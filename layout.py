@@ -14,8 +14,28 @@ class Layout():
         for box in self.boxes:
             box.render(parent)
 
+    def set_rulesets(self, rulesets):
+        for i, box in enumerate(self.boxes):
+            box.ruleset = rulesets[i]
+
     def get_rulesets(self):
         return [box.ruleset for box in self.boxes]
+
+    # apply rules that each box in given layout has, and generate new rules 
+    def generate_and_apply_rules(self):
+
+        for box in layout.boxes:
+
+            #if present condition matches any rule of this box, apply(execute) that rule, and get True
+            matching_rule_found = box.find_matching_rule_and_apply(layout)
+
+            # if no rule is matched, make new rule
+            if matching_rule_found == False:
+
+                # generate new rule with condition of present situation
+                box.generate_rule_with_random_action(layout)
+
+
 
 class SampleLayout(Layout):
     def __init__(self):

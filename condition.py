@@ -1,5 +1,23 @@
 #-*- coding: utf-8 -*-
 
+# return True if given box and any box in given layout satisfy the given bool function
+def bool_for_layout_and_box(layout, box, bool_function):
+    boxes = layout.boxes
+
+    #ignore exception
+    try:
+        boxes.remove(box)
+    except:
+        pass
+
+    result = False
+    for i in range(len(boxes)):
+        if bool_function(box, boxes[i]) == True:
+            result = True
+            break
+
+    return result
+
 class Condition():
     # we call function which reperesents one condition  as "condfun"
     def __init__(self, condfuns=[], and_or=1):
@@ -16,8 +34,38 @@ class Condition():
         else:
             return reduce(lambda b1,b2: b1 or b2, results)
 
+    def get_size(self):
+        return len(self.condfuns)
+
     def add_condfun(self, condfun):
         self.condfuns.append(condfun)
+
+    def remove_random_condfun(self):
+        index = random.randint(0, len(self.condfuns) - 1)
+        remove_condfun(index)
+
+    def remove_condfun(self, index):
+        del(self.condfuns[index])
+
+
+    @classmethod
+    # make Condition instance which represents current state(layout and box)
+    def make_condition(cls, **keyargs):
+        condfun_candidates = [Condition.having_box_in_given_distance(100), Condition.having_overlapped_box()]
+
+        # extract which matches given state(layout and box)
+        matched_condfuns = [condfun for condfun in condfun_candidates if condfun(**keyargs) == True]
+
+        and_or = 1 # represents "and"
+        condition = Condition(matched_condfuns, and_or)
+        
+        # remove if condition has a lot of condfuns (loosing condition)
+        if 3 < condition.get_size():
+            condition.remove_random_condfun()
+
+        return condition
+
+    # # # CONDFUNS # # #
 
     @classmethod
     def minimum_member(cls, number):
@@ -64,22 +112,28 @@ class Condition():
         return _no_overlap
 
     @classmethod
-    def nearby_object(cls, distance):
-        def _no_overlap(**kwargs):
+    def having_box_in_given_distance(cls, distance):
+        def _having_box_in_given_distance(**kwargs):
             layout = kwargs['layout']
             box = kwargs['box']
 
-            boxes = layout.boxes
-            result = True
-            for i in range(len(boxes)):
-                for j in range(i+1, len(boxes)):
-                    if BoxAgent.overlap_or_not(boxes[i], boxes[j]) == True:
-                        result = False
-                        break
+            bool_function = (lambda box1, box2: get_distance_between_gravities(box1, box2) < distance)
 
-            return result
+            return bool_for_layout_and_box(layout, box, bool_function)
 
-        return _no_overlap
+        return _having_box_in_given_distance
+
+    @classmethod
+    def having_overlapped_box(cls):
+        def _having_overlapped_box(**kwargs):
+            layout = kwargs['layout']
+            box = kwargs['box']
+
+            bool_function = BoxAgent.overlap_or_not
+
+            return bool_for_layout_and_box(layout, box, bool_function)
+
+        return _having_overlapped_box
 
 #必要なければ制約ConstraintはConditionだけにしてもいいかも
 class Constraint():
@@ -98,13 +152,15 @@ class SampleConstraint(Constraint):
 
 class Rule():
     initial_weight = 5
+
     def __init__(self, conditions, action, weight):
         self.condition = Condition()
         self.action = ''
         self.weight = Rule.initial_weight
 
     @classmethod
-    def make_rule_with_random_action(cls, condition):
+    # take layout as argument because some actions need layout for argument
+    def generate_rule_with_random_action(cls, condition, layout):
         action = ''
         weight = Rule.initial_weight
         return Rule(condition, action, weight)
@@ -173,3 +229,4 @@ class Action():
 from layout import *
 from agent import *
 from specification import *
+import random

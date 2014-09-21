@@ -2,6 +2,8 @@
 
 class Agent():
 
+    max_rules = 5
+
     def __init__(self):
         self.ruleset = []
 
@@ -16,8 +18,20 @@ class Agent():
         pairs.reverse()
         return [pair[1] for pair in pairs]
 
+    def get_number_of_rules(self):
+        return len(self.ruleset)
+
     def add_rule(self, rule):
-        self.ruleset.append(rule)
+        if Agent.max_rules <= self.get_number_of_rules():
+            self.replace_lightest_rule(rule)
+        else:
+            self.ruleset.append(rule)
+
+    def add_rule_with_random_action(self, layout):
+        pass
+
+    def find_matching_rule_and_apply(self, layout):
+        pass
 
     # let this agent take given action
     def execute_action(self, action):
@@ -60,6 +74,24 @@ class BoxAgent(Agent):
     def render(self, parent):
         panel = wx.Panel(parent, wx.ID_ANY, pos=self.position, size=self.size, style=wx.SIMPLE_BORDER)
         panel.SetBackgroundColour("#ffffff")
+
+    #add rule which has present condition and random action
+    def add_rule_with_random_action(self, layout):
+        new_rule = Rule.generate_rule_with_random_action(Condition.make_condition(layout=layout, box=self), layout)
+        self.add_rule(new_rule)
+
+    # find rule which matches current condition(layout and box) and apply it, and return True if matching rule is found
+    def find_matching_rule_and_apply(self, layout):
+        box.ruleset = self.get_sorted_ruleset()
+        matching_rule_found = False 
+
+        for rule in self.ruleset:
+            if rule.condition.evaluate(layout=layout, box=self):
+                self.execute_action(rule.action)
+                matching_rule_found = True
+                break
+
+        return matching_rule_found
 
     def get_right_position(self, margin):
         present_x, present_y = self.position
