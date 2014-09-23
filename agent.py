@@ -37,10 +37,10 @@ class Agent():
     def execute_action(self, action):
         action(self)
 
-    def get_index_of_lightest_rule(self, rule):
+    def get_index_of_lightest_rule(self):
         lightest_value = 1000
 
-        for i,rule in enumelate(self.ruleset):
+        for i,rule in enumerate(self.ruleset):
             if rule.weight < lightest_value:
                 lightest_value = rule.weight
                 index_lightest = i
@@ -66,7 +66,7 @@ class Agent():
         agents[i2].replace_lightest_rule(sending_rule1)
 
 class BoxAgent(Agent):
-    def __init__(self, position, size):
+    def __init__(self, position=[0,0], size=[10,10]):
         Agent.__init__(self)
         self.position = position
         self.size = size

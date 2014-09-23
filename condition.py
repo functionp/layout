@@ -1,6 +1,6 @@
 #-*- coding: utf-8 -*-
 
-# return True if given box and any box in given layout satisfy the given bool function
+# return True if relation between given box and any box in given layout satisfies the given bool function
 def bool_for_layout_and_box(layout, box, bool_function):
     boxes = layout.boxes
 
@@ -49,7 +49,7 @@ class Condition():
 
 
     @classmethod
-    # make Condition instance which represents current state(layout and box)
+    # make Condition instance which represents given state(layout and box)
     def make_condition(cls, **keyargs):
         condfun_candidates = [Condition.having_box_in_given_distance(100), Condition.having_overlapped_box()]
 
@@ -149,29 +149,7 @@ class SampleConstraint(Constraint):
 
         Constraint.__init__(self, condition)
 
-
-class Rule():
-    initial_weight = 5
-
-    def __init__(self, conditions, action, weight):
-        self.condition = Condition()
-        self.action = ''
-        self.weight = Rule.initial_weight
-
-    @classmethod
-    # take layout as argument because some actions need layout for argument
-    def generate_rule_with_random_action(cls, condition, layout):
-        action = ''
-        weight = Rule.initial_weight
-        return Rule(condition, action, weight)
-
-class SampleRule():
-    def __init__(self):
-        self.condition = Condition([Condition.nearby_object(60)])
-        self.action = Action.stay()
-        self.weight = Rule.initial_weight
-
-#アクションはagentをとる関数
+#アクションはagentをとる関数 Actionクラスはインスタンスを持たない：持ったほうがいいか？
 class Action():
     
     @classmethod
@@ -224,6 +202,34 @@ class Action():
                 box.align_top(nearest_box)
 
         return _align_to_nearest_box
+
+
+class Rule():
+    initial_weight = 5
+
+    def __init__(self, conditions=Condition(), action=Action.stay(), weight=initial_weight):
+        self.condition = conditions
+        self.action = action
+        self.weight = weight
+
+    def set_weight(self, weight):
+        self.weight = weight
+
+    def add_weight(self, amount):
+        self.set_weight(self.weight +  amount)
+
+
+    @classmethod
+    # take layout as argument because some actions need layout for argument
+    def generate_rule_with_random_action(cls, condition, layout):
+        action = Action.stay()
+        return Rule(condition, action)
+
+class SampleRule():
+    def __init__(self):
+        self.condition = Condition([Condition.nearby_object(60)])
+        self.action = Action.stay()
+        self.weight = Rule.initial_weight
 
 # imports - - - - - - -
 from layout import *
