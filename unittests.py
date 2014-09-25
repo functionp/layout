@@ -66,6 +66,7 @@ class TestRule(unittest.TestCase):
 class TestCondition(unittest.TestCase):
 
     def setUp(self):
+        print "setup!"
         pass
 
 
