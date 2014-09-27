@@ -160,3 +160,4 @@ import wx
 import random
 from main import WINDOW_SIZE
 from condition import *
+from rule import *

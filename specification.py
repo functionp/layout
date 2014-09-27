@@ -39,4 +39,5 @@ def get_distance_between_gravities(box1, box2):
 from layout import *
 from agent import *
 from condition import *
+from rule import *
 import math

@@ -2,6 +2,7 @@
 
 import unittest
 from agent import *
+from rule import *
 from condition import *
 from optimization import *
 from condition import *
@@ -66,7 +67,6 @@ class TestRule(unittest.TestCase):
 class TestCondition(unittest.TestCase):
 
     def setUp(self):
-        print "setup!"
         pass
 
 
