@@ -1,5 +1,10 @@
 #-*- coding: utf-8 -*-
 
+class Situation():
+    def __init__(self, layout, box):
+        self.layout = layout
+        self.box = box
+
 # return True if relation between given box and any box in given layout satisfies the given bool function
 def bool_for_layout_and_box(layout, box, bool_function):
     boxes = layout.boxes
@@ -24,9 +29,9 @@ class Condition():
         self.condfuns = condfuns
         self.and_or = and_or
 
-    # evaluate the condition and return True or False
-    def evaluate(self, **kwargs):
-        results = [condfun(**kwargs) for condfun in self.condfuns]
+    # evaluate the condition with given situation and return True or False
+    def evaluate(self, situation):
+        results = [condfun(situation) for condfun in self.condfuns]
 
         # case of "and"
         if self.and_or == 1:
@@ -49,12 +54,12 @@ class Condition():
 
 
     @classmethod
-    # make Condition instance which represents given state(layout and box)
-    def make_condition(cls, **keyargs):
+    # make Condition instance which represents given situation(layout and box)
+    def make_condition(cls, situation):
         condfun_candidates = [Condition.having_box_in_given_distance(100), Condition.having_overlapped_box()]
 
         # extract which matches given state(layout and box)
-        matched_condfuns = [condfun for condfun in condfun_candidates if condfun(**keyargs) == True]
+        matched_condfuns = [condfun for condfun in condfun_candidates if condfun(situation) == True]
 
         and_or = 1 # represents "and"
         condition = Condition(matched_condfuns, and_or)
@@ -69,8 +74,8 @@ class Condition():
 
     @classmethod
     def minimum_member(cls, number):
-        def _minimum_member(**kwargs):
-            layout = kwargs['layout']
+        def _minimum_member(situation):
+            layout = situation.layout
 
             if layout.get_number_of_boxes() >= number:
                 return True
@@ -81,8 +86,8 @@ class Condition():
 
     @classmethod
     def in_the_edge(cls):
-        def _in_the_edge(**kwargs):
-            layout = kwargs['layout']
+        def _in_the_edge(situation):
+            layout = situation.layout
 
             result = True
             for box in layout.boxes:
@@ -96,8 +101,8 @@ class Condition():
 
     @classmethod
     def no_overlap(cls):
-        def _no_overlap(**kwargs):
-            layout = kwargs['layout']
+        def _no_overlap(situation):
+            layout = situation.layout
 
             boxes = layout.boxes
             result = True
@@ -113,9 +118,9 @@ class Condition():
 
     @classmethod
     def having_box_in_given_distance(cls, distance):
-        def _having_box_in_given_distance(**kwargs):
-            layout = kwargs['layout']
-            box = kwargs['box']
+        def _having_box_in_given_distance(situation):
+            layout = situation.layout
+            box = situation.box
 
             bool_function = (lambda box1, box2: get_distance_between_gravities(box1, box2) < distance)
 
@@ -125,9 +130,9 @@ class Condition():
 
     @classmethod
     def having_overlapped_box(cls):
-        def _having_overlapped_box(**kwargs):
-            layout = kwargs['layout']
-            box = kwargs['box']
+        def _having_overlapped_box(situation):
+            layout = situation.layout
+            box = situation.box
 
             bool_function = BoxAgent.overlap_or_not
 

@@ -76,9 +76,10 @@ class TestCondition(unittest.TestCase):
         box3 = BoxAgent([120, 100], [30, 30])
 
         layout = Layout([box1, box2, box3])
-        condition = Condition.make_condition(layout=layout, box=box1)
+        situation = Situation(layout, box1)
+        condition = Condition.make_condition(situation)
 
-        self.assertTrue(condition.evaluate(layout=layout, box=box1))
+        self.assertTrue(condition.evaluate(situation))
 
 if __name__ == "__main__":
     unittest.main()

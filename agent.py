@@ -82,11 +82,12 @@ class BoxAgent(Agent):
 
     # find rule which matches current condition(layout and box) and apply it, and return True if matching rule is found
     def find_matching_rule_and_apply(self, layout):
-        box.ruleset = self.get_sorted_ruleset()
+        self.ruleset = self.get_sorted_ruleset()
         matching_rule_found = False 
+        current_situation = Situation(layout, selfsssss)
 
         for rule in self.ruleset:
-            if rule.condition.evaluate(layout=layout, box=self):
+            if rule.condition.evaluate(current_situation):
                 self.execute_action(rule.action)
                 matching_rule_found = True
                 break
