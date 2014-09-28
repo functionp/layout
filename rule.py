@@ -5,14 +5,14 @@ from condition import *
 
 #アクションはagentをとる関数 Actionクラスはインスタンスを持たない：持ったほうがいいか？
 class Action():
-    
+
     @classmethod
     def stay(cls):
         def _stay(box):
             pass
 
         return _stay
-    
+
     @classmethod
     def move_horizontally(cls, amount):
         def _move_horizontally(box):
@@ -22,25 +22,25 @@ class Action():
 
     @classmethod
     def move_vertically(cls, amount):
-        def _move_horizontally(box):
+        def _move_vertically(box):
             box.add_y(amount)
 
-        return _move_horizontally
-    
+        return _move_vertically
+
     @classmethod
     def change_width(cls, amount):
         def _change_width(box):
             box.add_width(amount)
 
         return _change_width
-    
+
     @classmethod
     def change_height(cls, amount):
         def _change_height(box):
             box.add_height(amount)
 
         return _change_height
-    
+
     @classmethod
     def align_to_nearest_box(cls, layout):
 
@@ -56,6 +56,24 @@ class Action():
                 box.align_top(nearest_box)
 
         return _align_to_nearest_box
+
+    @classmethod
+    def align_top_to_nearest_box(cls, layout):
+
+        def _align_top_to_nearest_box(box):
+            nearest_box = box.get_nearest_box(layout)
+            box.align_top(nearest_box)
+
+        return _align_top_to_nearest_box
+
+    @classmethod
+    def align_left_to_nearest_box(cls, layout):
+
+        def _align_left_to_nearest_box(box):
+            nearest_box = box.get_nearest_box(layout)
+            box.align_left(nearest_box)
+
+        return _align_left_to_nearest_box
 
 
 class Rule():
