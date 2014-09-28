@@ -2,6 +2,7 @@
 
 # imports - - - - - - -
 from condition import *
+import random
 
 #アクションはagentをとる関数 Actionクラスはインスタンスを持たない：持ったほうがいいか？
 class Action():
@@ -14,18 +15,34 @@ class Action():
         return _stay
 
     @classmethod
-    def move_horizontally(cls, amount):
+    def move_horizontally(cls, amount_to_move):
         def _move_horizontally(box):
-            box.add_x(amount)
+            box.add_x(amount_to_move)
 
         return _move_horizontally
 
     @classmethod
-    def move_vertically(cls, amount):
+    def move_horizontally_at_random(cls, max_amount):
+        def _move_horizontally_at_random(box):
+            amount_to_move = random.randint(-max_amount, max_amount)
+            box.add_x(amount_to_move)
+
+        return _move_horizontally_at_random
+
+    @classmethod
+    def move_vertically(cls, amount_to_move):
         def _move_vertically(box):
-            box.add_y(amount)
+            box.add_y(amount_to_move)
 
         return _move_vertically
+
+    @classmethod
+    def move_vertically_at_random(cls, max_amount):
+        def _move_vertically_at_random(box):
+            amount_to_move = random.randint(-max_amount, max_amount)
+            box.add_y(amount_to_move)
+
+        return _move_vertically_at_random
 
     @classmethod
     def change_width(cls, amount):
@@ -35,9 +52,25 @@ class Action():
         return _change_width
 
     @classmethod
+    def change_width_at_random(cls, max_amount):
+        def _change_width_at_random(box):
+            amount_to_change = random.randint(-max_amount, max_amount)
+            box.add_width(amount_to_change)
+
+        return _change_width
+
+    @classmethod
     def change_height(cls, amount):
         def _change_height(box):
             box.add_height(amount)
+
+        return _change_height
+
+    @classmethod
+    def change_height_at_random(cls, max_amount):
+        def _change_height_at_random(box):
+            amount_to_change = random.randint(-max_amount, max_amount)
+            box.add_height(amount_to_change)
 
         return _change_height
 
@@ -74,7 +107,7 @@ class Action():
             box.align_left(nearest_box)
 
         return _align_left_to_nearest_box
-
+ 
 
 class Rule():
     initial_weight = 5
@@ -94,7 +127,8 @@ class Rule():
     @classmethod
     # take layout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, layout):
-        action = Action.stay()
+        action_candidates = [Action.stay(), Action.move_vertically_at_random(30), Action.move_horizontally_at_random(30), Action.change_width_at_random(30), Action.change_height_at_random(30), Action.align_to_nearest_box(layout), Action.align_top_to_nearest_box(layout), Action.align_left_to_nearest_box(layout)]
+        action = random.choice(action_candidates)
         return Rule(condition, action)
 
 class SampleRule():
