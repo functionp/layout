@@ -57,7 +57,7 @@ class Action():
             amount_to_change = random.randint(-max_amount, max_amount)
             box.add_width(amount_to_change)
 
-        return _change_width
+        return _change_width_at_random
 
     @classmethod
     def change_height(cls, amount):
@@ -72,7 +72,7 @@ class Action():
             amount_to_change = random.randint(-max_amount, max_amount)
             box.add_height(amount_to_change)
 
-        return _change_height
+        return _change_height_at_random
 
     @classmethod
     def align_to_nearest_box(cls, layout):

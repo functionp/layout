@@ -47,6 +47,25 @@ class TestLayout(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_rulesets(self):
+        box1 = BoxAgent([50, 100], [30, 30])
+        box2 = BoxAgent([60, 200], [30, 30])
+        box3 = BoxAgent([120, 100], [30, 30])
+
+        layout = Layout([box1, box2, box3])
+
+        box1.add_rule_with_random_action(layout)
+        box1.add_rule_with_random_action(layout)
+        box2.add_rule_with_random_action(layout)
+        box2.add_rule_with_random_action(layout)
+        box3.add_rule_with_random_action(layout)
+        box3.add_rule_with_random_action(layout)
+
+        rulesets = layout.get_rulesets()
+
+        self.assertEqual(box2.ruleset[1], rulesets[1][1])
+
+
 
 class TestOptimization(unittest.TestCase):
 

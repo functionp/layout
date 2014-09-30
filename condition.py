@@ -7,7 +7,8 @@ class Situation():
 
 # return True if relation between given box and any box in given layout satisfies the given bool function
 def bool_for_layout_and_box(layout, box, bool_function):
-    boxes = layout.boxes
+
+    boxes = layout.boxes[:]
 
     #ignore exception
     try:

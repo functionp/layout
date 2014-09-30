@@ -77,7 +77,9 @@ class BoxAgent(Agent):
 
     #add rule which has present condition and random action
     def add_rule_with_random_action(self, layout):
-        new_rule = Rule.generate_rule_with_random_action(Condition.make_condition(layout=layout, box=self), layout)
+        situation = Situation(layout, self)
+        condition = Condition.make_condition(situation)
+        new_rule = Rule.generate_rule_with_random_action(condition, layout)
         self.add_rule(new_rule)
 
     # find rule which matches current condition(layout and box) and apply it, and return True if matching rule is found
