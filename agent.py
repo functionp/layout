@@ -82,7 +82,7 @@ class BoxAgent(Agent):
         new_rule = Rule.generate_rule_with_random_action(condition, layout)
         self.add_rule(new_rule)
 
-    # find (the most valuable) rule which matches current condition(layout and box) and return it. return None if no rule is found.
+    # find (the strongest) rule which matches current condition(layout and box) and return it. return None if no rule is found.
     def get_matching_rule(self, layout):
         self.ruleset = self.get_sorted_ruleset()
         matching_rule = None

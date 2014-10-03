@@ -24,13 +24,13 @@ class Layout():
     # generate new rules 
     def generate_rules(self):
 
-        for box in layout.boxes:
+        for box in (self).boxes:
 
             # if no rule is matched, make new rule
-            if box.get_matching_rule(layout) == None:
+            if box.get_matching_rule(self) == None:
 
                 # generate new rule with condition of present situation
-                box.generate_rule_with_random_action(layout)
+                box.add_rule_with_random_action(self)
 
 
 

@@ -65,7 +65,17 @@ class TestLayout(unittest.TestCase):
 
         self.assertEqual(box2.ruleset[1], rulesets[1][1])
 
+    def test_generating_rule(self):
+        box1 = BoxAgent([50, 100], [30, 30])
+        box2 = BoxAgent([60, 200], [30, 30])
+        box3 = BoxAgent([120, 100], [30, 30])
 
+        layout = Layout([box1, box2, box3])
+
+        layout.generate_rules()
+        matching_rule = box2.get_matching_rule(layout)
+
+        self.assertNotEqual(matching_rule, None)
 
 class TestOptimization(unittest.TestCase):
 
