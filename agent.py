@@ -7,12 +7,12 @@ class Agent():
     def __init__(self):
         self.ruleset = []
 
-    # return sorted ruleset according to its weight
+    # return sorted ruleset according to its strength
     def get_sorted_ruleset(self):
         pairs = []
         for rule in self.ruleset:
-            # make pair of weight value and rule
-            pairs.append((rule.weight, rule)) # ruleがidenticalなオブジェクトかも→ならコピー
+            # make pair of strength value and rule
+            pairs.append((rule.strength, rule)) # ruleがidenticalなオブジェクトかも→ならコピー
 
         pairs.sort()
         pairs.reverse()
@@ -23,7 +23,7 @@ class Agent():
 
     def add_rule(self, rule):
         if Agent.max_rules <= self.get_number_of_rules():
-            self.replace_lightest_rule(rule)
+            self.replace_weakest_rule(rule)
         else:
             self.ruleset.append(rule)
 
@@ -37,19 +37,19 @@ class Agent():
     def execute_action(self, action):
         action(self)
 
-    def get_index_of_lightest_rule(self):
-        lightest_value = 1000
+    def get_index_of_weakest_rule(self):
+        weakest_value = 1000
 
         for i,rule in enumerate(self.ruleset):
-            if rule.weight < lightest_value:
-                lightest_value = rule.weight
-                index_lightest = i
+            if rule.strength < weakest_value:
+                weakest_value = rule.strength
+                index_weakest = i
 
-        return index_lightest
+        return index_weakest
 
-    # change lightest rule of agent into given rule (DESTRUCTIVE)
-    def replace_lightest_rule(self, rule):
-        i = self.get_index_of_lightest_rule()
+    # change weakest rule of agent into given rule (DESTRUCTIVE)
+    def replace_weakest_rule(self, rule):
+        i = self.get_index_of_weakest_rule()
         self.ruleset[i] = rule
 
     @classmethod
@@ -62,8 +62,8 @@ class Agent():
         sending_rule1 = agents[i1].get_sorted_ruleset()[0]
         sending_rule2 = agents[i2].get_sorted_ruleset()[0]
 
-        agents[i1].replace_lightest_rule(sending_rule2)
-        agents[i2].replace_lightest_rule(sending_rule1)
+        agents[i1].replace_weakest_rule(sending_rule2)
+        agents[i2].replace_weakest_rule(sending_rule1)
 
 class BoxAgent(Agent):
     def __init__(self, position=[0,0], size=[10,10]):
@@ -82,19 +82,18 @@ class BoxAgent(Agent):
         new_rule = Rule.generate_rule_with_random_action(condition, layout)
         self.add_rule(new_rule)
 
-    # find rule which matches current condition(layout and box) and apply it, and return True if matching rule is found
-    def find_matching_rule_and_apply(self, layout):
+    # find (the most valuable) rule which matches current condition(layout and box) and return it. return None if no rule is found.
+    def get_matching_rule(self, layout):
         self.ruleset = self.get_sorted_ruleset()
-        matching_rule_found = False 
-        current_situation = Situation(layout, selfsssss)
+        matching_rule = None
+        current_situation = Situation(layout, self)
 
         for rule in self.ruleset:
             if rule.condition.evaluate(current_situation):
-                self.execute_action(rule.action)
-                matching_rule_found = True
+                matching_rule = rule
                 break
 
-        return matching_rule_found
+        return matching_rule
 
     def get_right_position(self, margin):
         present_x, present_y = self.position

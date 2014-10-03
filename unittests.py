@@ -32,14 +32,14 @@ class TestAgent(unittest.TestCase):
         rule2 = Rule()
         rule3 = Rule()
 
-        rule2.add_weight(3)
-        rule3.add_weight(-3)
+        rule2.add_strength(3)
+        rule3.add_strength(-3)
 
         box1.add_rule(rule1)
         box1.add_rule(rule2)
         box1.add_rule(rule3)
 
-        self.assertEqual(box1.get_index_of_lightest_rule(), 2)
+        self.assertEqual(box1.get_index_of_weakest_rule(), 2)
 
 
 class TestLayout(unittest.TestCase):
@@ -80,7 +80,7 @@ class TestRule(unittest.TestCase):
 
     def test_default_value(self):
         rule = Rule(Condition(), Action.stay())
-        self.assertTrue(rule.weight, Rule.initial_weight)
+        self.assertTrue(rule.strength, Rule.initial_strength)
 
 
 

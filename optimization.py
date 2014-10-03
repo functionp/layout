@@ -37,12 +37,13 @@ class MAOptimization(Optimization):
 
                 old_objective_value = self.get_objective_value(layout)
 
-                layout.generate_and_apply_rules()
+                layout.generate_rules()
                 Agent.exchage_rule_randomly(layout.boxes)
 
                 new_objective_value = self.get_objective_value(layout)
 
-            #ルール改変
+            # learn and adjust a strength of each rule
+            self.learn_strength_with_q_learning(layout)
 
             # in case this objective value exceeds the best value so far
             if self.get_objective_value(layout) > best_objective_value:
@@ -52,6 +53,9 @@ class MAOptimization(Optimization):
 
                 # update organizational ruleset
                 self.organizational_rulesets = layout.get_rulesets()
+
+    def learn_strength_with_q_learning(self, layout):
+        pass
 
 
 

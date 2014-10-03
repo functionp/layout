@@ -110,18 +110,18 @@ class Action():
  
 
 class Rule():
-    initial_weight = 5
+    initial_strength = 5
 
-    def __init__(self, condition=Condition(), action=Action.stay(), weight=initial_weight):
+    def __init__(self, condition=Condition(), action=Action.stay(), strength=initial_strength):
         self.condition = condition
         self.action = action
-        self.weight = weight
+        self.strength = strength
 
-    def set_weight(self, weight):
-        self.weight = weight
+    def set_strength(self, strength):
+        self.strength = strength
 
-    def add_weight(self, amount):
-        self.set_weight(self.weight +  amount)
+    def add_strength(self, amount):
+        self.set_strength(self.strength +  amount)
 
 
     @classmethod
@@ -135,7 +135,7 @@ class SampleRule():
     def __init__(self):
         self.condition = Condition([Condition.nearby_object(60)])
         self.action = Action.stay()
-        self.weight = Rule.initial_weight
+        self.strength = Rule.initial_strength
 
 
 # imports - - - - - - -
