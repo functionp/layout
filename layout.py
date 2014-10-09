@@ -3,6 +3,9 @@
 class Layout():
     def __init__(self, boxes):
         self.boxes = boxes
+        
+    def get_copy(self):
+        return Layout(self.boxes[:])
 
     def update(self, boxes):
         self.boxes = boxes

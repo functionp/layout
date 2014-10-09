@@ -9,14 +9,12 @@ class Agent():
 
     # return sorted ruleset according to its strength
     def get_sorted_ruleset(self):
-        pairs = []
-        for rule in self.ruleset:
-            # make pair of strength value and rule
-            pairs.append((rule.strength, rule)) # ruleがidenticalなオブジェクトかも→ならコピー
-
+        pairs = [(rule.strength, rule) for rule in agent.ruleset]
         pairs.sort()
         pairs.reverse()
-        return [pair[1] for pair in pairs]
+        sorted_ruleset = [pair[1] for pair in pairs]
+
+        return sorted_ruleset
 
     def get_number_of_rules(self):
         return len(self.ruleset)
@@ -52,6 +50,14 @@ class Agent():
         i = self.get_index_of_weakest_rule()
         self.ruleset[i] = rule
 
+    def rule_select(self):
+        def _greedy(agent):
+            sorted_ruleset = agent.get_sorted_ruleset()
+            return sorted_ruleset[0]
+
+        
+        return _greedy(self)
+
     @classmethod
     # exchange two rules of randomly chosen two agents (DESTRUCTIVE)
     def exchange_rule_randomly(cls, agents):
@@ -64,6 +70,8 @@ class Agent():
 
         agents[i1].replace_weakest_rule(sending_rule2)
         agents[i2].replace_weakest_rule(sending_rule1)
+
+
 
 class BoxAgent(Agent):
     def __init__(self, position=[0,0], size=[10,10]):
