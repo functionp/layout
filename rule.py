@@ -110,7 +110,7 @@ class Action():
  
 
 class Rule():
-    initial_strength = 5
+    initial_strength = 0.5
 
     def __init__(self, condition=Condition(), action=Action.stay(), strength=initial_strength):
         self.condition = condition

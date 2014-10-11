@@ -34,15 +34,11 @@ class OCSOptimization(Optimization):
         for i in range(OCSOptimization.max_iteration):
             step = 1
 
-            #解が収束していない間回す
-            while abs(old_objective_value - new_objective_value) < MAOptimization.minimum_difference : 
-
-                old_objective_value = self.get_objective_value(layout)
-
-                layout.generate_rules()
+            # repeat while ruleset is not converged(while new rule is generated)
+            rule_generated_or_not = True
+            while rule_generated_or_not == True : 
+                rule_generated_or_not = layout.generate_rules()
                 Agent.exchage_rule_randomly(layout.boxes)
-
-                new_objective_value = self.get_objective_value(layout)
 
             # learn and adjust a strength of each rule
             self.reinforcement_learning(layout)
