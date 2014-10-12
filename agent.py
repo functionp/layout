@@ -9,7 +9,7 @@ class Agent():
 
     # return sorted ruleset according to its strength
     def get_sorted_ruleset(self):
-        pairs = [(rule.strength, rule) for rule in agent.ruleset]
+        pairs = [(rule.strength, rule) for rule in self.ruleset]
         pairs.sort()
         pairs.reverse()
         sorted_ruleset = [pair[1] for pair in pairs]

@@ -123,6 +123,9 @@ class Rule():
     def add_strength(self, amount):
         self.set_strength(self.strength +  amount)
 
+    # increase(decrease) strength
+    def reinforce(self, reward_function, episode):
+        rule.strength = rule.strength + reward_function(episode)
 
     @classmethod
     # take layout as argument because some actions need layout for argument
@@ -130,6 +133,7 @@ class Rule():
         action_candidates = [Action.stay(), Action.move_vertically_at_random(30), Action.move_horizontally_at_random(30), Action.change_width_at_random(30), Action.change_height_at_random(30), Action.align_to_nearest_box(layout), Action.align_top_to_nearest_box(layout), Action.align_left_to_nearest_box(layout)]
         action = random.choice(action_candidates)
         return Rule(condition, action)
+
 
 class SampleRule():
     def __init__(self):
