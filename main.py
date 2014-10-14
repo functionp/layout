@@ -66,9 +66,9 @@ def click_start_button(event):
 
     layout = specification.get_default_layout()
 
-    optimization = Optimization(specification)
-    optimized_layout = optimization.optimize(layout)
-    objective_value = optimization.get_objective_value(layout)
+    optimization = Optimization(specification, layout)
+    optimized_layout = optimization.optimize()
+    objective_value = optimization.get_objective_value()
     optimized_layout.render(optimization_frame.base_panel)
 
     condition = specification.constraint.condition

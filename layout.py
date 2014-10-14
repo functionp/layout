@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 class Layout():
-    def __init__(self, boxes):
+    def __init__(self, boxes=[]):
         self.boxes = boxes
         
     def get_copy(self):
