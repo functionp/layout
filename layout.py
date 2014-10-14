@@ -27,6 +27,8 @@ class Layout():
     # generate new rules 
     def generate_rules(self):
 
+        rule_generated_or_not = False
+
         for box in (self).boxes:
 
             # if no rule is matched, make new rule
@@ -34,6 +36,9 @@ class Layout():
 
                 # generate new rule with condition of present situation
                 box.add_rule_with_random_action(self)
+                rule_generated_or_not = True
+
+        return rule_generated_or_not
 
 
 

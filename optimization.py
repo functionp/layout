@@ -1,21 +1,50 @@
 #-*- coding: utf-8 -*-
 
+
 class Optimization():
 
     def __init__(self, specification):
         self.specification = specification
+        self.reset_record()
 
     def optimize(self, layout):
+
+        self.reset_record()
+
         for box in layout.boxes:
             box.position[0] = box.position[0] + 100
 
         return layout
+
+    def reset_record(self):
+        self.best_value = 0
+        self.worst_value = 0
 
     def get_objective_value(self, layout):
         return self.specification.objective.function(layout)
 
     def get_rulesets(self, layout):
         return layout.get_rulesets
+
+    # update best objective value if gained new value exceeds the best value
+    # if updated, return True
+    def update_best_value(self, new_value):
+        if self.best_value < new_value:
+            self.best_value = new_value
+            return True
+        else: 
+            return False
+
+    # update worst objective value if gained new value gets below the worst value
+    # if updated, return True
+    def update_worst_value(self, new_value):
+        
+        #ブールとその時の処理を渡して同じ処理をする高階関数に治せる
+        if new_value < self.worst_value:
+            self.worst_value = new_value
+            return True
+        else: 
+            return False
 
 class OCSOptimization(Optimization):
     max_iteration = 10
@@ -28,8 +57,6 @@ class OCSOptimization(Optimization):
 
     # optimization はlayoutとかboxを使わない一般化をしたほうがいい
     def optimize(self, layout):
-
-        best_objective_value = 0
 
         # use organizational rulesets for default rulesets
         layout.set_rulesets(self.organizational_rulesets)
@@ -46,14 +73,20 @@ class OCSOptimization(Optimization):
             # learn and adjust a strength of each rule
             self.reinforcement_learning(layout)
 
-            # in case this objective value exceeds the best value so far
-            if self.get_objective_value(layout) > best_objective_value:
+            current_objective_value = self.get_objective_value(layout)
+            self.update_worst_value(current_objective_value)
+            self.update_organizational_rulesets(current_objective_value, layout)
+            
 
-                # update the best objective value
-                best_objective_value = self.get_objective_value(layout)
+    def update_organizational_rulesets(self, new_value, layout):
 
-                # update organizational ruleset
-                self.organizational_rulesets = layout.get_rulesets()
+        if self.update_best_value(new_value):
+
+            # update organizational ruleset
+            self.organizational_rulesets = layout.get_rulesets()
+            return True
+        else:
+            return False
 
     def reinforcement_learning(self, layout):
         for box in layout.boxes:
@@ -65,7 +98,7 @@ class OCSOptimization(Optimization):
             
             episode = 0
 
-            #次にやること：bestとworstの表現→インスタンスに保持？
+            #次にやること：bestとworstの表現→インスタンスに保持？layoutとboxを使わない一般化
 
             #とりあえず終了状態ベースでなく関数の収束ベースで終了条件考えてるけど状態で考えなくていいのだろうか？→脳内実行
             while abs(previous_value - current_value) > OCSOptimization.minimum_difference:
@@ -83,7 +116,7 @@ class OCSOptimization(Optimization):
 
                 episode += 1
 
-                if self.positive_reward_or_not(current_value, previous_value, best_value, worst_value):
+                if self.positive_reward_or_not(current_value, previous_value):
                     positive_reward_function = (lambda x: 0.1)
                     self.give_rewards(applied_pairs, positive_reward_function)
 
@@ -91,11 +124,16 @@ class OCSOptimization(Optimization):
                     negative_reward_function = (lambda x: -0.1)
                     self.give_rewards(applied_pairs, negative_reward_function)
 
-    def positive_reward_or_not(self, current_value, previous_value, best_value, worst_value):
+    def positive_reward_or_not(self, current_value, previous_value):
+        half_value = (self.worst_value + self.best_value) / 2
+
         def _compare_with_before():
             return (previous_value < current_value)
 
-        return _compare_with_before()
+        def _compare_with_half():
+            return (half_value < current_value)
+
+        return _compare_with_half()
 
     # give rewards to serial rules at one time
     def give_rewards(self, pairs, reward_function):
