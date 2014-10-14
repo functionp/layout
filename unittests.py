@@ -82,6 +82,24 @@ class TestOptimization(unittest.TestCase):
     def setUp(self):
         pass
 
+    def test_recorded_objective(self):
+        objective = SampleObjective()
+        constraint = SampleConstraint()
+        specification = Specification(constraint, objective)
+
+        box1 = BoxAgent([100, 100], [30, 30])
+        box2 = BoxAgent([100, 200], [30, 30])
+        box3 = BoxAgent([150, 180], [30, 30])
+
+        layout = Layout([box1, box2, box3])
+
+        optimization = OCSOptimization(specification, layout)
+
+        objective_value = optimization.get_objective_value()
+        best_value = optimization.update_best_value(objective_value)
+        worst_value = optimization.update_worst_value(objective_value)
+        
+        self.assertTrue(best_value < worst_value)
 
 class TestRule(unittest.TestCase):
 
@@ -90,7 +108,7 @@ class TestRule(unittest.TestCase):
 
     def test_default_value(self):
         rule = Rule(Condition(), Action.stay())
-        self.assertTrue(rule.strength, Rule.initial_strength)
+        self.assertEqual(rule.strength, Rule.initial_strength)
 
 
 

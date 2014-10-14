@@ -22,21 +22,21 @@ class Optimization():
     def get_rulesets(self):
         return self.layout.get_rulesets()
 
-    # update best objective value if gained new value exceeds the best value
+    # update best objective value if gained new value is better(smaller) than the best value
     # if updated, return True
     def update_best_value(self, new_value):
-        if self.best_value < new_value:
+        if new_value < self.best_value:
             self.best_value = new_value
             return True
         else: 
             return False
 
-    # update worst objective value if gained new value gets below the worst value
+    # update worst objective value if gained new value is worse(bigger) than the worst value
     # if updated, return True
     def update_worst_value(self, new_value):
         
         #ブールとその時の処理を渡して同じ処理をする高階関数に治せる
-        if new_value < self.worst_value:
+        if self.worst_value < new_value:
             self.worst_value = new_value
             return True
         else: 
