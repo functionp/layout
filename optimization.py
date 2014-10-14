@@ -7,24 +7,18 @@ class Optimization():
         self.specification = specification
         self.reset_record()
 
-    def optimize(self, layout):
-
-        self.reset_record()
-
-        for box in layout.boxes:
-            box.position[0] = box.position[0] + 100
-
-        return layout
+    def optimize(self):
+        pass
 
     def reset_record(self):
         self.best_value = 0
         self.worst_value = 0
 
-    def get_objective_value(self, layout):
-        return self.specification.objective.function(layout)
+    def get_objective_value(self):
+        return self.specification.objective.function(self.layout)
 
-    def get_rulesets(self, layout):
-        return layout.get_rulesets
+    def get_rulesets(self):
+        return self.layout.get_rulesets()
 
     # update best objective value if gained new value exceeds the best value
     # if updated, return True
@@ -51,12 +45,14 @@ class OCSOptimization(Optimization):
     max_cycle_of_learning = 10
     minimum_difference = 20
 
-    def __init__(self, specification):
+    def __init__(self, specification, layout=Layout()):
         Optimization.__init__(self, specification)
         self.organizational_rulesets = []
+        self.layout = layout.get_copy()
 
     # optimization はlayoutとかboxを使わない一般化をしたほうがいい
-    def optimize(self, layout):
+    def optimize(self):
+        layout = self.layout
 
         # use organizational rulesets for default rulesets
         layout.set_rulesets(self.organizational_rulesets)
@@ -71,28 +67,30 @@ class OCSOptimization(Optimization):
                 Agent.exchage_rule_randomly(layout.boxes)
 
             # learn and adjust a strength of each rule
-            self.reinforcement_learning(layout)
+            self.reinforcement_learning()
 
-            current_objective_value = self.get_objective_value(layout)
+            current_objective_value = self.get_objective_value()
             self.update_worst_value(current_objective_value)
-            self.update_organizational_rulesets(current_objective_value, layout)
+            self.update_organizational_rulesets(current_objective_value)
             
 
-    def update_organizational_rulesets(self, new_value, layout):
+    def update_organizational_rulesets(self, new_value):
 
         if self.update_best_value(new_value):
 
             # update organizational ruleset
-            self.organizational_rulesets = layout.get_rulesets()
+            self.organizational_rulesets = self.layout.get_rulesets()
             return True
         else:
             return False
 
-    def reinforcement_learning(self, layout):
-        for box in layout.boxes:
-            self.learn_strength_with_profit_sharing(box, layout)
+    def reinforcement_learning(self):
+        for box in self.layout.boxes:
+            self.learn_strength_with_profit_sharing(box)
 
-    def learn_strength_with_profit_sharing(self, box, layout):
+    def learn_strength_with_profit_sharing(self, box):
+
+        layout = self.layout
 
         for i in range(OCSOptimization.max_cycle_of_learning):
             
@@ -105,9 +103,9 @@ class OCSOptimization(Optimization):
                 selected_rule = box.rule_select()
 
                 # apply selected rule, and record objective values before and after execution
-                previous_value = self.get_objective_value(layout)
+                previous_value = self.get_objective_value()
                 box.execute_action(selected_rule.action)
-                current_value = self.get_objective_value(layout)
+                current_value = self.get_objective_value()
                 situation_after = Situation(layout.get_copy(), box)
 
                 # rememebr applied rule with episode(time)
