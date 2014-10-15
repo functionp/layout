@@ -57,7 +57,7 @@ class Condition():
     @classmethod
     # make Condition instance which represents given situation(layout and box)
     def make_condition(cls, situation):
-        condfun_candidates = [Condition.in_the_edge() , Condition.having_box_in_given_distance(100), Condition.having_overlapped_box()]
+        condfun_candidates = [BoxCondition.in_the_edge() , BoxCondition.having_box_in_given_distance(100), BoxCondition.having_overlapped_box()]
 
         # extract which matches given state(layout and box)
         matched_condfuns = [condfun for condfun in condfun_candidates if condfun(situation) == True]
@@ -156,9 +156,9 @@ class Constraint():
 class SampleConstraint(Constraint):
     def __init__(self):
         condition = Condition()
-        condition.add_condfun(Condition.minimum_member(2))
-        condition.add_condfun(Condition.in_the_edge())
-        condition.add_condfun(Condition.no_overlap())
+        condition.add_condfun(BoxCondition.minimum_member(2))
+        condition.add_condfun(BoxCondition.in_the_edge())
+        condition.add_condfun(BoxCondition.no_overlap())
 
         Constraint.__init__(self, condition)
 

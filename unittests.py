@@ -153,7 +153,7 @@ class TestCondition(unittest.TestCase):
 
         layout = Layout([box1, box2, box3])
         situation = Situation(layout, box1)
-        condition = Condition.make_condition(situation)
+        condition = BoxCondition.make_condition(situation)
 
         self.assertTrue(condition.evaluate(situation))
 
@@ -166,7 +166,7 @@ class TestCondition(unittest.TestCase):
         layout = Layout([box1, box2, box3, box4])
         situation = Situation(layout, box2)
 
-        condfun = Condition.having_overlapped_box()
+        condfun = BoxCondition.having_overlapped_box()
         self.assertTrue(condfun(situation))
 
 
@@ -179,7 +179,7 @@ class TestCondition(unittest.TestCase):
         layout = Layout([box1, box2, box3, box4])
         situation = Situation(layout, box1)
 
-        condfun = Condition.having_box_in_given_distance(30)
+        condfun = BoxCondition.having_box_in_given_distance(30)
         self.assertTrue(condfun(situation))
 
 if __name__ == "__main__":
