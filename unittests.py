@@ -98,8 +98,8 @@ class TestOptimization(unittest.TestCase):
         objective_value = optimization.get_objective_value()
         best_value = optimization.update_best_value(objective_value)
         worst_value = optimization.update_worst_value(objective_value)
-        
-        self.assertTrue(best_value < worst_value)
+
+        self.assertTrue(optimization.best_value < optimization.worst_value)
 
 class TestRule(unittest.TestCase):
 

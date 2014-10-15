@@ -3,6 +3,15 @@
 # imports - - - - - - -
 from layout import *
 
+# a high order function which updates given value and return True if updated.
+def update_something(bool_condition, process):
+    if bool_condition:
+        process()
+        return True
+    else:
+        return False
+
+
 class Optimization():
 
     def __init__(self, specification):
@@ -13,8 +22,8 @@ class Optimization():
         pass
 
     def reset_record(self):
-        self.best_value = 0
-        self.worst_value = 0
+        self.set_best_value(0)
+        self.set_worst_value(0)
 
     def get_objective_value(self):
         return self.specification.objective.function(self.layout)
@@ -22,25 +31,21 @@ class Optimization():
     def get_rulesets(self):
         return self.layout.get_rulesets()
 
+    def set_best_value(self, value):
+        self.best_value = value
+
+    def set_worst_value(self, value):
+        self.worst_value = value
+
     # update best objective value if gained new value is better(smaller) than the best value
     # if updated, return True
     def update_best_value(self, new_value):
-        if new_value < self.best_value:
-            self.best_value = new_value
-            return True
-        else: 
-            return False
+        update_something((new_value < self.best_value), (lambda : self.set_best_value(new_value)))
 
     # update worst objective value if gained new value is worse(bigger) than the worst value
     # if updated, return True
     def update_worst_value(self, new_value):
-        
-        #ブールとその時の処理を渡して同じ処理をする高階関数に治せる
-        if self.worst_value < new_value:
-            self.worst_value = new_value
-            return True
-        else: 
-            return False
+        update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
     max_iteration = 10
@@ -51,6 +56,9 @@ class OCSOptimization(Optimization):
         Optimization.__init__(self, specification)
         self.organizational_rulesets = []
         self.layout = layout.get_copy()
+
+    def set_organizational_rulesets(self, rulesets):
+        self.organizational_rulesets = rulesets
 
     # optimization はlayoutとかboxを使わない一般化をしたほうがいい
     def optimize(self):
@@ -77,14 +85,8 @@ class OCSOptimization(Optimization):
             
 
     def update_organizational_rulesets(self, new_value):
-
-        if self.update_best_value(new_value):
-
-            # update organizational ruleset
-            self.organizational_rulesets = self.layout.get_rulesets()
-            return True
-        else:
-            return False
+        new_layout = self.layout.get_rulesets()
+        update_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_layout)))
 
     def reinforcement_learning(self):
         for box in self.layout.boxes:
