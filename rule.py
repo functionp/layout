@@ -6,7 +6,9 @@ import random
 
 #アクションはagentをとる関数 Actionクラスはインスタンスを持たない：持ったほうがいいか？
 class Action():
+    pass
 
+class BoxAction(Action):
     @classmethod
     def stay(cls):
         def _stay(box):
@@ -67,6 +69,7 @@ class Action():
         return _change_height
 
     @classmethod
+
     def change_height_at_random(cls, max_amount):
         def _change_height_at_random(box):
             amount_to_change = random.randint(-max_amount, max_amount)
@@ -112,7 +115,7 @@ class Action():
 class Rule():
     initial_strength = 0.5
 
-    def __init__(self, condition=Condition(), action=Action.stay(), strength=initial_strength):
+    def __init__(self, condition=Condition(), action=BoxAction.stay(), strength=initial_strength):
         self.condition = condition
         self.action = action
         self.strength = strength
@@ -129,8 +132,14 @@ class Rule():
 
     @classmethod
     # take layout as argument because some actions need layout for argument
+    def generate_rule_with_random_action(cls, condition, agent_set):
+        pass
+
+class BoxRule(Rule):
+    @classmethod
+    # take layout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, layout):
-        action_candidates = [Action.stay(), Action.move_vertically_at_random(30), Action.move_horizontally_at_random(30), Action.change_width_at_random(30), Action.change_height_at_random(30), Action.align_to_nearest_box(layout), Action.align_top_to_nearest_box(layout), Action.align_left_to_nearest_box(layout)]
+        action_candidates = [BoxAction.stay(), BoxAction.move_vertically_at_random(30), BoxAction.move_horizontally_at_random(30), BoxAction.change_width_at_random(30), BoxAction.change_height_at_random(30), BoxAction.align_to_nearest_box(layout), BoxAction.align_top_to_nearest_box(layout), BoxAction.align_left_to_nearest_box(layout)]
         action = random.choice(action_candidates)
         return Rule(condition, action)
 
@@ -138,7 +147,7 @@ class Rule():
 class SampleRule():
     def __init__(self):
         self.condition = Condition([Condition.nearby_object(60)])
-        self.action = Action.stay()
+        self.action = BoxAction.stay()
         self.strength = Rule.initial_strength
 
 

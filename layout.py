@@ -1,46 +1,52 @@
 #-*- coding: utf-8 -*-
 
-
-class Layout():
-    def __init__(self, boxes=[]):
-        self.boxes = boxes
+class AgentSet():
+    def __init__(self, agents=[]):
+        self.agents = agents
         
     def get_copy(self):
-        return Layout(self.boxes[:])
+        return AgentSet(self.agents[:])
 
-    def update(self, boxes):
-        self.boxes = boxes
+    def update(self, agents):
+        self.agents = agents
 
-    def get_number_of_boxes(self):
-        return len(self.boxes)
-
-    def render(self, parent):
-        for box in self.boxes:
-            box.render(parent)
+    def get_number_of_agents(self):
+        return len(self.agents)
 
     def set_rulesets(self, rulesets):
-        for i, box in enumerate(self.boxes):
-            box.ruleset = rulesets[i]
+        for i, agent in enumerate(self.agents):
+            agent.ruleset = rulesets[i]
 
     def get_rulesets(self):
-        return [box.ruleset for box in self.boxes]
+        return [agent.ruleset for agent in self.agents]
 
     # generate new rules 
     def generate_rules(self):
 
         rule_generated_or_not = False
 
-        for box in (self).boxes:
+        for agent in (self).agents:
 
             # if no rule is matched, make new rule
-            if box.get_matching_rule(self) == None:
+            if agent.get_matching_rule(self) == None:
 
                 # generate new rule with condition of present situation
-                box.add_rule_with_random_action(self)
+                agent.add_rule_with_random_action(self)
                 rule_generated_or_not = True
 
         return rule_generated_or_not
+    
 
+class Layout(AgentSet):
+    def __init__(self, agents=[]):
+        self.agents = agents
+        
+    def get_copy(self):
+        return Layout(self.agents[:])
+
+    def render(self, parent):
+        for agent in self.agents:
+            agent.render(parent)
 
 
 class SampleLayout(Layout):

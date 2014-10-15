@@ -26,10 +26,10 @@ class Optimization():
         self.set_worst_value(0)
 
     def get_objective_value(self):
-        return self.specification.objective.function(self.layout)
+        return self.specification.objective.function(self.agent_set)
 
     def get_rulesets(self):
-        return self.layout.get_rulesets()
+        return self.agent_set.get_rulesets()
 
     def set_best_value(self, value):
         self.best_value = value
@@ -52,20 +52,20 @@ class OCSOptimization(Optimization):
     max_cycle_of_learning = 10
     minimum_difference = 20
 
-    def __init__(self, specification, layout=Layout()):
+    def __init__(self, specification, agent_set=AgentSet()):
         Optimization.__init__(self, specification)
         self.organizational_rulesets = []
-        self.layout = layout.get_copy()
+        self.agent_set = agent_set.get_copy()
 
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets
 
-    # optimization はlayoutとかboxを使わない一般化をしたほうがいい
+    # optimization はlayoutとかagentを使わない一般化をしたほうがいい
     def optimize(self):
-        layout = self.layout
+        agent_set = self.agent_set
 
         # use organizational rulesets for default rulesets
-        layout.set_rulesets(self.organizational_rulesets)
+        agent_set.set_rulesets(self.organizational_rulesets)
 
         for i in range(OCSOptimization.max_iteration):
             step = 1
@@ -73,8 +73,8 @@ class OCSOptimization(Optimization):
             # repeat while ruleset is not converged(while new rule is generated)
             rule_generated_or_not = True
             while rule_generated_or_not == True : 
-                rule_generated_or_not = layout.generate_rules()
-                Agent.exchage_rule_randomly(layout.boxes)
+                rule_generated_or_not = agent_set.generate_rules()
+                Agent.exchage_rule_randomly(agent_set.agents)
 
             # learn and adjust a strength of each rule
             self.reinforcement_learning()
@@ -82,35 +82,35 @@ class OCSOptimization(Optimization):
             current_objective_value = self.get_objective_value()
             self.update_worst_value(current_objective_value)
             self.update_organizational_rulesets(current_objective_value)
-            
 
+    #update objective value if it is the best, and record the rulesets
     def update_organizational_rulesets(self, new_value):
-        new_layout = self.layout.get_rulesets()
-        update_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_layout)))
+        new_rulesets = self.agent_set.get_rulesets()
+        update_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_rulesets)))
 
     def reinforcement_learning(self):
-        for box in self.layout.boxes:
-            self.learn_strength_with_profit_sharing(box)
+        for agent in self.agent_set.agents:
+            self.learn_strength_with_profit_sharing(agent)
 
-    def learn_strength_with_profit_sharing(self, box):
+    def learn_strength_with_profit_sharing(self, agent):
 
-        layout = self.layout
+        agent_set = self.agent_set
 
         for i in range(OCSOptimization.max_cycle_of_learning):
             
             episode = 0
 
-            #次にやること：bestとworstの表現→インスタンスに保持？layoutとboxを使わない一般化
+            #次にやること：bestとworstの表現→インスタンスに保持？agent_setとagentを使わない一般化
 
             #とりあえず終了状態ベースでなく関数の収束ベースで終了条件考えてるけど状態で考えなくていいのだろうか？→脳内実行
             while abs(previous_value - current_value) > OCSOptimization.minimum_difference:
-                selected_rule = box.rule_select()
+                selected_rule = agent.rule_select()
 
                 # apply selected rule, and record objective values before and after execution
                 previous_value = self.get_objective_value()
-                box.execute_action(selected_rule.action)
+                agent.execute_action(selected_rule.action)
                 current_value = self.get_objective_value()
-                situation_after = Situation(layout.get_copy(), box)
+                situation_after = Situation(agent_set.get_copy(), agent)
 
                 # rememebr applied rule with episode(time)
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
@@ -126,6 +126,7 @@ class OCSOptimization(Optimization):
                     negative_reward_function = (lambda x: -0.1)
                     self.give_rewards(applied_pairs, negative_reward_function)
 
+    # return True if positive reward is given, otherwise return False
     def positive_reward_or_not(self, current_value, previous_value):
         half_value = (self.worst_value + self.best_value) / 2
 

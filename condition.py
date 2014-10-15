@@ -1,24 +1,24 @@
 #-*- coding: utf-8 -*-
 
 class Situation():
-    def __init__(self, layout, box):
-        self.layout = layout
-        self.box = box
+    def __init__(self, agent_set, agent):
+        self.agent_set = agent_set
+        self.agent = agent
 
 # return True if relation between given box and any box in given layout satisfies the given bool function
-def bool_for_layout_and_box(layout, box, bool_function):
+def bool_for_layout_and_box(agent_set, agent, bool_function):
 
-    boxes = layout.boxes[:]
+    agents = agent_set.agents[:]
 
     #ignore exception
     try:
-        boxes.remove(box)
+        agents.remove(agent)
     except:
         pass
 
     result = False
-    for i in range(len(boxes)):
-        if bool_function(box, boxes[i]) == True:
+    for i in range(len(agents)):
+        if bool_function(agent, agents[i]) == True:
             result = True
             break
 
@@ -76,22 +76,29 @@ class Condition():
     @classmethod
     def minimum_member(cls, number):
         def _minimum_member(situation):
-            layout = situation.layout
+            agent_set = situation.agent_set
 
-            if layout.get_number_of_boxes() >= number:
+            if agent_set.get_number_of_boxes() >= number:
                 return True
             else:
                 return False
 
         return _minimum_member
 
+
+
+class BoxCondition(Condition):
+
+    # # # CONDFUNS # # #
+
     @classmethod
     def in_the_edge(cls):
         def _in_the_edge(situation):
-            layout = situation.layout
+            layout = situation.agent_set
+            boxes = layout.agents
 
             result = True
-            for box in layout.boxes:
+            for box in boxes:
                 if box.off_the_edge_or_not() == True:
                     result = False
                     break
@@ -103,9 +110,9 @@ class Condition():
     @classmethod
     def no_overlap(cls):
         def _no_overlap(situation):
-            layout = situation.layout
+            layout = situation.agent_set
 
-            boxes = layout.boxes
+            boxes = layout.agents
             result = True
             for i in range(len(boxes)):
                 for j in range(i+1, len(boxes)):
@@ -120,8 +127,8 @@ class Condition():
     @classmethod
     def having_box_in_given_distance(cls, distance):
         def _having_box_in_given_distance(situation):
-            layout = situation.layout
-            box = situation.box
+            layout = situation.agent_set
+            box = situation.agent
 
             bool_function = (lambda box1, box2: get_distance_between_gravities(box1, box2) < distance)
 
@@ -132,8 +139,8 @@ class Condition():
     @classmethod
     def having_overlapped_box(cls):
         def _having_overlapped_box(situation):
-            layout = situation.layout
-            box = situation.box
+            layout = situation.agent_set
+            box = situation.agent
 
             bool_function = BoxAgent.overlap_or_not
 

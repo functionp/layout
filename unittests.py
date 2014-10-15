@@ -107,7 +107,7 @@ class TestRule(unittest.TestCase):
         pass
 
     def test_default_value(self):
-        rule = Rule(Condition(), Action.stay())
+        rule = Rule(Condition(), BoxAction.stay())
         self.assertEqual(rule.strength, Rule.initial_strength)
 
 
@@ -120,8 +120,8 @@ class TestAction(unittest.TestCase):
     def test_movement(self):
         box1 = BoxAgent([100, 100], [30, 30])
 
-        action1 = Action.move_vertically(50)
-        action2 = Action.move_horizontally(50)
+        action1 = BoxAction.move_vertically(50)
+        action2 = BoxAction.move_horizontally(50)
 
         action1(box1)
         action2(box1)
@@ -135,7 +135,7 @@ class TestAction(unittest.TestCase):
 
         layout = Layout([box1, box2, box3])
 
-        action1 = Action.align_to_nearest_box(layout)
+        action1 = BoxAction.align_to_nearest_box(layout)
         action1(box3)
 
         self.assertEqual(box2.position[1], box3.position[1])

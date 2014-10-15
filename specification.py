@@ -24,7 +24,7 @@ class SampleObjective(Objective):
 
         def sum_of_distance_between_gravities(layout):
 
-            boxes = layout.boxes
+            boxes = layout.agents
             distance_list = [[get_distance_between_gravities(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
 
             # return sum of distances

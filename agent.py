@@ -25,10 +25,10 @@ class Agent():
         else:
             self.ruleset.append(rule)
 
-    def add_rule_with_random_action(self, layout):
+    def add_rule_with_random_action(self, agent_set):
         pass
 
-    def find_matching_rule_and_apply(self, layout):
+    def find_matching_rule_and_apply(self, agent_set):
         pass
 
     # let this agent take given action
@@ -87,7 +87,7 @@ class BoxAgent(Agent):
     def add_rule_with_random_action(self, layout):
         situation = Situation(layout, self)
         condition = Condition.make_condition(situation)
-        new_rule = Rule.generate_rule_with_random_action(condition, layout)
+        new_rule = BoxRule.generate_rule_with_random_action(condition, layout)
         self.add_rule(new_rule)
 
     # find (the strongest) rule which matches current condition(layout and box) and return it. return None if no rule is found.
@@ -131,7 +131,7 @@ class BoxAgent(Agent):
 
     def get_nearest_box(self, layout):
 
-        pairs = [(get_distance_between_gravities(self, box), box)  for box in layout.boxes]
+        pairs = [(get_distance_between_gravities(self, box), box)  for box in layout.agents]
         pairs.sort()
 
         # take 1st box as nearest box because 0th box is box itself
