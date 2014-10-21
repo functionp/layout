@@ -99,8 +99,7 @@ class OCSOptimization(Optimization):
         for i in range(OCSOptimization.max_cycle_of_learning):
             
             episode = 0
-
-            #次にやること：bestとworstの表現→インスタンスに保持？agent_setとagentを使わない一般化
+            applied_pairs = []
 
             #とりあえず終了状態ベースでなく関数の収束ベースで終了条件考えてるけど状態で考えなくていいのだろうか？→脳内実行
             while abs(previous_value - current_value) > OCSOptimization.minimum_difference:

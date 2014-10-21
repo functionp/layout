@@ -110,6 +110,31 @@ class TestRule(unittest.TestCase):
         rule = Rule(Condition(), BoxAction.stay())
         self.assertEqual(rule.strength, Rule.initial_strength)
 
+    def test_reinforce(self):
+        box1 = BoxAgent([50, 100], [30, 30])
+        box2 = BoxAgent([60, 200], [30, 30])
+        box3 = BoxAgent([120, 100], [30, 30])
+        box4 = BoxAgent([100, 30], [30, 30])
+        box5 = BoxAgent([220, 200], [50, 50])
+
+        layout1 = Layout([box1, box2, box3])
+        layout2 = Layout([box1, box4, box5])
+
+        box1.add_rule_with_random_action(layout1)
+        box1.add_rule_with_random_action(layout1)
+        box1.add_rule_with_random_action(layout2)
+        box1.add_rule_with_random_action(layout2)
+
+        selected_rule = box1.rule_select()
+
+        reward_function = (lambda x: 0.1)
+        #reward_function = (lambda x: (0.5)**x)
+        episode = 5
+
+        for i in range(5):
+            selected_rule.reinforce(episode, reward_function)
+
+        self.assertTrue((selected_rule.strength - 1.0) < 0.0001)
 
 
 class TestAction(unittest.TestCase):
