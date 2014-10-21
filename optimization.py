@@ -14,12 +14,13 @@ def update_something(bool_condition, process):
 
 class Optimization():
 
-    def __init__(self, specification):
+    def __init__(self, specification, agent_set):
         self.specification = specification
+        self.agent_set = agent_set.get_copy()
         self.reset_record()
 
     def optimize(self):
-        pass
+        return self.agent_set
 
     def reset_record(self):
         self.set_best_value(0)
@@ -53,9 +54,8 @@ class OCSOptimization(Optimization):
     minimum_difference = 20
 
     def __init__(self, specification, agent_set=AgentSet()):
-        Optimization.__init__(self, specification)
+        Optimization.__init__(self, specification, agent_set)
         self.organizational_rulesets = []
-        self.agent_set = agent_set.get_copy()
 
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets

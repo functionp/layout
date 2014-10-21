@@ -1,7 +1,7 @@
 #-*- coding: utf-8 -*-
 
 class Situation():
-    def __init__(self, agent_set, agent):
+    def __init__(self, agent_set, agent=None):
         self.agent_set = agent_set
         self.agent = agent
 
@@ -147,20 +147,6 @@ class BoxCondition(Condition):
             return bool_for_layout_and_box(layout, box, bool_function)
 
         return _having_overlapped_box
-
-#必要なければ制約ConstraintはConditionだけにしてもいいかも
-class Constraint():
-    def __init__(self, condition):
-        self.condition = condition
-
-class SampleConstraint(Constraint):
-    def __init__(self):
-        condition = Condition()
-        condition.add_condfun(BoxCondition.minimum_member(2))
-        condition.add_condfun(BoxCondition.in_the_edge())
-        condition.add_condfun(BoxCondition.no_overlap())
-
-        Constraint.__init__(self, condition)
 
 # imports - - - - - - -
 from layout import *

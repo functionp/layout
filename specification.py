@@ -1,8 +1,8 @@
 #-*- coding: utf-8 -*-
 
+#制約条件も目的関数に取り込む方針で　カプセル化の意味でSpecificationは消さない
 class Specification():
-    def __init__(self, constraint, objective):
-        self.constraint = constraint
+    def __init__(self, objective):
         self.objective = objective
 
     def get_default_layout(self):
@@ -12,7 +12,7 @@ class Specification():
     def load_specification(file_path):
         something = ''
         #return Specification(constraint, objective)
-        return Specification(SampleConstraint(), SampleObjective())
+        return Specification(SampleObjective())
 
 class Objective():
     def __init__(self, max_min, function):

@@ -71,10 +71,6 @@ def click_start_button(event):
     objective_value = optimization.get_objective_value()
     optimized_layout.render(optimization_frame.base_panel)
 
-    condition = specification.constraint.condition
-    #print [condfun(layout=optimized_layout) for condfun in condition.condfuns]
-    print condition.evaluate(layout=optimized_layout)
-
     optimization_frame.Show()
 
     optimization_app.MainLoop()
