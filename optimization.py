@@ -143,7 +143,7 @@ class OCSOptimization(Optimization):
         def _compare_with_half():
             return (half_value > current_value)
 
-        return _compare_with_half()
+        return _compare_with_before()
 
     # give rewards to serial rules at one time
     def give_rewards(self, pairs, reward_function):
