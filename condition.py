@@ -32,13 +32,17 @@ class Condition():
 
     # evaluate the condition with given situation and return True or False
     def evaluate(self, situation):
-        results = [condfun(situation) for condfun in self.condfuns]
 
-        # case of "and"
-        if self.and_or == 1:
-            return reduce(lambda b1,b2: b1 and b2, results)
+        if self.condfuns != []:
+            results = [condfun(situation) for condfun in self.condfuns]
+
+            # case of "and"
+            if self.and_or == 1:
+                return reduce(lambda b1,b2: b1 and b2, results)
+            else:
+                return reduce(lambda b1,b2: b1 or b2, results)
         else:
-            return reduce(lambda b1,b2: b1 or b2, results)
+            return False
 
     def get_size(self):
         return len(self.condfuns)

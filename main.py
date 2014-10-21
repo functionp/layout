@@ -66,8 +66,9 @@ def click_start_button(event):
 
     layout = specification.get_default_layout()
 
-    optimization = Optimization(specification, layout)
-    optimized_layout = optimization.optimize()
+    optimization = OCSOptimization(specification, layout)
+    optimization.optimize()
+    optimized_layout = optimization.agent_set
     objective_value = optimization.get_objective_value()
     optimized_layout.render(optimization_frame.base_panel)
 

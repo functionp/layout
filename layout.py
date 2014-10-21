@@ -14,8 +14,9 @@ class AgentSet():
         return len(self.agents)
 
     def set_rulesets(self, rulesets):
-        for i, agent in enumerate(self.agents):
-            agent.ruleset = rulesets[i]
+        if rulesets != []:
+            for i, agent in enumerate(self.agents):
+                agent.ruleset = rulesets[i]
 
     def get_rulesets(self):
         return [agent.ruleset for agent in self.agents]
@@ -35,18 +36,19 @@ class AgentSet():
                 rule_generated_or_not = True
 
         return rule_generated_or_not
-    
+
 
 class Layout(AgentSet):
     def __init__(self, agents=[]):
         self.agents = agents
-        
+
     def get_copy(self):
         return Layout(self.agents[:])
 
     def render(self, parent):
         for agent in self.agents:
             agent.render(parent)
+
 
 
 class SampleLayout(Layout):

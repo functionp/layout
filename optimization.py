@@ -20,7 +20,7 @@ class Optimization():
         self.reset_record()
 
     def optimize(self):
-        return self.agent_set
+        pass
 
     def reset_record(self):
         self.set_best_value(0)
@@ -49,8 +49,8 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    max_iteration = 10
-    max_cycle_of_learning = 10
+    max_iteration = 3
+    max_cycle_of_learning = 5
     minimum_difference = 20
 
     def __init__(self, specification, agent_set=AgentSet()):
@@ -74,7 +74,7 @@ class OCSOptimization(Optimization):
             rule_generated_or_not = True
             while rule_generated_or_not == True : 
                 rule_generated_or_not = agent_set.generate_rules()
-                Agent.exchage_rule_randomly(agent_set.agents)
+                Agent.exchange_rule_randomly(agent_set.agents)
 
             # learn and adjust a strength of each rule
             self.reinforcement_learning()
@@ -96,10 +96,14 @@ class OCSOptimization(Optimization):
 
         agent_set = self.agent_set
 
+        #てか収束してんだから繰り返しても意味ないのでは？
         for i in range(OCSOptimization.max_cycle_of_learning):
             
             episode = 0
             applied_pairs = []
+
+            current_value = self.get_objective_value()
+            previous_value = 10000
 
             #とりあえず終了状態ベースでなく関数の収束ベースで終了条件考えてるけど状態で考えなくていいのだろうか？→脳内実行
             while abs(previous_value - current_value) > OCSOptimization.minimum_difference:
@@ -149,3 +153,5 @@ class SampleOptimization(Optimization):
         Optimization.__init__(self, specification)
 
 
+# imports - - - - - - -
+from condition import *

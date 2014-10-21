@@ -62,8 +62,13 @@ class Agent():
     # exchange two rules of randomly chosen two agents (DESTRUCTIVE)
     def exchange_rule_randomly(cls, agents):
         BORDER = 3
-        i1 = random.randint(0,len(agents))
-        i2 = random.randint(0,len(agents))
+
+        if len(agents) != 0:
+            i1 = random.randint(0,len(agents)-1)
+            i2 = random.randint(0,len(agents)-1)
+        else: 
+            i1 = 0
+            i2 = 0
 
         sending_rule1 = agents[i1].get_sorted_ruleset()[0]
         sending_rule2 = agents[i2].get_sorted_ruleset()[0]
