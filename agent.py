@@ -92,8 +92,15 @@ class BoxAgent(Agent):
     def add_rule_with_random_action(self, layout):
         situation = Situation(layout, self)
         condition = Condition.make_condition(situation)
-        new_rule = BoxRule.generate_rule_with_random_action(condition, layout)
-        self.add_rule(new_rule)
+
+        if condition.condfuns != []:
+            new_rule = BoxRule.generate_rule_with_random_action(condition, layout)
+            self.add_rule(new_rule)
+            return True
+
+        # if no condition can be represents current situation, add no rule
+        else:
+            return False
 
     # find (the strongest) rule which matches current condition(layout and box) and return it. return None if no rule is found.
     def get_matching_rule(self, layout):

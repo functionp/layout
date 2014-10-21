@@ -32,8 +32,8 @@ class AgentSet():
             if agent.get_matching_rule(self) == None:
 
                 # generate new rule with condition of present situation
-                agent.add_rule_with_random_action(self)
-                rule_generated_or_not = True
+                if agent.add_rule_with_random_action(self):
+                    rule_generated_or_not = True
 
         return rule_generated_or_not
 
