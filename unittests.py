@@ -84,8 +84,7 @@ class TestOptimization(unittest.TestCase):
 
     def test_recorded_objective(self):
         objective = SampleObjective()
-        constraint = SampleConstraint()
-        specification = Specification(constraint, objective)
+        specification = Specification(objective)
 
         box1 = BoxAgent([100, 100], [30, 30])
         box2 = BoxAgent([100, 200], [30, 30])
@@ -99,7 +98,7 @@ class TestOptimization(unittest.TestCase):
         best_value = optimization.update_best_value(objective_value)
         worst_value = optimization.update_worst_value(objective_value)
 
-        self.assertTrue(optimization.best_value < optimization.worst_value)
+        self.assertTrue(optimization.best_value == optimization.worst_value)
 
 class TestRule(unittest.TestCase):
 

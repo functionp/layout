@@ -67,10 +67,18 @@ def click_start_button(event):
     layout = specification.get_default_layout()
 
     optimization = OCSOptimization(specification, layout)
+
+    objective_value_before = optimization.get_objective_value()
+    print "Optimization Value Before:"
+    print objective_value_before
+
     optimization.optimize()
     optimized_layout = optimization.agent_set
-    objective_value = optimization.get_objective_value()
     optimized_layout.render(optimization_frame.base_panel)
+
+    objective_value = optimization.get_objective_value()
+    print "Optimization Value After:"
+    print objective_value
 
     optimization_frame.Show()
 

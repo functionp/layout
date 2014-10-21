@@ -23,7 +23,7 @@ class Optimization():
         pass
 
     def reset_record(self):
-        self.set_best_value(0)
+        self.set_best_value(100000)
         self.set_worst_value(0)
 
     def get_objective_value(self):
@@ -49,7 +49,7 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    max_iteration = 3
+    max_iteration = 5
     max_cycle_of_learning = 5
     minimum_difference = 20
 
@@ -60,7 +60,6 @@ class OCSOptimization(Optimization):
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets
 
-    # optimization はlayoutとかagentを使わない一般化をしたほうがいい
     def optimize(self):
         agent_set = self.agent_set
 
@@ -83,6 +82,9 @@ class OCSOptimization(Optimization):
             self.update_worst_value(current_objective_value)
             self.update_organizational_rulesets(current_objective_value)
 
+            self.display_status()
+
+
     #update objective value if it is the best, and record the rulesets
     def update_organizational_rulesets(self, new_value):
         new_rulesets = self.agent_set.get_rulesets()
@@ -99,7 +101,7 @@ class OCSOptimization(Optimization):
         #てか収束してんだから繰り返しても意味ないのでは？
         for i in range(OCSOptimization.max_cycle_of_learning):
             
-            episode = 0
+            episode = 1
             applied_pairs = []
 
             current_value = self.get_objective_value()
@@ -122,11 +124,13 @@ class OCSOptimization(Optimization):
                 episode += 1
 
                 if self.positive_reward_or_not(current_value, previous_value):
-                    positive_reward_function = (lambda x: 0.1)
+                    #positive_reward_function = (lambda x: 0.1)
+                    positive_reward_function = (lambda x: (0.1)**x)
                     self.give_rewards(applied_pairs, positive_reward_function)
 
                 else:
-                    negative_reward_function = (lambda x: -0.1)
+                    #negative_reward_function = (lambda x: -0.1)
+                    negative_reward_function = (lambda x: -(0.1)**x)
                     self.give_rewards(applied_pairs, negative_reward_function)
 
     # return True if positive reward is given, otherwise return False
@@ -134,10 +138,10 @@ class OCSOptimization(Optimization):
         half_value = (self.worst_value + self.best_value) / 2
 
         def _compare_with_before():
-            return (previous_value < current_value)
+            return (previous_value > current_value)
 
         def _compare_with_half():
-            return (half_value < current_value)
+            return (half_value > current_value)
 
         return _compare_with_half()
 
@@ -147,6 +151,23 @@ class OCSOptimization(Optimization):
             rule = pair['rule']
             episode = pair['episode']
             rule.reinforce(episode, reward_function)
+
+    def display_status(self):
+
+        print "============================================="
+        print "Best Value so far: " + str(self.best_value)
+        print "Worst Value so far: " + str(self.worst_value)
+        agents = self.agent_set.agents
+        
+        for i,agent in enumerate(agents):
+            print "Agent Number " + str(i)
+            ruleset = agent.get_sorted_ruleset()
+
+            for rule_i, rule in enumerate(ruleset):
+                print "  Rule Number " + str(rule_i) + ": " + str(rule.strength)
+                print rule.condition.condfuns
+
+            print ""
 
 class SampleOptimization(Optimization):
     def __init__(self, specification):
