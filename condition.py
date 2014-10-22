@@ -61,7 +61,8 @@ class Condition():
     @classmethod
     # make Condition instance which represents given situation(layout and box)
     def make_condition(cls, situation):
-        condfun_candidates = [BoxCondition.having_box_in_given_distance(100), BoxCondition.having_box_in_given_distance(200), BoxCondition.having_box_in_given_distance(400), BoxCondition.having_overlapped_box()]
+        #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
+        condfun_candidates = [BoxCondition.in_the_edge(), BoxCondition.having_box_in_given_distance(100), BoxCondition.having_box_in_given_distance(200), BoxCondition.having_box_in_given_distance(400), BoxCondition.having_overlapped_box()]
 
         # extract which matches given state(layout and box)
         matched_condfuns = [condfun for condfun in condfun_candidates if condfun(situation) == True]

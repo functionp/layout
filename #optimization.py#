@@ -72,7 +72,7 @@ class OCSOptimization(Optimization):
             # repeat while ruleset is not converged(while new rule is generated)
             rule_generated_or_not = True
             while rule_generated_or_not == True : 
-                rule_generated_or_not = agent_set.generate_rules() 
+                matching_rule_found_or_not = agent_set.generate_rules()
                 Agent.exchange_rule_randomly(agent_set.agents)
 
             # learn and adjust a strength of each rule

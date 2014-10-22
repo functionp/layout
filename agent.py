@@ -50,6 +50,7 @@ class Agent():
     def get_index_of_weakest_rule(self):
         weakest_value = 1000
 
+        index_weakest = None
         for i,rule in enumerate(self.ruleset):
             if rule.strength < weakest_value:
                 weakest_value = rule.strength
@@ -60,7 +61,15 @@ class Agent():
     # change weakest rule of agent into given rule (DESTRUCTIVE)
     def replace_weakest_rule(self, rule):
         i = self.get_index_of_weakest_rule()
-        self.ruleset[i] = rule
+        new_rule = rule.get_copy()
+        new_rule.strength = Rule.initial_strength
+
+        if i != None:
+            self.ruleset[i] = new_rule
+
+        # if this agent has no rule, newly add the rule
+        else:
+            self.add_rule(new_rule)
 
     def rule_select(self):
         def _greedy(agent):
@@ -81,11 +90,13 @@ class Agent():
             i1 = 0
             i2 = 0
 
-        sending_rule1 = agents[i1].get_sorted_ruleset()[0]
-        sending_rule2 = agents[i2].get_sorted_ruleset()[0]
+        if agents[i1].get_number_of_rules() != 0:
+            sending_rule1 = agents[i1].get_sorted_ruleset()[0]
+            agents[i2].replace_weakest_rule(sending_rule1)
 
-        agents[i1].replace_weakest_rule(sending_rule2)
-        agents[i2].replace_weakest_rule(sending_rule1)
+        if agents[i2].get_number_of_rules() != 0:
+            sending_rule2 = agents[i2].get_sorted_ruleset()[0]
+            agents[i1].replace_weakest_rule(sending_rule2)
 
 def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
@@ -139,10 +150,10 @@ class BoxAgent(Agent):
 
         x_after_movement = (self.position[0] + amount)
 
-        if x_after_movement <= 0:
-            self.position[0] = 0
+        if x_after_movement < 0:
+            self.position[0] = 1
         elif WINDOW_SIZE[0] <x_after_movement + self.size[0]:
-            self.position[0] = WINDOW_SIZE[0] - self.size[0]
+            self.position[0] = WINDOW_SIZE[0] - self.size[0] - 1
         else:
             self.position[0] = x_after_movement
 
@@ -150,10 +161,10 @@ class BoxAgent(Agent):
 
         y_after_movement = (self.position[1] + amount)
 
-        if y_after_movement <= 0:
-            self.position[1] = 0
+        if y_after_movement < 0:
+            self.position[1] = 1
         elif WINDOW_SIZE[1] < y_after_movement + self.size[1]:
-            self.position[1] = WINDOW_SIZE[1] - self.size[1]
+            self.position[1] = WINDOW_SIZE[1] - self.size[1] -1
         else:
             self.position[1] = y_after_movement
 
