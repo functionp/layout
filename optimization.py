@@ -49,7 +49,7 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    max_iteration = 5
+    max_iteration = 10
     max_cycle_of_learning = 5
     minimum_difference = 20
 
@@ -108,14 +108,19 @@ class OCSOptimization(Optimization):
             previous_value = 10000
 
             #とりあえず終了状態ベースでなく関数の収束ベースで終了条件考えてるけど状態で考えなくていいのだろうか？→脳内実行
-            while abs(previous_value - current_value) > OCSOptimization.minimum_difference:
+            while abs(previous_value - current_value) > OCSOptimization.minimum_difference :
                 selected_rule = agent.rule_select()
 
                 # apply selected rule, and record objective values before and after execution
                 previous_value = self.get_objective_value()
-                agent.execute_action(selected_rule.action)
+
+                # do not execute too weak rule
+                if selected_rule.strength > 0.001:
+                    agent.execute_action(selected_rule.action)
+
                 current_value = self.get_objective_value()
                 situation_after = Situation(agent_set.get_copy(), agent)
+
 
                 # rememebr applied rule with episode(time)
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
@@ -123,27 +128,30 @@ class OCSOptimization(Optimization):
 
                 episode += 1
 
-                if self.positive_reward_or_not(current_value, previous_value):
-                    #positive_reward_function = (lambda x: 0.1)
-                    positive_reward_function = (lambda x: (0.1)**x)
-                    self.give_rewards(applied_pairs, positive_reward_function)
+                self.reward_process(current_value, previous_value, applied_pairs)
 
-                else:
-                    #negative_reward_function = (lambda x: -0.1)
-                    negative_reward_function = (lambda x: -(0.1)**x)
-                    self.give_rewards(applied_pairs, negative_reward_function)
+    def reward_process(self, current_value, previous_value, applied_pairs):
+        if self.positive_reward_or_not(current_value, previous_value):
+            positive_reward_function = (lambda x: 0.05)
+            #positive_reward_function = (lambda x: (0.1)**x)
+            self.give_rewards(applied_pairs, positive_reward_function)
+
+        else:
+            negative_reward_function = (lambda x: -0.05)
+            #negative_reward_function = (lambda x: -(0.1)**x)
+            self.give_rewards(applied_pairs, negative_reward_function)
 
     # return True if positive reward is given, otherwise return False
     def positive_reward_or_not(self, current_value, previous_value):
         half_value = (self.worst_value + self.best_value) / 2
 
-        def _compare_with_before():
+        def compare_with_before():
             return (previous_value > current_value)
 
-        def _compare_with_half():
+        def compare_with_half():
             return (half_value > current_value)
 
-        return _compare_with_before()
+        return compare_with_before()
 
     # give rewards to serial rules at one time
     def give_rewards(self, pairs, reward_function):
@@ -157,6 +165,7 @@ class OCSOptimization(Optimization):
         print "============================================="
         print "Best Value so far: " + str(self.best_value)
         print "Worst Value so far: " + str(self.worst_value)
+        print "Current Value so far: " + str(self.get_objective_value())
         agents = self.agent_set.agents
         
         for i,agent in enumerate(agents):
@@ -165,7 +174,7 @@ class OCSOptimization(Optimization):
 
             for rule_i, rule in enumerate(ruleset):
                 print "  Rule Number " + str(rule_i) + ": " + str(rule.strength)
-                print rule.condition.condfuns
+                #print rule.condition.condfuns
 
             print ""
 

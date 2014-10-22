@@ -69,7 +69,6 @@ class BoxAction(Action):
         return _change_height
 
     @classmethod
-
     def change_height_at_random(cls, max_amount):
         def _change_height_at_random(box):
             amount_to_change = random.randint(-max_amount, max_amount)
@@ -110,6 +109,24 @@ class BoxAction(Action):
             box.align_left(nearest_box)
 
         return _align_left_to_nearest_box
+
+    @classmethod
+    def stay_away_to_nearest_box(cls, layout):
+
+        def _stay_away_to_nearest_box(box):
+            nearest_box = box.get_nearest_box(layout)
+            box.stay_away(nearest_box)
+
+        return _stay_away_to_nearest_box
+
+    @classmethod
+    def approach_to_nearest_box(cls, layout):
+
+        def _approach_to_nearest_box(box):
+            nearest_box = box.get_nearest_box(layout)
+            box.approach(nearest_box)
+
+        return _approach_to_nearest_box
  
 
 class Rule():
@@ -145,7 +162,13 @@ class BoxRule(Rule):
     @classmethod
     # take layout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, layout):
-        action_candidates = [BoxAction.stay(), BoxAction.move_vertically_at_random(30), BoxAction.move_horizontally_at_random(30), BoxAction.change_width_at_random(30), BoxAction.change_height_at_random(30), BoxAction.align_to_nearest_box(layout), BoxAction.align_top_to_nearest_box(layout), BoxAction.align_left_to_nearest_box(layout)]
+        action_candidates = [BoxAction.stay(),
+                             BoxAction.change_width_at_random(30),
+                             BoxAction.change_height_at_random(30),
+                             BoxAction.align_to_nearest_box(layout),
+                             BoxAction.stay_away_to_nearest_box(layout),
+                             BoxAction.approach_to_nearest_box(layout)]
+
         action = random.choice(action_candidates)
         return Rule(condition, action)
 

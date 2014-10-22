@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 
+import math
+
 class Agent():
 
     max_rules = 5
@@ -76,7 +78,8 @@ class Agent():
         agents[i1].replace_weakest_rule(sending_rule2)
         agents[i2].replace_weakest_rule(sending_rule1)
 
-
+def length_of_vector(vector):
+    return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
 
 class BoxAgent(Agent):
     def __init__(self, position=[0,0], size=[10,10]):
@@ -129,6 +132,10 @@ class BoxAgent(Agent):
     def add_y(self, amount):
         self.position[1] = self.position[1] + amount
 
+    def add_vector(self, vector):
+        self.add_x(vector[0])
+        self.add_y(vector[1])
+
     def add_width(self, amount):
         self.size[0] = self.size[0] + amount
 
@@ -149,7 +156,52 @@ class BoxAgent(Agent):
         # take 1st box as nearest box because 0th box is box itself
         nearest_box = pairs[1][1]
 
-        return nearest_box 
+        return nearest_box
+
+    # get difference(signed distance) of gravity
+    def get_gravity_difference(self, target_box):
+        self_gravity = self.get_gravity_position()
+        target_gravity = target_box.get_gravity_position()
+
+        gravity_difference_x = self_gravity[0] - target_gravity[0]
+        gravity_difference_y = self_gravity[1] - target_gravity[1]
+
+        return [gravity_difference_x, gravity_difference_y]
+
+    # stay away from target, or approach to target
+    def change_distance(self, target_box, amount):
+        gravity_difference = self.get_gravity_difference(target_box)
+        gravity_distance = length_of_vector(gravity_difference)
+
+        vector_to_move = [amount * (gravity_difference[0] / gravity_distance), amount * (gravity_difference[1] / gravity_distance)]
+        self.add_vector(vector_to_move)
+
+    def stay_away(self, target_box, amount=None):
+
+        # set default amount
+        if amount == None:
+            gravity_difference = self.get_gravity_difference(target_box)
+            gravity_distance = length_of_vector(gravity_difference)
+
+            basic_distance_vector = BoxAgent.get_basic_distance_vector(self, target_box)
+            basic_distance = length_of_vector(basic_distance_vector)
+
+            # the closer two boxes are, the further they move
+            amount =  basic_distance ** 2 / gravity_distance
+
+        self.change_distance(target_box, amount)
+
+    def approach(self, target_box, amount=None):
+        gravity_difference = self.get_gravity_difference(target_box)
+        gravity_distance = length_of_vector(gravity_difference)
+
+        #set default amount
+        if amount == None:
+            amount = gravity_distance / 2
+
+        # do not approach if boxes are already close enough
+        if gravity_distance > amount:
+            self.change_distance(target_box, -amount)
 
     # get the position of center of gravity
     def get_gravity_position(self):
@@ -175,6 +227,12 @@ class BoxAgent(Agent):
             return True
         else:
             return False
+
+    @classmethod
+    def get_basic_distance_vector(cls, box1, box2):
+        basic_distance_x = (box1.size[0] + box2.size[0]) /2
+        basic_distance_y = (box1.size[1] + box2.size[1]) /2
+        return [basic_distance_x, basic_distance_y]
 
 
 # imports - - - - - - -

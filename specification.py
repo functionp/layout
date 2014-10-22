@@ -32,7 +32,6 @@ class SampleObjective(Objective):
 
         def penalize_overlap(layout):
             boxes = layout.agents
-
             penalty = 0
 
             for i, box1 in enumerate(boxes):
@@ -40,12 +39,10 @@ class SampleObjective(Objective):
                     if BoxAgent.overlap_or_not(boxes[i], boxes[j]):
                         penalty += 1
 
-
             # return sum of distances
-            return penalty * 2000
+            return penalty * 0
 
         objective_function = (lambda layout: sum_of_distance_between_gravities(layout) + penalize_overlap(layout))
-
 
         Objective.__init__(self, 1, objective_function)
 
