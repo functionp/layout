@@ -127,10 +127,26 @@ class BoxAgent(Agent):
         return [present_x, present_y + self.size[1] + margin]
 
     def add_x(self, amount):
-        self.position[0] = self.position[0] + amount
+
+        x_after_movement = (self.position[0] + amount)
+
+        if x_after_movement <= 0:
+            self.position[0] = 0
+        elif WINDOW_SIZE[0] <x_after_movement + self.size[0]:
+            self.position[0] = WINDOW_SIZE[0] - self.size[0]
+        else:
+            self.position[0] = x_after_movement
 
     def add_y(self, amount):
-        self.position[1] = self.position[1] + amount
+
+        y_after_movement = (self.position[1] + amount)
+
+        if y_after_movement <= 0:
+            self.position[1] = 0
+        elif WINDOW_SIZE[1] < y_after_movement + self.size[1]:
+            self.position[1] = WINDOW_SIZE[1] - self.size[1]
+        else:
+            self.position[1] = y_after_movement
 
     def add_vector(self, vector):
         self.add_x(vector[0])
@@ -186,8 +202,9 @@ class BoxAgent(Agent):
             basic_distance_vector = BoxAgent.get_basic_distance_vector(self, target_box)
             basic_distance = length_of_vector(basic_distance_vector)
 
-            # the closer two boxes are, the further they move
-            amount =  basic_distance ** 2 / gravity_distance
+            if gravity_distance != 0:
+                # the closer two boxes are, the further they move
+                amount =  basic_distance ** 2 / gravity_distance
 
         self.change_distance(target_box, amount)
 
@@ -211,7 +228,7 @@ class BoxAgent(Agent):
         return [gravity_x, gravity_y]
 
     def off_the_edge_or_not(self):
-        off_right_or_bottom = self.position[0] + self.size[0] > WINDOW_SIZE[0] or self.position[1] + self.size[1] > WINDOW_SIZE[1]
+        off_right_or_bottom = (self.position[0] + self.size[0]) > WINDOW_SIZE[0] or (self.position[1] + self.size[1]) > WINDOW_SIZE[1]
         off_left_or_top = self.position[0] < 0 or self.position[1] < 0
 
         if off_right_or_bottom or off_left_or_top:
