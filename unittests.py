@@ -77,6 +77,7 @@ class TestLayout(unittest.TestCase):
 
         self.assertNotEqual(matching_rule, None)
 
+
 class TestOptimization(unittest.TestCase):
 
     def setUp(self):

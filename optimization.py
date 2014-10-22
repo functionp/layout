@@ -49,7 +49,7 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    max_iteration = 10
+    max_iteration = 15
     max_cycle_of_learning = 5
     minimum_difference = 20
 
@@ -77,6 +77,8 @@ class OCSOptimization(Optimization):
 
             # learn and adjust a strength of each rule
             self.reinforcement_learning()
+
+            agent_set.delete_weak_rules()
 
             current_objective_value = self.get_objective_value()
             self.update_worst_value(current_objective_value)
@@ -165,7 +167,7 @@ class OCSOptimization(Optimization):
         print "============================================="
         print "Best Value so far: " + str(self.best_value)
         print "Worst Value so far: " + str(self.worst_value)
-        print "Current Value so far: " + str(self.get_objective_value())
+        print "Current Value: " + str(self.get_objective_value())
         agents = self.agent_set.agents
         
         for i,agent in enumerate(agents):
@@ -174,7 +176,8 @@ class OCSOptimization(Optimization):
 
             for rule_i, rule in enumerate(ruleset):
                 print "  Rule Number " + str(rule_i) + ": " + str(rule.strength)
-                #print rule.condition.condfuns
+                print rule.condition.condfuns
+                print rule.action
 
             print ""
 

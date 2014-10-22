@@ -30,6 +30,16 @@ class Agent():
     def add_rule_with_random_action(self, agent_set):
         pass
 
+    def delete_weak_rules(self):
+        border_strength = 0.01
+
+        for rule in self.ruleset:
+            if rule.strength < border_strength:
+                self.delete_rule(rule)
+
+    def delete_rule(self, rule):
+        self.ruleset.remove(rule)
+
     def find_matching_rule_and_apply(self, agent_set):
         pass
 
@@ -57,7 +67,6 @@ class Agent():
             sorted_ruleset = agent.get_sorted_ruleset()
             return sorted_ruleset[0]
 
-        
         return _greedy(self)
 
     @classmethod
@@ -189,8 +198,9 @@ class BoxAgent(Agent):
         gravity_difference = self.get_gravity_difference(target_box)
         gravity_distance = length_of_vector(gravity_difference)
 
-        vector_to_move = [amount * (gravity_difference[0] / gravity_distance), amount * (gravity_difference[1] / gravity_distance)]
-        self.add_vector(vector_to_move)
+        if gravity_distance != 0:
+            vector_to_move = [amount * (gravity_difference[0] / gravity_distance), amount * (gravity_difference[1] / gravity_distance)]
+            self.add_vector(vector_to_move)
 
     def stay_away(self, target_box, amount=None):
 
@@ -205,6 +215,8 @@ class BoxAgent(Agent):
             if gravity_distance != 0:
                 # the closer two boxes are, the further they move
                 amount =  basic_distance ** 2 / gravity_distance
+            else:
+                amount = 0
 
         self.change_distance(target_box, amount)
 

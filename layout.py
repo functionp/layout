@@ -23,7 +23,6 @@ class AgentSet():
 
     # generate new rules 
     def generate_rules(self):
-
         rule_generated_or_not = False
 
         for agent in (self).agents:
@@ -36,6 +35,15 @@ class AgentSet():
                     rule_generated_or_not = True
 
         return rule_generated_or_not
+
+    def delete_weak_rules(self):
+        rule_deleted_or_not = False
+
+        for agent in (self).agents:
+            if agent.delete_weak_rules():
+                rule_deleted_or_not = True
+
+        return rule_deleted_or_not
 
 
 class Layout(AgentSet):
