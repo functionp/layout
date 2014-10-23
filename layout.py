@@ -33,8 +33,6 @@ class AgentSet():
 
                 rule_not_found_or_not = True
 
-                #ルールは見つからなかったけど新たなルールも作れませんでした、という場合にループが終わってしまうのでTrue条件をルールが見つからなかった場合に帰る
-                # →するとエラーが起こる 見つからなかったけどルール作れなかった場合抜けられないので
                 # generate new rule with condition of present situation
                 if agent.add_rule_with_random_action(self):
                     rule_generated_or_not = True

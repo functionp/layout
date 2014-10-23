@@ -49,7 +49,7 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    max_iteration = 100
+    max_iteration = 10
     max_cycle_of_learning = 5
     minimum_difference = 20
 
@@ -72,15 +72,8 @@ class OCSOptimization(Optimization):
             # repeat while ruleset is not converged(while new rule is generated)
             rule_not_found_or_not = True
             while rule_not_found_or_not == True : 
-                print "generating"
                 rule_not_found_or_not, rule_generated_or_not = agent_set.generate_rules() 
                 Agent.exchange_rule_randomly(agent_set.agents)
-
-                n = 0
-                for agent in agent_set.agents:
-                    n += agent.get_number_of_rules()
-
-                print n
 
             # learn and adjust a strength of each rule
             self.reinforcement_learning()
