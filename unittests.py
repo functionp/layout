@@ -165,6 +165,18 @@ class TestAction(unittest.TestCase):
 
         self.assertEqual(box2.position[1], box3.position[1])
 
+    def test_stay_away(self):
+        box1 = BoxAgent([100, 100], [150, 200])
+        box2 = BoxAgent([150, 150], [300, 100])
+        box3 = BoxAgent([170, 170], [50, 50])
+
+        layout = Layout([box1, box2])
+
+        action1 = BoxAction.stay_away_to_nearest_box(layout)
+        action1(box2)
+
+        self.assertFalse(BoxAgent.overlap_or_not(box1,box2))
+
 
 class TestCondition(unittest.TestCase):
 

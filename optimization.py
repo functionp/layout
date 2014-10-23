@@ -49,7 +49,7 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    max_iteration = 10
+    max_iteration = 30
     max_cycle_of_learning = 5
     minimum_difference = 20
 
@@ -132,6 +132,7 @@ class OCSOptimization(Optimization):
                 self.reward_process(current_value, previous_value, applied_pairs)
 
     def reward_process(self, current_value, previous_value, applied_pairs):
+        #報酬関数を減少関数にするとあっという間に強度が収束してデッドロックに陥る
         if self.positive_reward_or_not(current_value, previous_value):
             positive_reward_function = (lambda x: 0.05)
             #positive_reward_function = (lambda x: (0.1)**x)
