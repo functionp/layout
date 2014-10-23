@@ -24,18 +24,22 @@ class AgentSet():
     # generate new rules 
     def generate_rules(self):
         rule_generated_or_not = False
+        rule_not_found_or_not = False
 
         for agent in (self).agents:
 
             # if no rule is matched, make new rule
             if agent.get_matching_rule(self) == None:
 
-                #ルールは見つからなかったけど新たなルールも作れませんでした、という場合にループが終わってしまうのでTrue条件をルールが見つからなかった場合に帰る→するとエラーが起こる
+                rule_not_found_or_not = True
+
+                #ルールは見つからなかったけど新たなルールも作れませんでした、という場合にループが終わってしまうのでTrue条件をルールが見つからなかった場合に帰る
+                # →するとエラーが起こる 見つからなかったけどルール作れなかった場合抜けられないので
                 # generate new rule with condition of present situation
                 if agent.add_rule_with_random_action(self):
                     rule_generated_or_not = True
 
-        return rule_generated_or_not
+        return [rule_not_found_or_not, rule_generated_or_not]
 
     def delete_weak_rules(self):
         rule_deleted_or_not = False
