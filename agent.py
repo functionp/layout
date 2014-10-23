@@ -62,7 +62,7 @@ class Agent():
     def replace_weakest_rule(self, rule):
         i = self.get_index_of_weakest_rule()
         new_rule = rule.get_copy()
-        new_rule.strength = Rule.initial_strength
+        new_rule.set_strength(Rule.initial_strength)
 
         if i != None:
             self.ruleset[i] = new_rule
@@ -83,12 +83,8 @@ class Agent():
     def exchange_rule_randomly(cls, agents):
         BORDER = 3
 
-        if len(agents) != 0:
-            i1 = random.randint(0,len(agents)-1)
-            i2 = random.randint(0,len(agents)-1)
-        else: 
-            i1 = 0
-            i2 = 0
+        i1 = random.randint(0,len(agents)-1)
+        i2 = random.randint(0,len(agents)-1)
 
         if agents[i1].get_number_of_rules() != 0:
             sending_rule1 = agents[i1].get_sorted_ruleset()[0]

@@ -138,6 +138,12 @@ class Rule():
         self.strength = strength
 
     def set_strength(self, strength):
+
+        if 1.0 <= strength:
+            strength = 1.0
+        elif strength <= 0:
+            strength = 0
+
         self.strength = strength
 
     def add_strength(self, amount):
@@ -148,13 +154,7 @@ class Rule():
 
     # increase(decrease) strength
     def reinforce(self, episode, reward_function):
-        self.strength = self.strength + reward_function(episode)
-
-        if 1.0 <= self.strength:
-            self.strength = 1.0
-        elif self.strength <= 0:
-            self.strength = 0
-
+        self.set_strength(self.strength + reward_function(episode))
 
     @classmethod
     # take layout as argument because some actions need layout for argument

@@ -40,7 +40,7 @@ class SampleObjective(Objective):
                         penalty += 1
 
             # return sum of distances
-            return penalty * 0
+            return penalty * 1000
 
         objective_function = (lambda layout: sum_of_distance_between_gravities(layout) + penalize_overlap(layout))
 
