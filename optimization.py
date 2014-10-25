@@ -61,30 +61,29 @@ class OCSOptimization(Optimization):
         self.organizational_rulesets = rulesets
 
     def optimize(self):
-        agent_set = self.agent_set
-
         # use organizational rulesets for default rulesets
-        agent_set.set_rulesets(self.organizational_rulesets)
+        self.agent_set.set_rulesets(self.organizational_rulesets)
 
         for i in range(OCSOptimization.max_iteration):
-            step = 1
+            self.one_optimization_cycle()
 
-            # repeat while ruleset is not converged(while new rule is generated)
-            rule_not_found_or_not = True
-            while rule_not_found_or_not == True : 
-                rule_not_found_or_not, rule_generated_or_not = agent_set.generate_rules() 
-                Agent.exchange_rule_randomly(agent_set.agents)
+    def one_optimization_cycle(self):
+        # repeat while ruleset is not converged(while new rule is generated)
+        rule_not_found_or_not = True
+        while rule_not_found_or_not == True : 
+            rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
+            Agent.exchange_rule_randomly(self.agent_set.agents)
 
-            # learn and adjust a strength of each rule
-            self.reinforcement_learning()
+        # learn and adjust a strength of each rule
+        self.reinforcement_learning()
 
-            agent_set.delete_weak_rules()
+        self.agent_set.delete_weak_rules()
 
-            current_objective_value = self.get_objective_value()
-            self.update_worst_value(current_objective_value)
-            self.update_organizational_rulesets(current_objective_value)
+        current_objective_value = self.get_objective_value()
+        self.update_worst_value(current_objective_value)
+        self.update_organizational_rulesets(current_objective_value)
 
-            self.display_status()
+        self.display_status()
 
 
     #update objective value if it is the best, and record the rulesets
