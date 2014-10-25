@@ -132,18 +132,19 @@ class OCSOptimization(Optimization):
                 self.reward_process(current_value, previous_value, applied_pairs)
 
     def reward_process(self, current_value, previous_value, applied_pairs):
+
+        fixed_value = (lambda x: 0.05)
+        decreasing_function = (lambda x: (0.1)**x)
+
         #報酬関数を減少関数にするとあっという間に強度が収束してデッドロックに陥る
         if self.positive_reward_or_not(current_value, previous_value):
-            positive_reward_function = (lambda x: 0.05)
-            #positive_reward_function = (lambda x: (0.1)**x)
-            self.give_rewards(applied_pairs, positive_reward_function)
-
+            reward_function = (lambda x: fixed_value(x))
         else:
-            negative_reward_function = (lambda x: -0.05)
-            #negative_reward_function = (lambda x: -(0.1)**x)
-            self.give_rewards(applied_pairs, negative_reward_function)
+            reward_function = (lambda x: -1 * fixed_value(x))
 
-    # return True if positive reward is given, otherwise return False
+        self.give_rewards(applied_pairs, reward_function)
+
+    # return True if positive reward is to be given, otherwise return False
     def positive_reward_or_not(self, current_value, previous_value):
         half_value = (self.worst_value + self.best_value) / 2
 

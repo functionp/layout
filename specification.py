@@ -30,6 +30,7 @@ class SampleObjective(Objective):
             # return sum of distances
             return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
 
+        #重なり数ではなく重なり面積とかにすれば改善されそう
         def penalize_overlap(layout):
             boxes = layout.agents
             penalty = 0
