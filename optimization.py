@@ -50,12 +50,15 @@ class Optimization():
 
 class OCSOptimization(Optimization):
     max_iteration = 30
-    max_cycle_of_learning = 5
+    max_cycle_of_learning = 1
     minimum_difference = 20
 
     def __init__(self, specification, agent_set=AgentSet()):
         Optimization.__init__(self, specification, agent_set)
         self.organizational_rulesets = []
+
+        def get_half_value(self):
+            return (self.worst_value + self.best_value) / 2
 
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets
@@ -145,7 +148,7 @@ class OCSOptimization(Optimization):
 
     # return True if positive reward is to be given, otherwise return False
     def positive_reward_or_not(self, current_value, previous_value):
-        half_value = (self.worst_value + self.best_value) / 2
+        half_value = self.get_half_value()
 
         def compare_with_before():
             return (previous_value > current_value)

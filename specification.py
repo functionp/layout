@@ -56,3 +56,5 @@ from agent import *
 from condition import *
 from rule import *
 import math
+
+from compiler.node import *
