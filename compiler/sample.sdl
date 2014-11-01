@@ -1,0 +1,25 @@
+content content1 {
+	c1.value = “some sentences”;
+	c1.priority = 12;
+
+	c2.value = “some sentences”;
+}
+
+style style1 {
+    global-menu(5);
+	constraints();
+    simple();
+}
+
+function global-menu(){
+    has-component();
+}
+
+function simple() {
+	number-of-components: 10;
+} 
+
+function constraints() {
+	nooverlap: true !absolute;
+	aligned: true !absolute;
+}
