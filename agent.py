@@ -103,6 +103,12 @@ class BoxAgent(Agent):
         self.position = position
         self.size = size
 
+    def set_width(self, value):
+        self.size[0] = value
+
+    def set_height(self, value):
+        self.size[1] = value
+
     def render(self, parent):
         panel = wx.Panel(parent, wx.ID_ANY, pos=self.position, size=self.size, style=wx.SIMPLE_BORDER)
         panel.SetBackgroundColour("#ffffff")
@@ -169,10 +175,10 @@ class BoxAgent(Agent):
         self.add_y(vector[1])
 
     def add_width(self, amount):
-        self.size[0] = self.size[0] + amount
+        self.set_width(self.size[0] + amount)
 
     def add_height(self, amount):
-        self.size[1] = self.size[1] + amount
+        self.set_height(self.size[1] + amount)
 
     def align_left(self, target_box):
         self.position[0] = target_box.position[0]

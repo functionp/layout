@@ -76,6 +76,25 @@ class BoxAction(Action):
 
         return _change_height_at_random
 
+
+    @classmethod
+    def unify_width_to_nearest_box(cls, layout):
+
+        def _unify_width_to_nearest_box(box):
+            nearest_box = box.get_nearest_box(layout)
+            box.set_width(nearest_box.size[0])
+
+        return _unify_width_to_nearest_box
+
+    @classmethod
+    def unify_height_to_nearest_box(cls, layout):
+
+        def _unify_height_to_nearest_box(box):
+            nearest_box = box.get_nearest_box(layout)
+            box.set_height(nearest_box.size[0])
+
+        return _unify_height_to_nearest_box
+
     @classmethod
     def align_to_nearest_box(cls, layout):
 
@@ -166,11 +185,7 @@ class BoxRule(Rule):
     # take layout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, layout):
         action_candidates = [BoxAction.stay(),
-                             BoxAction.change_width_at_random(30),
-                             BoxAction.change_height_at_random(30),
-                             BoxAction.align_to_nearest_box(layout),
-                             BoxAction.stay_away_to_nearest_box(layout),
-                             BoxAction.approach_to_nearest_box(layout)]
+                             BoxAction.align_to_nearest_box(layout)]
 
         action = random.choice(action_candidates)
         return Rule(condition, action)
