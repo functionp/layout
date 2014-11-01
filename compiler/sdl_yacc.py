@@ -357,7 +357,6 @@ parser = yacc.yacc()
 
 if __name__ == '__main__':  
     
-    """
     while True:
         try:
             s = raw_input('tcperser > ')
@@ -369,8 +368,8 @@ if __name__ == '__main__':
         result = parser.parse(s)
         result.display(0)
 
-        """
     
+    """
     s = ""
     for line in sys.stdin:
         s += line.strip("\n") 
@@ -382,5 +381,5 @@ if __name__ == '__main__':
     #print ""
     print_code()
     #write_code()
-
+    """
     
