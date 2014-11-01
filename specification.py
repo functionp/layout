@@ -25,7 +25,7 @@ class SampleObjective(Objective):
         def sum_of_distance_between_gravities(layout):
 
             boxes = layout.agents
-            distance_list = [[get_distance_between_gravities(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
+            distance_list = [[Agent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
 
             # return sum of distances
             return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
@@ -54,7 +54,7 @@ class DistanceObjective(Objective):
         def sum_of_distance_between_gravities(layout):
 
             boxes = layout.agents
-            distance_list = [[get_distance_between_gravities(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
+            distance_list = [[Agent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
 
             # return sum of distances
             return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
@@ -75,9 +75,6 @@ class DistanceObjective(Objective):
         objective_function = (lambda layout: sum_of_distance_between_gravities(layout) + penalize_overlap(layout))
 
         Objective.__init__(self, 1, objective_function)
-
-def get_distance_between_gravities(box1, box2):
-    return math.sqrt((box1.get_gravity_position()[0] - box2.get_gravity_position()[0]) ** 2 + (box1.get_gravity_position()[1] - box2.get_gravity_position()[1]) ** 2)
 
 # imports - - - - - - -
 from layout import *

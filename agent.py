@@ -103,6 +103,24 @@ class BoxAgent(Agent):
         self.position = position
         self.size = size
 
+    def set_x(self, value):
+
+        if value < 0:
+            self.position[0] = 1
+        elif WINDOW_SIZE[0] < value + self.size[0]:
+            self.position[0] = WINDOW_SIZE[0] - self.size[0] - 1
+        else:
+            self.position[0] = value
+
+    def set_y(self, value):
+
+        if value < 0:
+            position[1] = 1
+        elif WINDOW_SIZE[1] < value + self.size[1]:
+            position[1] = WINDOW_SIZE[1] - self.size[1] -1
+        else:
+            position[1] = value
+
     def set_width(self, value):
         self.size[0] = value
 
@@ -149,26 +167,12 @@ class BoxAgent(Agent):
         return [present_x, present_y + self.size[1] + margin]
 
     def add_x(self, amount):
-
         x_after_movement = (self.position[0] + amount)
-
-        if x_after_movement < 0:
-            self.position[0] = 1
-        elif WINDOW_SIZE[0] <x_after_movement + self.size[0]:
-            self.position[0] = WINDOW_SIZE[0] - self.size[0] - 1
-        else:
-            self.position[0] = x_after_movement
+        self.set_x(x_after_movement)
 
     def add_y(self, amount):
-
         y_after_movement = (self.position[1] + amount)
-
-        if y_after_movement < 0:
-            self.position[1] = 1
-        elif WINDOW_SIZE[1] < y_after_movement + self.size[1]:
-            self.position[1] = WINDOW_SIZE[1] - self.size[1] -1
-        else:
-            self.position[1] = y_after_movement
+        self.set_y(y_after_movement)
 
     def add_vector(self, vector):
         self.add_x(vector[0])
@@ -181,10 +185,25 @@ class BoxAgent(Agent):
         self.set_height(self.size[1] + amount)
 
     def align_left(self, target_box):
-        self.position[0] = target_box.position[0]
+        self.set_x( target_box.position[0])
 
     def align_top(self, target_box):
-        self.position[1] = target_box.position[1]
+        self.set_y(target_box.position[1])
+
+    # place itself next to given box making given amount of vertical space
+    def make_vertical_space(self, box, amount):
+        if box.position[1] < self.position[1]:
+            self.set_y(box.position[1] + box.size[1] + amount)
+        else:
+            self.set_y(box.position[1] - amount)
+
+    # place itself next to given box making given amount of horizontal space
+    def make_horizontal_space(self, box, amount):
+        
+        if box.position[0] < self.position[0]:
+            self.set_x(box.position[0] + box.size[1] + amount)
+        else:
+            self.set_x(box.position[0] - amount)
 
     def get_nearest_box(self, layout):
 
@@ -195,6 +214,26 @@ class BoxAgent(Agent):
         nearest_box = pairs[1][1]
 
         return nearest_box
+
+    def get_space_difference(self,box,i):
+        return abs(self.position[i] - box.position[i])
+
+    def get_most_aligned_box(self, layout):
+
+        pairs = []
+        for box in layout.agents:
+            smaller_space = min(get_space_difference(box,0), get_space_difference(box,1))
+
+            # in case smaller_space is same, add gravity distance to make difference
+            gravity_distance = Agent.get_gravity_distance(self, box) / 200
+            pairs.append(smaller_space + gravity_distance, box)
+
+        pairs.sort()
+
+        # take 1st box as most_aligned box because 0th box is box itself
+        most_aligned_box = pairs[1][1]
+
+        return most_aligned_box
 
     # get difference(signed distance) of gravity
     def get_gravity_difference(self, target_box):
@@ -275,6 +314,10 @@ class BoxAgent(Agent):
         basic_distance_x = (box1.size[0] + box2.size[0]) /2
         basic_distance_y = (box1.size[1] + box2.size[1]) /2
         return [basic_distance_x, basic_distance_y]
+
+    @classmethod
+    def get_gravity_distance(cls, box1, box2):
+        return length_of_vector(box1.gravity_difference(box2))
 
 
 # imports - - - - - - -

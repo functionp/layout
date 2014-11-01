@@ -77,6 +77,7 @@ class BoxAction(Action):
         return _change_height_at_random
 
 
+    #詰まったら一番近いってのを帰る
     @classmethod
     def unify_width_to_nearest_box(cls, layout):
 
@@ -146,7 +147,21 @@ class BoxAction(Action):
             box.approach(nearest_box)
 
         return _approach_to_nearest_box
+
+    @classmethod
+    #自分に一番アラインされているボックスとの間隔を指定値にする
+    def space_most_aligned_box(cls, amount, layout):
+        def _space_most_aligned_box(box):
+            most_aligned_box = box.get_most_aligned_box(layout)
+            width_difference = box.get_space_difference(most_aligned_box, 0)
+            height_difference = box.get_space_difference(most_aligned_box, 1)
  
+            if width_difference < height_difference:
+                box.make_vertical_space(most_aligned_box, amount)
+            else:
+                box.make_horizontal_space(most_aligned_box, amount)
+
+        return _space_most_aligned_box
 
 class Rule():
     initial_strength = 0.5
