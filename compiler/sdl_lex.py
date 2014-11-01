@@ -17,6 +17,7 @@ tokens = [
     'EQUAL',
     'NOT',
     'SEMICOLON',
+    'COLON',
     'OR',
     'AND',
     'LT',
@@ -25,6 +26,8 @@ tokens = [
     'EGT',
     'EQUALCOMP',
     'EQUALNOT',
+    'TRUE',
+    'FALSE',
     'CONSTANT',
     'IDENTIFIER'
 ]
@@ -32,12 +35,10 @@ tokens = [
 reserved = {
     'if' : 'IF',
     'else' : 'ELSE',
-    'int' : 'INT',
-    'while' : 'WHILE',
     'return' : 'RETURN',
-    'break' : 'BREAK',
-    'continue' : 'CONT',
-    'for' : 'FOR'
+    'content' : 'CONTENT',
+    'function' : 'FUNCTION',
+    'style' : 'STYLE'
 }
 
 tokens = tokens + list(reserved.values())
@@ -57,6 +58,7 @@ t_COMMA = r'\,'
 t_EQUAL = r'='
 t_NOT = r'\!'
 t_SEMICOLON = r';'
+t_COLON = r':'
 t_OR = r'\|\|'
 t_AND = r'&&'
 t_LT = r'<'
@@ -66,14 +68,14 @@ t_EGT = r'>='
 t_EQUALCOMP = r'=='
 t_EQUALNOT = r'!='
 
-t_IF = r'if'
-t_INT = r'int'
-t_RETURN = r'return'
-t_BREAK = r'break'
-t_CONT = r'continue'
-t_WHILE = r'while'
-t_FOR = r'for'
+t_TRUE = r'true'
+t_FALSE = r'false'
 
+t_IF = r'if'
+t_RETURN = r'return'
+t_CONTENT = r'content'
+t_FUNCTION = r'return'
+t_STYLE = r'STYLE'
 
 # 正規表現とアクションコード
 def t_CONSTANT(t):
@@ -92,7 +94,7 @@ def t_newline(t):
     r'\n+'
     t.lexer.lineno += len(t.value)
 
-# 識別子と予約後
+# 識別子と予約語
 def t_IDENTIFIER(t):
     r'[a-zA-Z]\w*'
 
@@ -106,7 +108,7 @@ t_ignore = ' \t'
 
 # エラーハンドリングルール
 def t_error(t):
-    print u"不正な文字 '%s'" % t.value[0]
+    print u"invalid character '%s'" % t.value[0]
 
 # lexer を構築
 lexer = lex.lex()
