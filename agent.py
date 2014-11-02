@@ -190,6 +190,14 @@ class BoxAgent(Agent):
     def align_top(self, target_box):
         self.set_y(target_box.position[1])
 
+    def unify_width_and_align(self, target_box):
+        self.align_left(target_box)
+        self.set_width(target_box.size[0])
+
+    def unify_height_and_align(self, target_box):
+        self.align_top(target_box)
+        self.set_height(target_box.size[1])
+
     # place itself next to given box making given amount of vertical space
     def make_vertical_space(self, box, amount):
         if box.position[1] < self.position[1]:

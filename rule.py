@@ -96,7 +96,6 @@ class BoxAction(Action):
         return _unify_height_to_nearest_box
 
     @classmethod
-    #サイズ統一の仕方を改める(ただ伸び縮みでなく、ぴったりあらいんするようにずれる)
     def unify_size_to_most_aligned_box(cls, layout):
 
         def _unify_size_to_most_aligned_box(box):
@@ -105,9 +104,9 @@ class BoxAction(Action):
             y_difference = box.get_position_difference(most_aligned_box, 1)
  
             if x_difference < y_difference:
-                box.set_width(most_aligned_box.size[0])
+                box.unify_width_and_align(most_aligned_box)
             else:
-                box.set_height(most_aligned_box.size[1])
+                box.unify_height_and_align(most_aligned_box)
 
         return _unify_size_to_most_aligned_box
 
