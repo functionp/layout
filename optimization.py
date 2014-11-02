@@ -57,8 +57,8 @@ class OCSOptimization(Optimization):
         Optimization.__init__(self, specification, agent_set)
         self.organizational_rulesets = []
 
-    def get_half_value(self):
-        return (self.worst_value + self.best_value) / 2
+        def get_half_value(self):
+            return (self.worst_value + self.best_value) / 2
 
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets

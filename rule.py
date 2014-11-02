@@ -215,7 +215,7 @@ class BoxRule(Rule):
     def generate_rule_with_random_action(cls, condition, layout):
         action_candidates = [BoxAction.stay(),
                              BoxAction.align_to_nearest_box(layout),
-                             BoxAction.space_most_aligned_box(100, layout),
+                             BoxAction.space_most_aligned_box(40, layout),
                              BoxAction.unify_size_to_most_aligned_box(layout)]
 
         action = random.choice(action_candidates)

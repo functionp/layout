@@ -70,11 +70,11 @@ class SampleLayout(Layout):
         boxes = []
         margin = 20
         boxes.append(BoxAgent([50,50], [200,200]))
-        boxes.append(BoxAgent([150,200], [100,200]))
-#        boxes.append(BoxAgent(boxes[1].get_right_position(margin), [100,200]))
-#        boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [100,200]))
-#        boxes.append(BoxAgent(boxes[3].get_right_position(margin), [350,200]))
-#        boxes.append(BoxAgent(boxes[4].get_right_position(margin), [100,200]))
+        boxes.append(BoxAgent(boxes[0].get_right_position(margin), [100,200]))
+        boxes.append(BoxAgent(boxes[1].get_right_position(margin), [100,200]))
+        boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [100,200]))
+        boxes.append(BoxAgent(boxes[3].get_right_position(margin), [350,200]))
+        boxes.append(BoxAgent(boxes[4].get_right_position(margin), [100,200]))
 
         Layout.__init__(self, boxes)
 
