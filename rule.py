@@ -97,6 +97,21 @@ class BoxAction(Action):
         return _unify_height_to_nearest_box
 
     @classmethod
+    def unify_size_to_most_aligned_box(cls, layout):
+
+        def _unify_size_to_most_aligned_box(box):
+            most_aligned_box = box.get_most_aligned_box(layout)
+            x_difference = box.get_position_difference(most_aligned_box, 0)
+            y_difference = box.get_position_difference(most_aligned_box, 1)
+ 
+            if x_difference < y_difference:
+                box.set_width(most_aligned_box.size[0])
+            else:
+                box.set_height(most_aligned_box.size[1])
+
+        return _unify_height_to_nearest_box
+
+    @classmethod
     def align_to_nearest_box(cls, layout):
 
         def _align_to_nearest_box(box):
@@ -153,10 +168,10 @@ class BoxAction(Action):
     def space_most_aligned_box(cls, amount, layout):
         def _space_most_aligned_box(box):
             most_aligned_box = box.get_most_aligned_box(layout)
-            width_difference = box.get_space_difference(most_aligned_box, 0)
-            height_difference = box.get_space_difference(most_aligned_box, 1)
+            x_difference = box.get_position_difference(most_aligned_box, 0)
+            y_difference = box.get_position_difference(most_aligned_box, 1)
  
-            if width_difference < height_difference:
+            if x_difference < y_difference:
                 box.make_vertical_space(most_aligned_box, amount)
             else:
                 box.make_horizontal_space(most_aligned_box, amount)
@@ -200,7 +215,9 @@ class BoxRule(Rule):
     # take layout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, layout):
         action_candidates = [BoxAction.stay(),
-                             BoxAction.align_to_nearest_box(layout)]
+                             BoxAction.align_to_nearest_box(layout),
+                             BoxAction.space_most_aligned_box(40, layout),
+                             unify_size_to_most_aligned_box(layout)]
 
         action = random.choice(action_candidates)
         return Rule(condition, action)

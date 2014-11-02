@@ -214,18 +214,18 @@ class BoxAgent(Agent):
 
         return nearest_box
 
-    def get_space_difference(self,box,i):
+    def get_position_difference(self,box,i):
         return abs(self.position[i] - box.position[i])
 
     def get_most_aligned_box(self, layout):
 
         pairs = []
         for box in layout.agents:
-            smaller_space = min(self.get_space_difference(box,0), self.get_space_difference(box,1))
+            smaller_difference = min(self.get_position_difference(box,0), self.get_position_difference(box,1))
 
-            # in case smaller_space is same, add gravity distance to make difference
-            gravity_distance = BoxAgent.get_gravity_distance(self, box) / 200
-            pairs.append((smaller_space + gravity_distance, box))
+            # in case smaller_difference is same, add gravity distance to make difference
+            scaled_gravity_distance = BoxAgent.get_gravity_distance(self, box) / 200
+            pairs.append((smaller_difference + scaled_gravity_distance, box))
 
         pairs.sort()
 
