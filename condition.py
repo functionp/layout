@@ -140,7 +140,7 @@ class BoxCondition(Condition):
             layout = situation.agent_set
             box = situation.agent
 
-            bool_function = (lambda box1, box2: get_distance_between_gravities(box1, box2) < distance)
+            bool_function = (lambda box1, box2: BoxAgent.get_gravity_distance(box1, box2) < distance)
 
             return bool_for_layout_and_box(layout, box, bool_function)
 

@@ -115,11 +115,11 @@ class BoxAgent(Agent):
     def set_y(self, value):
 
         if value < 0:
-            position[1] = 1
+            self.position[1] = 1
         elif WINDOW_SIZE[1] < value + self.size[1]:
-            position[1] = WINDOW_SIZE[1] - self.size[1] -1
+            self.position[1] = WINDOW_SIZE[1] - self.size[1] -1
         else:
-            position[1] = value
+            self.position[1] = value
 
     def set_width(self, value):
         self.size[0] = value
@@ -198,8 +198,7 @@ class BoxAgent(Agent):
             self.set_y(box.position[1] - amount)
 
     # place itself next to given box making given amount of horizontal space
-    def make_horizontal_space(self, box, amount):
-        
+    def make_horizontal_space(self, box, amount):        
         if box.position[0] < self.position[0]:
             self.set_x(box.position[0] + box.size[1] + amount)
         else:
@@ -207,7 +206,7 @@ class BoxAgent(Agent):
 
     def get_nearest_box(self, layout):
 
-        pairs = [(get_distance_between_gravities(self, box), box)  for box in layout.agents]
+        pairs = [(BoxAgent.get_gravity_distance(self, box), box)  for box in layout.agents]
         pairs.sort()
 
         # take 1st box as nearest box because 0th box is box itself
@@ -222,11 +221,11 @@ class BoxAgent(Agent):
 
         pairs = []
         for box in layout.agents:
-            smaller_space = min(get_space_difference(box,0), get_space_difference(box,1))
+            smaller_space = min(self.get_space_difference(box,0), self.get_space_difference(box,1))
 
             # in case smaller_space is same, add gravity distance to make difference
-            gravity_distance = Agent.get_gravity_distance(self, box) / 200
-            pairs.append(smaller_space + gravity_distance, box)
+            gravity_distance = BoxAgent.get_gravity_distance(self, box) / 200
+            pairs.append((smaller_space + gravity_distance, box))
 
         pairs.sort()
 
@@ -317,7 +316,7 @@ class BoxAgent(Agent):
 
     @classmethod
     def get_gravity_distance(cls, box1, box2):
-        return length_of_vector(box1.gravity_difference(box2))
+        return length_of_vector(box1.get_gravity_difference(box2))
 
 
 # imports - - - - - - -

@@ -177,6 +177,19 @@ class TestAction(unittest.TestCase):
 
         self.assertFalse(BoxAgent.overlap_or_not(box1,box2))
 
+    def test_spacing(self):
+        box1 = BoxAgent([100, 100], [150, 100])
+        box2 = BoxAgent([100, 250], [300, 100])
+        box3 = BoxAgent([170, 500], [250, 150])
+        box4 = BoxAgent([100, 570], [50, 50])
+
+        layout = Layout([box1, box2, box3, box4])
+
+        action1 = BoxAction.space_most_aligned_box(30, layout)
+        action1(box4)
+
+        self.assertEqual(box4.position[1], 380)
+
 
 class TestCondition(unittest.TestCase):
 

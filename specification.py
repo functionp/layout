@@ -25,7 +25,7 @@ class SampleObjective(Objective):
         def sum_of_distance_between_gravities(layout):
 
             boxes = layout.agents
-            distance_list = [[Agent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
+            distance_list = [[BoxAgent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
 
             # return sum of distances
             return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
@@ -54,7 +54,7 @@ class DistanceObjective(Objective):
         def sum_of_distance_between_gravities(layout):
 
             boxes = layout.agents
-            distance_list = [[Agent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
+            distance_list = [[BoxAgent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
 
             # return sum of distances
             return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
