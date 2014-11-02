@@ -190,6 +190,18 @@ class TestAction(unittest.TestCase):
 
         self.assertEqual(box4.position[1], 380)
 
+    def test_unify_size(self):
+        box1 = BoxAgent([100, 100], [200, 40])
+        box2 = BoxAgent([100, 200], [50, 80])
+        box3 = BoxAgent([120, 290], [250, 150])
+
+        layout = Layout([box1, box2, box3])
+
+        action1 = BoxAction.unify_size_to_most_aligned_box(layout)
+        action1(box2)
+
+        self.assertEqual(box2.size[0], box1.size[0])
+
 
 class TestCondition(unittest.TestCase):
 

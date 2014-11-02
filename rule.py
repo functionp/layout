@@ -77,7 +77,6 @@ class BoxAction(Action):
         return _change_height_at_random
 
 
-    #詰まったら一番近いってのを帰る
     @classmethod
     def unify_width_to_nearest_box(cls, layout):
 
@@ -97,6 +96,7 @@ class BoxAction(Action):
         return _unify_height_to_nearest_box
 
     @classmethod
+    #サイズ統一の仕方を改める(ただ伸び縮みでなく、ぴったりあらいんするようにずれる)
     def unify_size_to_most_aligned_box(cls, layout):
 
         def _unify_size_to_most_aligned_box(box):
@@ -109,7 +109,7 @@ class BoxAction(Action):
             else:
                 box.set_height(most_aligned_box.size[1])
 
-        return _unify_height_to_nearest_box
+        return _unify_size_to_most_aligned_box
 
     @classmethod
     def align_to_nearest_box(cls, layout):
@@ -217,7 +217,7 @@ class BoxRule(Rule):
         action_candidates = [BoxAction.stay(),
                              BoxAction.align_to_nearest_box(layout),
                              BoxAction.space_most_aligned_box(40, layout),
-                             unify_size_to_most_aligned_box(layout)]
+                             BoxAction.unify_size_to_most_aligned_box(layout)]
 
         action = random.choice(action_candidates)
         return Rule(condition, action)
