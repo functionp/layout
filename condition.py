@@ -42,7 +42,7 @@ class Condition():
             else:
                 return reduce(lambda b1,b2: b1 or b2, results)
         else:
-            return False
+            return True
 
     def get_size(self):
         return len(self.condfuns)

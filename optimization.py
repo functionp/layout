@@ -57,8 +57,8 @@ class OCSOptimization(Optimization):
         Optimization.__init__(self, specification, agent_set)
         self.organizational_rulesets = []
 
-        def get_half_value(self):
-            return (self.worst_value + self.best_value) / 2
+    def get_half_value(self):
+        return (self.worst_value + self.best_value) / 2
 
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets
@@ -67,8 +67,16 @@ class OCSOptimization(Optimization):
         # use organizational rulesets for default rulesets
         self.agent_set.set_rulesets(self.organizational_rulesets)
 
-        for i in range(OCSOptimization.max_iteration):
+        constraints = self.specification.constraints
+        situation = Situation(self.agent_set.get_copy()) 
+
+        #for i in range(OCSOptimization.max_iteration):
+
+        #いくら制約条件をつけてもそれを緩和するアクション・目的関数（突然変異）を作らなければ収束しきって動かない（ex. 互いにアラインアクションなど）
+        i = 0
+        while i < OCSOptimization.max_iteration:# or constraints.evaluate(situation) == False:
             self.one_optimization_cycle()
+            i += 1
 
     def one_optimization_cycle(self):
         # repeat while ruleset is not converged(while new rule is generated)
@@ -111,8 +119,11 @@ class OCSOptimization(Optimization):
             current_value = self.get_objective_value()
             previous_value = 10000
 
-            #とりあえず終了状態ベースでなく関数の収束ベースで終了条件考えてるけど状態で考えなくていいのだろうか？→脳内実行
-            while abs(previous_value - current_value) > OCSOptimization.minimum_difference :
+            constraints = self.specification.constraints
+            situation = Situation(agent_set.get_copy(), agent) 
+
+            # repeat until objective converged and constraints are sutisfied
+            while abs(previous_value - current_value) > OCSOptimization.minimum_difference:
                 selected_rule = agent.rule_select()
 
                 # apply selected rule, and record objective values before and after execution
@@ -123,7 +134,7 @@ class OCSOptimization(Optimization):
                     agent.execute_action(selected_rule.action)
 
                 current_value = self.get_objective_value()
-                situation_after = Situation(agent_set.get_copy(), agent)
+                situation = Situation(agent_set.get_copy(), agent)
 
                 # rememebr applied rule with episode(time)
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
