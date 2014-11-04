@@ -311,7 +311,11 @@ class BoxAgent(Agent):
     def overlap_or_not(cls, box1, box2):
         difference_x = abs(box1.position[0] - box2.position[0])
         difference_y = abs(box1.position[1] - box2.position[1])
-        if difference_x < box1.size[0] and difference_x < box2.size[0] and difference_y < box1.size[1] and difference_y < box2.size[1]:
+
+        cross_or_not = difference_x < box1.size[0] and difference_x < box2.size[0] and difference_y < box1.size[1] and difference_y < box2.size[1]
+        include_or_not = (box1.position[0] - box2.position[0]) * (box1.position[0] + box1.size[0] - (box2.position[0] + box2.size[0])) < 0 and (box1.position[1] - box2.position[1]) * (box1.position[1] + box1.size[1] - (box2.position[1] + box2.size[1])) < 0
+
+        if cross_or_not or include_or_not:
             return True
         else:
             return False

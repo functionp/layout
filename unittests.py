@@ -5,6 +5,7 @@ from agent import *
 from rule import *
 from condition import *
 from optimization import *
+from specification import *
 
 class TestAgent(unittest.TestCase):
 
@@ -40,6 +41,14 @@ class TestAgent(unittest.TestCase):
         box1.add_rule(rule3)
 
         self.assertEqual(box1.get_index_of_weakest_rule(), 2)
+
+    def test_oberlapped_area(self):
+        box1 = BoxAgent([100, 100], [100, 100])
+        box2 = BoxAgent([160, 160], [30, 30])
+        box3 = BoxAgent([160, 160], [100, 100])
+
+        print BoxAgent.overlap_or_not(box1, box2)
+        self.assertEqual(BoxAgent.get_overlaped_area(box1, box2), 900)
 
 
 class TestLayout(unittest.TestCase):
