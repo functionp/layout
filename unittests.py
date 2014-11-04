@@ -42,13 +42,11 @@ class TestAgent(unittest.TestCase):
 
         self.assertEqual(box1.get_index_of_weakest_rule(), 2)
 
-    def test_oberlapped_area(self):
-        box1 = BoxAgent([100, 100], [100, 100])
-        box2 = BoxAgent([160, 160], [30, 30])
-        box3 = BoxAgent([160, 160], [100, 100])
+    def test_overlapped_area(self):
+        box1 = BoxAgent([50, 50], [200, 200])
+        box2 = BoxAgent([150, 200], [100, 200])
 
-        print BoxAgent.overlap_or_not(box1, box2)
-        self.assertEqual(BoxAgent.get_overlaped_area(box1, box2), 900)
+        self.assertEqual(BoxAgent.get_overlaped_area(box1, box2), 5000)
 
 
 class TestLayout(unittest.TestCase):
