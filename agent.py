@@ -326,6 +326,16 @@ class BoxAgent(Agent):
     def get_gravity_distance(cls, box1, box2):
         return length_of_vector(box1.get_gravity_difference(box2))
 
+    @classmethod
+    def get_overlaped_area(cls, box1, box2):
+        if cls.overlap_or_not(box1, box2):
+            overlaped_width = min(box1.position[0] + box1.size[0], box2.position[0] + box2.size[0]) - max(box1.position[0], box2.position[0])
+            overlaped_height = min(box1.position[1] + box1.size[1], box2.position[1] + box2.size[1]) - max(box1.position[1], box2.position[1])
+
+            return overlaped_width * overlaped_height
+        else:
+            return 0
+
 
 # imports - - - - - - -
 import wx
