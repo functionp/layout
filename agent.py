@@ -62,7 +62,7 @@ class Agent():
     def replace_weakest_rule(self, rule):
         i = self.get_index_of_weakest_rule()
         new_rule = rule.get_copy()
-        new_rule.set_strength(Rule.initial_strength)
+        #new_rule.set_strength(Rule.initial_strength)
 
         if i != None:
             self.ruleset[i] = new_rule
@@ -134,10 +134,16 @@ class BoxAgent(Agent):
             self.position[1] = value
 
     def set_width(self, value):
-        self.size[0] = value
+        if value > 0:
+            self.size[0] = value
+        else:
+            self.size[0] = 0
 
     def set_height(self, value):
-        self.size[1] = value
+        if value > 0:
+            self.size[1] = value
+        else:
+            self.size[1] = 0
 
     def render(self, parent):
         panel = wx.Panel(parent, wx.ID_ANY, pos=self.position, size=self.size, style=wx.SIMPLE_BORDER)

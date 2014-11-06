@@ -74,7 +74,7 @@ class OCSOptimization(Optimization):
 
         #いくら制約条件をつけてもそれを緩和するアクション・目的関数（突然変異）を作らなければ収束しきって動かない（ex. 互いにアラインアクションなど）
         i = 0
-        while i < OCSOptimization.max_iteration:# or constraints.evaluate(situation) == False:
+        while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False:
             self.one_optimization_cycle()
             i += 1
 
@@ -88,6 +88,7 @@ class OCSOptimization(Optimization):
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
 
+        print "im here"
         self.agent_set.delete_weak_rules()
 
         current_objective_value = self.get_objective_value()
@@ -95,7 +96,6 @@ class OCSOptimization(Optimization):
         self.update_organizational_rulesets(current_objective_value)
 
         self.display_status()
-
 
     #update objective value if it is the best, and record the rulesets
     def update_organizational_rulesets(self, new_value):
@@ -122,8 +122,10 @@ class OCSOptimization(Optimization):
             constraints = self.specification.constraints
             situation = Situation(agent_set.get_copy(), agent) 
 
+            #すでに収束しているが制約満たしている場合ここで泊まる　通常交換が行われてうまくいくが同じルールならおかしくなる
+
             # repeat until objective converged and constraints are sutisfied
-            while abs(previous_value - current_value) > OCSOptimization.minimum_difference:
+            while abs(previous_value - current_value) > OCSOptimization.minimum_difference :
                 selected_rule = agent.rule_select()
 
                 # apply selected rule, and record objective values before and after execution
@@ -153,6 +155,7 @@ class OCSOptimization(Optimization):
         if self.positive_reward_or_not(current_value, previous_value):
             reward_function = (lambda x: fixed_value(x))
         else:
+            #ここの節には入っているのにマイナスされない
             reward_function = (lambda x: -1 * fixed_value(x))
 
         self.give_rewards(applied_pairs, reward_function)
@@ -166,6 +169,10 @@ class OCSOptimization(Optimization):
 
         def compare_with_half():
             return (half_value > current_value)
+
+        #def compare_with_half():
+        #    constraints = self.specification.constraints
+        #    return constraints.evaluate() == True and current_value == previous_value
 
         return compare_with_before()
 

@@ -46,8 +46,6 @@ class AgentSet():
             if agent.delete_weak_rules():
                 rule_deleted_or_not = True
 
-        print self.get_number_of_agents()
-
         return rule_deleted_or_not
 
 
@@ -71,7 +69,7 @@ class SampleLayout(Layout):
         margin = 20
         boxes.append(BoxAgent([50,50], [200,200]))
         boxes.append(BoxAgent([150,200], [100,200]))
-#        boxes.append(BoxAgent(boxes[1].get_right_position(margin), [100,200]))
+        boxes.append(BoxAgent([100,100], [100,200]))
 #        boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [100,200]))
 #        boxes.append(BoxAgent(boxes[3].get_right_position(margin), [350,200]))
 #        boxes.append(BoxAgent(boxes[4].get_right_position(margin), [100,200]))
