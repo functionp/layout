@@ -17,7 +17,7 @@ class TestAgent(unittest.TestCase):
         box2 = BoxAgent([60, 200], [30, 30])
 
         box2.align_left(box1)
-        self.assertEqual(box2.position[0], 50)
+        self.assertEqual(box2.get_x(), 50)
 
     def test_overlap_or_not(self):
         box1 = BoxAgent([50, 50], [30, 30])
@@ -170,7 +170,7 @@ class TestAction(unittest.TestCase):
         action1 = BoxAction.align_to_nearest_box(layout)
         action1(box3)
 
-        self.assertEqual(box2.position[1], box3.position[1])
+        self.assertEqual(box2.get_y(), box3.get_y())
 
     def test_stay_away(self):
         box1 = BoxAgent([100, 100], [150, 200])
@@ -195,7 +195,7 @@ class TestAction(unittest.TestCase):
         action1 = BoxAction.space_most_aligned_box(30, layout)
         action1(box4)
 
-        self.assertEqual(box4.position[1], 380)
+        self.assertEqual(box4.get_y(), 380)
 
     def test_unify_size(self):
         box1 = BoxAgent([100, 100], [200, 40])
@@ -207,7 +207,7 @@ class TestAction(unittest.TestCase):
         action1 = BoxAction.unify_size_to_most_aligned_box(layout)
         action1(box2)
 
-        self.assertEqual(box2.size[0], box1.size[0])
+        self.assertEqual(box2.get_width(), box1.get_width())
 
 
 class TestCondition(unittest.TestCase):

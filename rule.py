@@ -82,7 +82,7 @@ class BoxAction(Action):
 
         def _unify_width_to_nearest_box(box):
             nearest_box = box.get_nearest_box(layout)
-            box.set_width(nearest_box.size[0])
+            box.set_width(nearest_box.get_width())
 
         return _unify_width_to_nearest_box
 
@@ -91,7 +91,7 @@ class BoxAction(Action):
 
         def _unify_height_to_nearest_box(box):
             nearest_box = box.get_nearest_box(layout)
-            box.set_height(nearest_box.size[0])
+            box.set_height(nearest_box.get_height())
 
         return _unify_height_to_nearest_box
 
@@ -116,8 +116,8 @@ class BoxAction(Action):
         def _align_to_nearest_box(box):
             nearest_box = box.get_nearest_box(layout)
 
-            difference_x = abs(box.position[0] - nearest_box.position[0])
-            difference_y = abs(box.position[1] - nearest_box.position[1])
+            difference_x = abs(box.get_x() - nearest_box.get_x())
+            difference_y = abs(box.get_y() - nearest_box.get_y())
 
             if difference_x < difference_y:
                 box.align_left(nearest_box)

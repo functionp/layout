@@ -103,12 +103,24 @@ class BoxAgent(Agent):
         self.position = position
         self.size = size
 
+    def get_x(self):
+        return self.position[0]
+
+    def get_y(self):
+        return self.position[1]
+
+    def get_width(self):
+        return self.size[0]
+
+    def get_height(self):
+        return self.size[1]
+
     def set_x(self, value):
 
         if value < 0:
             self.position[0] = 1
-        elif WINDOW_SIZE[0] < value + self.size[0]:
-            self.position[0] = WINDOW_SIZE[0] - self.size[0] - 1
+        elif WINDOW_SIZE[0] < value + self.get_width():
+            self.position[0] = WINDOW_SIZE[0] - self.get_width() - 1
         else:
             self.position[0] = value
 
@@ -116,8 +128,8 @@ class BoxAgent(Agent):
 
         if value < 0:
             self.position[1] = 1
-        elif WINDOW_SIZE[1] < value + self.size[1]:
-            self.position[1] = WINDOW_SIZE[1] - self.size[1] -1
+        elif WINDOW_SIZE[1] < value + self.get_height():
+            self.position[1] = WINDOW_SIZE[1] - self.get_height() -1
         else:
             self.position[1] = value
 
@@ -160,18 +172,18 @@ class BoxAgent(Agent):
 
     def get_right_position(self, margin):
         present_x, present_y = self.position
-        return [present_x + self.size[0] + margin, present_y]
+        return [present_x + self.get_width() + margin, present_y]
 
     def get_bottom_position(self, margin):
         present_x, present_y = self.position
-        return [present_x, present_y + self.size[1] + margin]
+        return [present_x, present_y + self.get_height() + margin]
 
     def add_x(self, amount):
-        x_after_movement = (self.position[0] + amount)
+        x_after_movement = (self.get_x() + amount)
         self.set_x(x_after_movement)
 
     def add_y(self, amount):
-        y_after_movement = (self.position[1] + amount)
+        y_after_movement = (self.get_y() + amount)
         self.set_y(y_after_movement)
 
     def add_vector(self, vector):
@@ -179,38 +191,38 @@ class BoxAgent(Agent):
         self.add_y(vector[1])
 
     def add_width(self, amount):
-        self.set_width(self.size[0] + amount)
+        self.set_width(self.get_width() + amount)
 
     def add_height(self, amount):
-        self.set_height(self.size[1] + amount)
+        self.set_height(self.get_height() + amount)
 
     def align_left(self, target_box):
-        self.set_x( target_box.position[0])
+        self.set_x( target_box.get_x())
 
     def align_top(self, target_box):
-        self.set_y(target_box.position[1])
+        self.set_y(target_box.get_y())
 
     def unify_width_and_align(self, target_box):
         self.align_left(target_box)
-        self.set_width(target_box.size[0])
+        self.set_width(target_box.get_width())
 
     def unify_height_and_align(self, target_box):
         self.align_top(target_box)
-        self.set_height(target_box.size[1])
+        self.set_height(target_box.get_height())
 
     # place itself next to given box making given amount of vertical space
     def make_vertical_space(self, box, amount):
-        if box.position[1] < self.position[1]:
-            self.set_y(box.position[1] + box.size[1] + amount)
+        if box.get_y() < self.get_y():
+            self.set_y(box.get_y() + box.get_height() + amount)
         else:
-            self.set_y(box.position[1] - self.size[1] - amount)
+            self.set_y(box.get_y() - self.get_height() - amount)
 
     # place itself next to given box making given amount of horizontal space
     def make_horizontal_space(self, box, amount):        
-        if box.position[0] < self.position[0]:
-            self.set_x(box.position[0] + box.size[0] + amount)
+        if box.get_x() < self.get_x():
+            self.set_x(box.get_x() + box.get_width() + amount)
         else:
-            self.set_x(box.position[0] - self.size[0]- amount)
+            self.set_x(box.get_x() - self.get_width()- amount)
 
     def get_nearest_box(self, layout):
 
@@ -293,14 +305,14 @@ class BoxAgent(Agent):
 
     # get the position of center of gravity
     def get_gravity_position(self):
-        gravity_x = self.position[0] + self.size[0] / 2
-        gravity_y = self.position[1] + self.size[1] / 2
+        gravity_x = self.get_x() + self.get_width() / 2
+        gravity_y = self.get_y() + self.get_height() / 2
 
         return [gravity_x, gravity_y]
 
     def off_the_edge_or_not(self):
-        off_right_or_bottom = (self.position[0] + self.size[0]) > WINDOW_SIZE[0] or (self.position[1] + self.size[1]) > WINDOW_SIZE[1]
-        off_left_or_top = self.position[0] < 0 or self.position[1] < 0
+        off_right_or_bottom = (self.get_x() + self.get_width()) > WINDOW_SIZE[0] or (self.get_y() + self.get_height()) > WINDOW_SIZE[1]
+        off_left_or_top = self.get_x() < 0 or self.get_y() < 0
 
         if off_right_or_bottom or off_left_or_top:
             return True
@@ -309,11 +321,11 @@ class BoxAgent(Agent):
 
     @classmethod
     def overlap_or_not(cls, box1, box2):
-        difference_x = abs(box1.position[0] - box2.position[0])
-        difference_y = abs(box1.position[1] - box2.position[1])
+        difference_x = abs(box1.get_x() - box2.get_x())
+        difference_y = abs(box1.get_y() - box2.get_y())
 
-        cross_or_not = (difference_x < box1.size[0] or difference_x < box2.size[0]) and (difference_y < box1.size[1] or difference_y < box2.size[1])
-        include_or_not = (box1.position[0] - box2.position[0]) * (box1.position[0] + box1.size[0] - (box2.position[0] + box2.size[0])) < 0 and (box1.position[1] - box2.position[1]) * (box1.position[1] + box1.size[1] - (box2.position[1] + box2.size[1])) < 0
+        cross_or_not = (difference_x < box1.get_width() or difference_x < box2.get_width()) and (difference_y < box1.get_height() or difference_y < box2.get_height())
+        include_or_not = (box1.get_x() - box2.get_x()) * (box1.get_x() + box1.get_width() - (box2.get_x() + box2.get_width())) < 0 and (box1.get_y() - box2.get_y()) * (box1.get_y() + box1.get_height() - (box2.get_y() + box2.get_height())) < 0
 
         if cross_or_not or include_or_not:
             return True
@@ -322,8 +334,8 @@ class BoxAgent(Agent):
 
     @classmethod
     def get_basic_distance_vector(cls, box1, box2):
-        basic_distance_x = (box1.size[0] + box2.size[0]) /2
-        basic_distance_y = (box1.size[1] + box2.size[1]) /2
+        basic_distance_x = (box1.get_width() + box2.get_width()) /2
+        basic_distance_y = (box1.get_height() + box2.get_height()) /2
         return [basic_distance_x, basic_distance_y]
 
     @classmethod
@@ -333,8 +345,8 @@ class BoxAgent(Agent):
     @classmethod
     def get_overlaped_area(cls, box1, box2):
         if cls.overlap_or_not(box1, box2):
-            overlaped_width = min(box1.position[0] + box1.size[0], box2.position[0] + box2.size[0]) - max(box1.position[0], box2.position[0])
-            overlaped_height = min(box1.position[1] + box1.size[1], box2.position[1] + box2.size[1]) - max(box1.position[1], box2.position[1])
+            overlaped_width = min(box1.get_x() + box1.get_width(), box2.get_x() + box2.get_width()) - max(box1.get_x(), box2.get_x())
+            overlaped_height = min(box1.get_y() + box1.get_height(), box2.get_y() + box2.get_height()) - max(box1.get_y(), box2.get_y())
 
             return overlaped_width * overlaped_height
         else:
