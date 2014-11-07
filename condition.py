@@ -24,19 +24,6 @@ def bool_for_layout_and_box(agent_set, agent, bool_function):
 
     return result
 
-# return True if given condition is satisfied for all pairs of two boxes in the given list of boxes
-def verify_all_pairs(boxes, function):
-
-    result = True
-    for i in range(len(boxes)):
-        for j in range(i+1, len(boxes)):
-            if function(boxes[i], boxes[j]) == False:
-                result = False
-                break
-
-    return result
-
-
 class Condition():
     # we call function which reperesents one condition  as "condfun"
     def __init__(self, condfuns=[], and_or=1):
@@ -134,20 +121,42 @@ class BoxCondition(Condition):
     def no_overlap(cls):
         def _no_overlap(situation):
             layout = situation.agent_set
-            boxes = layout.agents
 
-            # lambda is a function to return True if given two boxes are not overlapped
-            return verify_all_pairs(boxes, (lambda x: not BoxAgent.overlap_or_not(x)))
+            boxes = layout.agents
+            result = True
+            for i in range(len(boxes) - 1):
+                for j in range(i+1, len(boxes)):
+                    if BoxAgent.overlap_or_not(boxes[i], boxes[j]) == True:
+                        result = False
+                        break
+
+            return result
 
         return _no_overlap
 
     @classmethod
+    #クソみたいなコードゆえ後で直す
     def all_aligned(cls):
+        # return False if box which does not align to any box exists, otherwise True
         def _all_aligned(situation):
             layout = situation.agent_set
-            boxes  = layout.agents
+            boxes = layout.agents
 
-            return verify_all_pairs(boxes, BoxAgent.aligned_or_not)
+            list_of_number_of_aligned_box = []
+            for i in range(len(boxes)):
+
+                number_of_aligned_box = 0
+                for j in range(len(boxes)):
+                    if BoxAgent.aligned_or_not(boxes[i], boxes[j]) == True:
+                        number_of_aligned_box += 1
+
+                # minus 1 because every box aligned to the box itself
+                list_of_number_of_aligned_box.append(number_of_aligned_box - 1)
+
+            list_of_having_aligned_box_or_not = map((lambda x: x >= 1), list_of_number_of_aligned_box)
+
+            # return True only if all the element is True
+            return reduce((lambda b1,b2: b1 and b2), list_of_having_aligned_box_or_not)
 
         return _all_aligned
 

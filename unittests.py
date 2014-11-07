@@ -215,6 +215,19 @@ class TestCondition(unittest.TestCase):
     def setUp(self):
         pass
         
+    def test_all_aligned(self):
+        box1 = BoxAgent([100, 100], [40, 40])
+        box2 = BoxAgent([200, 100], [30, 30])
+        box3 = BoxAgent([200, 230], [50, 50])
+        box4 = BoxAgent([400, 230], [50, 50])
+
+        layout = Layout([box1, box2, box3, box4])
+        situation = Situation(layout)
+
+        condfun = BoxCondition.all_aligned()
+
+        self.assertTrue(condfun(situation))
+        
     def test_evaluating_condition(self):
         box1 = BoxAgent([50, 100], [30, 30])
         box2 = BoxAgent([60, 200], [30, 30])
