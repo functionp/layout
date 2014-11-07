@@ -320,10 +320,7 @@ class BoxAgent(Agent):
         off_right_or_bottom = (self.get_x() + self.get_width()) > WINDOW_SIZE[0] or (self.get_y() + self.get_height()) > WINDOW_SIZE[1]
         off_left_or_top = self.get_x() < 0 or self.get_y() < 0
 
-        if off_right_or_bottom or off_left_or_top:
-            return True
-        else:
-            return False
+        return off_right_or_bottom or off_left_or_top
 
     @classmethod
     def overlap_or_not(cls, box1, box2):
@@ -333,10 +330,11 @@ class BoxAgent(Agent):
         cross_or_not = (difference_x < box1.get_width() or difference_x < box2.get_width()) and (difference_y < box1.get_height() or difference_y < box2.get_height())
         include_or_not = (box1.get_x() - box2.get_x()) * (box1.get_x() + box1.get_width() - (box2.get_x() + box2.get_width())) < 0 and (box1.get_y() - box2.get_y()) * (box1.get_y() + box1.get_height() - (box2.get_y() + box2.get_height())) < 0
 
-        if cross_or_not or include_or_not:
-            return True
-        else:
-            return False
+        return cross_or_not or include_or_not
+
+    @classmethod
+    def aligned_or_not(cls, box1, box2):
+        return box1.get_x() == box2.get_x() or box1.get_y() == box2.get_y()
 
     @classmethod
     def get_basic_distance_vector(cls, box1, box2):

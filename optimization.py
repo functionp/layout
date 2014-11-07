@@ -121,7 +121,7 @@ class OCSOptimization(Optimization):
             constraints = self.specification.constraints
             situation = Situation(agent_set.get_copy(), agent) 
 
-
+            
             # repeat until objective converged and constraints are sutisfied
             while abs(previous_value - current_value) > OCSOptimization.minimum_difference or constraints.evaluate(situation) == False:
 
