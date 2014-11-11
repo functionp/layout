@@ -327,10 +327,17 @@ class BoxAgent(Agent):
         difference_x = abs(box1.get_x() - box2.get_x())
         difference_y = abs(box1.get_y() - box2.get_y())
 
-        cross_or_not = (difference_x < box1.get_width() or difference_x < box2.get_width()) and (difference_y < box1.get_height() or difference_y < box2.get_height())
-        include_or_not = (box1.get_x() - box2.get_x()) * (box1.get_x() + box1.get_width() - (box2.get_x() + box2.get_width())) < 0 and (box1.get_y() - box2.get_y()) * (box1.get_y() + box1.get_height() - (box2.get_y() + box2.get_height())) < 0
+        if box1.get_x() < box2.get_x():
+            box_on_left = box1
+        else:
+            box_on_left = box2
 
-        return cross_or_not or include_or_not
+        if box1.get_y() < box2.get_y():
+            box_on_top = box1
+        else:
+            box_on_top = box2
+
+        return difference_x < box_on_left.get_width() and difference_y < box_on_top.get_height() 
 
     @classmethod
     def aligned_or_not(cls, box1, box2):
@@ -347,6 +354,7 @@ class BoxAgent(Agent):
         return length_of_vector(box1.get_gravity_difference(box2))
 
     @classmethod
+    #
     def get_overlaped_area(cls, box1, box2):
         if cls.overlap_or_not(box1, box2):
             overlaped_width = min(box1.get_x() + box1.get_width(), box2.get_x() + box2.get_width()) - max(box1.get_x(), box2.get_x())

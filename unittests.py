@@ -25,6 +25,16 @@ class TestAgent(unittest.TestCase):
 
         self.assertTrue(BoxAgent.overlap_or_not(box1, box2))
 
+        box3 = BoxAgent([50, 50], [30, 30])
+        box4 = BoxAgent([90, 90], [50, 50])
+
+        self.assertFalse(BoxAgent.overlap_or_not(box3, box4))
+
+        box5 = BoxAgent([50, 50], [100, 100])
+        box6 = BoxAgent([60, 60], [20, 20])
+
+        self.assertTrue(BoxAgent.overlap_or_not(box5, box6))
+
 
     def test_evaluating_condition(self):
         box1 = BoxAgent()
