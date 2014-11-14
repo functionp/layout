@@ -135,7 +135,6 @@ class BoxCondition(Condition):
         return _no_overlap
 
     @classmethod
-    #クソみたいなコードゆえ後で直す
     def all_aligned(cls):
         # return False if box which does not align to any box exists, otherwise True
         def _all_aligned(situation):

@@ -14,9 +14,15 @@ class Specification():
     @staticmethod
     def load_specification(file_path):
         something = ''
-        condition = Condition([BoxCondition.no_overlap()])
         #return Specification(constraint, objective)
-        return Specification(SampleObjective(), condition)
+        return SampleSpecification()
+
+class SampleSpecification(Specification):
+    def __init__(self):
+        objective = SampleObjective()
+        constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()])
+
+        Specification.__init__(self, objective, constraint)
 
 class Objective():
     def __init__(self, max_min, function):

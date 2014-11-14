@@ -11,7 +11,6 @@ def update_something(bool_condition, process):
     else:
         return False
 
-
 class Optimization():
 
     def __init__(self, specification, agent_set):
