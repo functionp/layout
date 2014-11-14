@@ -178,6 +178,7 @@ class BoxAction(Action):
         return _space_most_aligned_box
 
     @classmethod
+    #未テスト
     def split_oneself_vertically(cls, layout):
 
         def _split_oneself_vertically(box):
@@ -224,6 +225,7 @@ class BoxRule(Rule):
     @classmethod
     # take layout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, layout):
+#        action_candidates = [BoxAction.split_oneself_vertically(layout)]
         action_candidates = [BoxAction.stay(),
                              BoxAction.align_to_nearest_box(layout),
                              BoxAction.space_most_aligned_box(20, layout),

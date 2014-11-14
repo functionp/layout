@@ -220,6 +220,19 @@ class TestAction(unittest.TestCase):
         self.assertEqual(box2.get_width(), box1.get_width())
 
 
+    def test_split_vertically(self):
+        box1 = BoxAgent([100, 100], [200, 200])
+
+        layout = Layout([box1])
+
+        action1 = BoxAction.split_oneself_vertically(layout)
+        action1(layout.agents[0])
+        action1(layout.agents[0])
+        action1(layout.agents[0])
+
+        self.assertEqual(layout.get_number_of_agents(), 4)
+
+
 class TestCondition(unittest.TestCase):
 
     def setUp(self):
