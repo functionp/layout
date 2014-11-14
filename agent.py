@@ -322,6 +322,17 @@ class BoxAgent(Agent):
 
         return off_right_or_bottom or off_left_or_top
 
+
+    def get_vertically_splited_box(self, margin):
+        splited_width = (self.get_width() - margin) / 2
+        splited_size = [splited_width , self.get_height()]
+        box1 = BoxAgent(self.position, splited_size)
+
+        box2_position = [self.get_x() + (self.get_width() + margin) / 2, self.get_y()]
+        box2 = BoxAgent(box2_position, splited_size)
+
+        return box1, box2
+
     @classmethod
     def overlap_or_not(cls, box1, box2):
         difference_x = abs(box1.get_x() - box2.get_x())

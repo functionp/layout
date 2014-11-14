@@ -177,6 +177,17 @@ class BoxAction(Action):
 
         return _space_most_aligned_box
 
+    @classmethod
+    def split_oneself_vertically(cls, layout):
+
+        def _split_oneself_vertically(box):
+            splited_box1, splited_box2 = box.get_vertically_splited_box(20)
+            layout.add_agent(splited_box1)
+            layout.add_agent(splited_box2)
+            layout.remove_agent(box)
+
+        return _split_oneself_vertically
+
 class Rule():
     initial_strength = 0.5
 

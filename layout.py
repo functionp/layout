@@ -7,6 +7,12 @@ class AgentSet():
     def get_copy(self):
         return AgentSet(self.agents[:])
 
+    def add_agent(self, agent):
+        self.agents.append(agent)
+
+    def remove_agent(self, agent):
+        self.agents.remove(agent)
+
     def update(self, agents):
         self.agents = agents
 

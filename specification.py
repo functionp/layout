@@ -20,7 +20,7 @@ class Specification():
 class SampleSpecification(Specification):
     def __init__(self):
         objective = SampleObjective()
-        constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()])
+        constraint = Condition([BoxCondition.no_overlap()], BoxCondition.all_aligned())
 
         Specification.__init__(self, objective, constraint)
 

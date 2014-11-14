@@ -142,7 +142,8 @@ class OCSOptimization(Optimization):
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
                 applied_pairs.append(pair_of_episode_and_rule)
 
-                print agent
+                #おそらく無限ループの原因はどんなアクションによっても体系が変化しない組み方になるから　制約がいつまでも解消されない→報酬減→削除→生成→無理
+                print "im here "
                 self.display_status()
                 episode += 1
 
