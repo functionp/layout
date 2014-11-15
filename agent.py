@@ -7,7 +7,13 @@ class Agent():
     max_rules = 5
 
     def __init__(self):
-        self.ruleset = []
+        self.set_ruleset([])
+
+    def set_ruleset(self, ruleset):
+        self.ruleset = ruleset
+
+    def get_copy_of_ruleset(self):
+        return self.ruleset[:]
 
     # return sorted ruleset according to its strength
     def get_sorted_ruleset(self):
@@ -323,13 +329,17 @@ class BoxAgent(Agent):
         return off_right_or_bottom or off_left_or_top
 
 
-    def get_vertically_splited_box(self, margin):
+    def get_vertically_splited_boxes(self, margin):
+        original_rule = self.get_copy_of_ruleset()
+
         splited_width = (self.get_width() - margin) / 2
         splited_size = [splited_width , self.get_height()]
         box1 = BoxAgent(self.position, splited_size)
+        box1.set_ruleset(original_rule)
 
         box2_position = [self.get_x() + (self.get_width() + margin) / 2, self.get_y()]
         box2 = BoxAgent(box2_position, splited_size)
+        box2.set_ruleset(original_rule)
 
         return box1, box2
 

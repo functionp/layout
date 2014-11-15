@@ -182,9 +182,12 @@ class BoxAction(Action):
     def split_oneself_vertically(cls, layout):
 
         def _split_oneself_vertically(box):
-            splited_box1, splited_box2 = box.get_vertically_splited_box(20)
+            splited_box1, splited_box2 = box.get_vertically_splited_boxes(20)
             layout.add_agent(splited_box1)
             layout.add_agent(splited_box2)
+
+            print layout.agents
+            print box
             layout.remove_agent(box)
 
         return _split_oneself_vertically
@@ -229,7 +232,8 @@ class BoxRule(Rule):
         action_candidates = [BoxAction.stay(),
                              BoxAction.align_to_nearest_box(layout),
                              BoxAction.space_most_aligned_box(20, layout),
-                             BoxAction.unify_size_to_most_aligned_box(layout)]
+                             BoxAction.unify_size_to_most_aligned_box(layout),
+                             BoxAction.split_oneself_vertically(layout)]
 
         action = random.choice(action_candidates)
         return Rule(condition, action)

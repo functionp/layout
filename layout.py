@@ -75,8 +75,8 @@ class SampleLayout(Layout):
         margin = 20
         boxes.append(BoxAgent([50,50], [200,200]))
         boxes.append(BoxAgent([150,200], [100,200]))
-        boxes.append(BoxAgent([300,100], [400,400]))
-        boxes.append(BoxAgent([500,400], [300,100]))
+#        boxes.append(BoxAgent([300,100], [400,400]))
+#        boxes.append(BoxAgent([500,400], [300,100]))
 #        boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [100,200]))
 #        boxes.append(BoxAgent(boxes[3].get_right_position(margin), [350,200]))
 #        boxes.append(BoxAgent(boxes[4].get_right_position(margin), [100,200]))
