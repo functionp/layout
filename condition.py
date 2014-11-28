@@ -102,6 +102,15 @@ class BoxCondition(Condition):
     # # # CONDFUNS # # #
 
     @classmethod
+    def width_limit(cls, limit):
+        def _width_limit(situation):
+            box = situation.agent
+
+            return box.get_width() < limit
+
+        return _width_limit
+
+    @classmethod
     def in_the_edge(cls):
         def _in_the_edge(situation):
             layout = situation.agent_set

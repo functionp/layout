@@ -67,19 +67,17 @@ class Layout(AgentSet):
             agent.render(parent)
 
 
-
 class SampleLayout(Layout):
     def __init__(self):
 
         boxes = []
         margin = 20
-        boxes.append(BoxAgent([50,50], [200,200]))
-        boxes.append(BoxAgent([150,200], [100,200]))
-        boxes.append(BoxAgent([300,100], [400,400]))
-        boxes.append(BoxAgent([500,400], [300,100]))
-#        boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [100,200]))
-#        boxes.append(BoxAgent(boxes[3].get_right_position(margin), [350,200]))
-#        boxes.append(BoxAgent(boxes[4].get_right_position(margin), [100,200]))
+
+        side_condition = Condition([BoxCondition.width_limit(100)] , 1)
+        main_condition = Condition([BoxCondition.width_limit(800)] , 1)
+
+        boxes.append(BoxAgent([50,50], [200,200], side_condition))
+        boxes.append(BoxAgent([150,200], [100,200], main_condition))
 
         Layout.__init__(self, boxes)
 

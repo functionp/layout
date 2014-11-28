@@ -6,9 +6,10 @@ class Agent():
 
     max_rules = 5
 
-    def __init__(self, condition):
+    def __init__(self, condition, label=""):
         self.set_ruleset([])
         self.condition = condition
+        self.label = label
 
     def set_ruleset(self, ruleset):
         self.ruleset = ruleset
@@ -105,12 +106,12 @@ def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
 
 class BoxAgent(Agent):
-    def __init__(self, position=[0,0], size=[10,10], condition=None):
+    def __init__(self, position=[0,0], size=[10,10], condition=None, label=""):
 
         # to avoid import error, avoid to use initial value
         if condition == None: condition = Condition()
 
-        Agent.__init__(self, condition)
+        Agent.__init__(self, condition, label)
         self.position = position
         self.size = size
 
