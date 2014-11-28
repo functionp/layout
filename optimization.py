@@ -67,7 +67,7 @@ class OCSOptimization(Optimization):
         self.agent_set.set_rulesets(self.organizational_rulesets)
 
         constraints = self.specification.constraints
-        situation = Situation(self.agent_set.get_copy()) 
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
 
         #for i in range(OCSOptimization.max_iteration):
 
@@ -118,7 +118,7 @@ class OCSOptimization(Optimization):
             previous_value = 10000
 
             constraints = self.specification.constraints
-            situation = Situation(agent_set.get_copy(), agent) 
+            situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
             
             # repeat until objective converged and constraints are sutisfied
@@ -136,7 +136,7 @@ class OCSOptimization(Optimization):
                 agent.execute_action(selected_rule.action)
 
                 current_value = self.get_objective_value()
-                situation = Situation(agent_set.get_copy(), agent)
+                situation = Situation(agent_set=agent_set.get_copy(), agent=agent)
 
                 # rememebr applied rule with episode(time)
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
@@ -175,7 +175,7 @@ class OCSOptimization(Optimization):
         # do not give reward to the rule which does not satisfy the constraint
         def compare_with_before_and_satisfy():
             constraints = self.specification.constraints
-            situation = Situation(self.agent_set.get_copy()) 
+            situation = Situation(agent_set=self.agent_set.get_copy()) 
             return constraints.evaluate(situation) == True and previous_value > current_value
 
         return compare_with_before_and_satisfy()

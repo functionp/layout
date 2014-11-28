@@ -162,7 +162,7 @@ class BoxAgent(Agent):
 
     #add rule which has present condition and random action
     def add_rule_with_random_action(self, layout):
-        situation = Situation(layout, self)
+        situation = Situation(agent_set=layout, agent=self)
         condition = Condition.make_condition(situation)
 
         if condition.condfuns != []:
@@ -178,7 +178,7 @@ class BoxAgent(Agent):
     def get_matching_rule(self, layout):
         self.ruleset = self.get_sorted_ruleset()
         matching_rule = None
-        current_situation = Situation(layout, self)
+        current_situation = Situation(agent_set=layout, agent=self)
 
         for rule in self.ruleset:
             if rule.condition.evaluate(current_situation):

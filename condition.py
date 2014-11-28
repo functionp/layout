@@ -1,9 +1,9 @@
 #-*- coding: utf-8 -*-
 
 class Situation():
-    def __init__(self, agent_set, agent=None):
-        self.agent_set = agent_set
-        self.agent = agent
+    def __init__(self, **kwargs):
+        self.agent_set = kwargs.get('agent_set', None)
+        self.agent = kwargs.get('agent', None)
 
 # return True if relation between given box and any box in given layout satisfies the given bool function
 def bool_for_layout_and_box(agent_set, agent, bool_function):

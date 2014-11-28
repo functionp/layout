@@ -245,7 +245,7 @@ class TestCondition(unittest.TestCase):
         box4 = BoxAgent([400, 230], [50, 50])
 
         layout = Layout([box1, box2, box3, box4])
-        situation = Situation(layout)
+        situation = Situation(agent_set=layout)
 
         condfun = BoxCondition.all_aligned()
 
@@ -257,7 +257,7 @@ class TestCondition(unittest.TestCase):
         box3 = BoxAgent([120, 100], [30, 30])
 
         layout = Layout([box1, box2, box3])
-        situation = Situation(layout, box1)
+        situation = Situation(agent_set=layout, agent=box1)
         condition = BoxCondition.make_condition(situation)
 
         self.assertTrue(condition.evaluate(situation))
@@ -269,7 +269,7 @@ class TestCondition(unittest.TestCase):
         box4 = BoxAgent([470, 470], [30, 30])
 
         layout = Layout([box1, box2, box3, box4])
-        situation = Situation(layout, box2)
+        situation = Situation(agent_set=layout, agent=box2)
 
         condfun = BoxCondition.having_overlapped_box()
         self.assertTrue(condfun(situation))
@@ -282,7 +282,7 @@ class TestCondition(unittest.TestCase):
         box4 = BoxAgent([470, 470], [30, 30])
 
         layout = Layout([box1, box2, box3, box4])
-        situation = Situation(layout, box1)
+        situation = Situation(agent_set=layout, agent=box1)
 
         condfun = BoxCondition.having_box_in_given_distance(30)
         self.assertTrue(condfun(situation))
