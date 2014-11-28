@@ -4,12 +4,11 @@ from condition import *
 
 #制約条件も目的関数に取り込む方針で　カプセル化の意味でSpecificationは消さない
 class Specification():
-    def __init__(self, objective, constraints=Condition()):
+    def __init__(self, default_layout, objective, constraints=Condition()):
+        self.default_layout = default_layout
         self.objective = objective
         self.constraints = constraints
 
-    def get_default_layout(self):
-        return SampleLayout()
 
     @staticmethod
     def load_specification(file_path):
@@ -19,10 +18,11 @@ class Specification():
 
 class SampleSpecification(Specification):
     def __init__(self):
+        default_layout = SampleLayout()
         objective = SampleObjective()
         constraint = Condition([BoxCondition.no_overlap()], BoxCondition.all_aligned())
 
-        Specification.__init__(self, objective, constraint)
+        Specification.__init__(self, default_layout, objective, constraint)
 
 class Objective():
     def __init__(self, max_min, function):
@@ -31,6 +31,7 @@ class Objective():
 
 class SampleObjective(Objective):
     def __init__(self):
+        
 
         def sum_of_overlapped_area(layout):
 

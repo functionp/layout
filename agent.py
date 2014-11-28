@@ -235,7 +235,7 @@ class BoxAgent(Agent):
             self.set_y(box.get_y() - self.get_height() - amount)
 
     # place itself next to given box making given amount of horizontal space
-    def make_horizontal_space(self, box, amount):        
+    def make_horizontal_space(self, box, amount):
         if box.get_x() < self.get_x():
             self.set_x(box.get_x() + box.get_width() + amount)
         else:
@@ -248,25 +248,6 @@ class BoxAgent(Agent):
 
         # take 1st box as nearest box because 0th box is box itself
         nearest_box = pairs[1][1]
-
-        return nearest_box
-
-    def get_box_on_left(self, layout):
-
-        difference_x = abs(box1.get_x() - box2.get_x())
-        difference_y = abs(box1.get_y() - box2.get_y())
-
-        if box1.get_x() < box2.get_x():
-            box_on_left = box1
-        else:
-            box_on_left = box2
-
-        if box1.get_y() < box2.get_y():
-            box_on_top = box1
-        else:
-            box_on_top = box2
-
-        return difference_x < box_on_left.get_width() and difference_y < box_on_top.get_height() 
 
         return nearest_box
 

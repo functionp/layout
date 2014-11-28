@@ -64,9 +64,9 @@ def click_start_button(event):
 
     specification = Specification.load_specification("sample.dat")
 
-    layout = specification.get_default_layout()
+    #layout = specification.get_default_layout()
 
-    optimization = OCSOptimization(specification, layout)
+    optimization = OCSOptimization(specification, specification.default_layout)
 
     objective_value_before = optimization.get_objective_value()
     print "Optimization Value Before:"
