@@ -6,8 +6,9 @@ class Agent():
 
     max_rules = 5
 
-    def __init__(self):
+    def __init__(self, condition):
         self.set_ruleset([])
+        self.condition = condition
 
     def set_ruleset(self, ruleset):
         self.ruleset = ruleset
@@ -104,8 +105,12 @@ def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
 
 class BoxAgent(Agent):
-    def __init__(self, position=[0,0], size=[10,10]):
-        Agent.__init__(self)
+    def __init__(self, position=[0,0], size=[10,10], condition=None):
+
+        # to avoid import error, avoid to use initial value
+        if condition == None: condition = Condition()
+
+        Agent.__init__(self, condition)
         self.position = position
         self.size = size
 
@@ -243,6 +248,25 @@ class BoxAgent(Agent):
 
         # take 1st box as nearest box because 0th box is box itself
         nearest_box = pairs[1][1]
+
+        return nearest_box
+
+    def get_box_on_left(self, layout):
+
+        difference_x = abs(box1.get_x() - box2.get_x())
+        difference_y = abs(box1.get_y() - box2.get_y())
+
+        if box1.get_x() < box2.get_x():
+            box_on_left = box1
+        else:
+            box_on_left = box2
+
+        if box1.get_y() < box2.get_y():
+            box_on_top = box1
+        else:
+            box_on_top = box2
+
+        return difference_x < box_on_left.get_width() and difference_y < box_on_top.get_height() 
 
         return nearest_box
 
@@ -390,5 +414,5 @@ class BoxAgent(Agent):
 import wx
 import random
 from main import WINDOW_SIZE
-from condition import *
 from rule import *
+from condition import *

@@ -178,7 +178,7 @@ class BoxAction(Action):
         return _space_most_aligned_box
 
     @classmethod
-    #未テスト
+    #途中でエージェントの数を変えるアクションは強化学習構造を変更する必要あり
     def split_oneself_vertically(cls, layout):
 
         def _split_oneself_vertically(box):
@@ -232,8 +232,7 @@ class BoxRule(Rule):
         action_candidates = [BoxAction.stay(),
                              BoxAction.align_to_nearest_box(layout),
                              BoxAction.space_most_aligned_box(20, layout),
-                             BoxAction.unify_size_to_most_aligned_box(layout),
-                             BoxAction.split_oneself_vertically(layout)]
+                             BoxAction.unify_size_to_most_aligned_box(layout)]
 
         action = random.choice(action_candidates)
         return Rule(condition, action)
