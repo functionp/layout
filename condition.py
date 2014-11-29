@@ -102,13 +102,36 @@ class BoxCondition(Condition):
     # # # CONDFUNS # # #
 
     @classmethod
-    def width_limit(cls, limit):
-        def _width_limit(situation):
+    def width_constraint(cls, upper_limit, lower_limit=0):
+        def _width_constraint(situation):
             box = situation.agent
+            return lower_limit <= box.get_width() and box.get_width() <= upper_limit
 
-            return box.get_width() < limit
+        return _width_constraint
 
-        return _width_limit
+    @classmethod
+    def height_constraint(cls, upper_limit, lower_limit=0):
+        def _height_constraint(situation):
+            box = situation.agent
+            return lower_limit <= box.get_height() and box.get_height() <= upper_limit
+
+        return _height_constraint
+
+    @classmethod
+    def x_constraint(cls, upper_limit, lower_limit=0):
+        def _x_constraint(situation):
+            box = situation.agent
+            return lower_limit <= box.get_x() and box.get_x() <= upper_limit
+
+        return _x_constraint
+
+    @classmethod
+    def y_constraint(cls, upper_limit, lower_limit=0):
+        def _y_constraint(situation):
+            box = situation.agent
+            return lower_limit <= box.get_y() and box.get_y() <= upper_limit
+
+        return _y_constraint
 
     @classmethod
     def in_the_edge(cls):

@@ -82,13 +82,22 @@ class Layout(AgentSet):
         for agent in self.agents:
             agent.render(parent_panel)
 
+    def evaluate_agent_constraint(self):
+        bool_list = []
+        for agent in self.agents:
+            bool_list.append(agent.condition.evaluate())
+
+        if len(bool_list) == 0:
+            return True
+        else:
+            return reduce((lambda b1, b2: b1 and b2) bool_list)
 
 class SampleLayout(Layout):
     def __init__(self):
 
         margin = 20
 
-        base_box = BoxAgent([200,20], [950,900], 1)
+        base_box = BoxAgent([200,20], [950,900], 0, "base")
 
         boxes = []
 
