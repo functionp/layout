@@ -159,10 +159,13 @@ class BoxAgent(Agent):
 
         if value < 0: value = 0
 
-        if self.get_x() + value < right_limit:
-            self.size[0] = value
+        if right_limit  self.get_x() + value:
+            self.size[1] = right_limit - self.get_x()
         else:
-            self.size[0] = right_limit - self.get_x()
+            print right_limit
+            print self.get_x()
+            print value
+            self.size[1] = value
 
     def set_height(self, value):
         parent_box = self.layout.parent
@@ -170,10 +173,10 @@ class BoxAgent(Agent):
 
         if value < 0: value = 0
 
-        if self.get_y() + value < bottom_limit:
-            self.size[1] = value
-        else:
+        if bottom_limit < self.get_y() + value:
             self.size[1] = bottom_limit - self.get_y()
+        else:
+            self.size[1] = value
 
     def set_layout(self, layout):
         self.layout = layout

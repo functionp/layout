@@ -16,6 +16,8 @@ class TestAgent(unittest.TestCase):
         box1 = BoxAgent([50, 100], [30, 30])
         box2 = BoxAgent([60, 200], [30, 30])
 
+        Layout([box1, box2])
+
         box2.align_left(box1)
         self.assertEqual(box2.get_x(), 50)
 
@@ -162,6 +164,8 @@ class TestAction(unittest.TestCase):
 
     def test_movement(self):
         box1 = BoxAgent([100, 100], [30, 30])
+
+        Layout([box1])
 
         action1 = BoxAction.move_vertically(50)
         action2 = BoxAction.move_horizontally(50)
