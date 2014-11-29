@@ -34,7 +34,11 @@ class SampleObjective(Objective):
         def sum_of_overlapped_area(layout):
 
             boxes = layout.agents
-            overlapped_area_list = [[BoxAgent.get_overlaped_area(boxes[i], boxes[j]) for j in range(i, len(boxes)) if i != j] for i in range(len(boxes))]
+
+            if len(boxes) > 1:
+                overlapped_area_list = [[BoxAgent.get_overlaped_area(boxes[i], boxes[j]) for j in range(i, len(boxes)) if i != j] for i in range(len(boxes))]
+            else:
+                overlapped_area_list = [[0]]
 
             # return sum of distances
             return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), overlapped_area_list))

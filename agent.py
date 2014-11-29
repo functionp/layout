@@ -131,16 +131,26 @@ class BoxAgent(Agent):
         return self.size[1]
 
     def set_x(self, value):
+        x_before_movement = self.get_x()
         base_box = self.parent_layout.base_box
         left_limit = base_box.get_x()
         right_limit = base_box.get_x()+ base_box.get_width()
 
         if value < left_limit:
-            self.position[0] = left_limit + 1
+            x_after_movement = left_limit + 1
         elif right_limit < value + self.get_width():
-            self.position[0] = right_limit - self.get_width() - 1
+            x_after_movement = right_limit - self.get_width() - 1
         else:
-            self.position[0] = value
+            x_after_movement = value
+
+        amount_to_move = x_after_movement - x_before_movement
+        self.position[0] = x_after_movement
+
+        # move all agents in the box itself
+        if self.inner_layout:
+            for agent in self.inner_layout.agents:
+                print amount_to_move
+                agent.add_x(amount_to_move)
 
     def set_y(self, value):
         base_box = self.parent_layout.base_box
@@ -148,11 +158,19 @@ class BoxAgent(Agent):
         bottom_limit = base_box.get_y()+ base_box.get_height()
 
         if value < top_limit:
-            self.position[1] = top_limit + 1
+            y_after_movement = top_limit + 1
         elif bottom_limit < value + self.get_height():
-            self.position[1] = bottom_limit - self.get_height() -1
+            y_after_movement = bottom_limit - self.get_height() -1
         else:
-            self.position[1] = value
+            y_after_movement = value
+
+        amount_to_move = y_after_movement - value
+        self.position[1] = y_after_movement
+
+        # move all agents in the box itself
+        if self.inner_layout:
+            for agent in self.inner_layout.agents:
+                agent.add_y(amount_to_move)
 
     def set_width(self, value):
         base_box = self.parent_layout.base_box
@@ -183,9 +201,14 @@ class BoxAgent(Agent):
         self.inner_layout = inner_layout
 
     def render(self, parent_panel):
+
         if self.visibility == 1:
             panel = wx.Panel(parent_panel, wx.ID_ANY, pos=self.position, size=self.size, style=wx.SIMPLE_BORDER)
             panel.SetBackgroundColour("#ffffff")
+
+        # if this box has boxes(layout) in itself, render them
+        if self.inner_layout:
+            self.inner_layout.render(parent_panel)
 
     #add rule which has present condition and random action
     def add_rule_with_random_action(self, layout):

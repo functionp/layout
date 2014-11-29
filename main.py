@@ -74,6 +74,7 @@ def click_start_button(event):
 
     #optimization.optimize()
     optimized_layout = optimization.agent_set
+    optimized_layout.agents[0].add_x(-50)
     optimized_layout.render(optimization_frame.base_panel)
 
     objective_value = optimization.get_objective_value()

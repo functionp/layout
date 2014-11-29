@@ -89,7 +89,7 @@ class SampleLayout(Layout):
         margin = 20
 
         base_box = BoxAgent([100,20], [900,900], 0)
-
+        
         boxes = []
 
         header_condition = Condition()
