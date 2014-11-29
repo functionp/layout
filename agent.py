@@ -130,34 +130,50 @@ class BoxAgent(Agent):
         return self.size[1]
 
     def set_x(self, value):
+        parent_box = self.layout.parent
+        left_limit = parent_box.get_x()
+        right_limit = parent_box.get_x()+ parent_box.get_width()
 
-        if value < 0:
-            self.position[0] = 1
-        elif WINDOW_SIZE[0] < value + self.get_width():
-            self.position[0] = WINDOW_SIZE[0] - self.get_width() - 1
+        if value < left_limit:
+            self.position[0] = left_limit + 1
+        elif right_limit < value + self.get_width():
+            self.position[0] = right_limit - self.get_width() - 1
         else:
             self.position[0] = value
 
     def set_y(self, value):
+        parent_box = self.layout.parent
+        top_limit = parent_box.get_y()
+        bottom_limit = parent_box.get_y()+ parent_box.get_height()
 
-        if value < 0:
-            self.position[1] = 1
-        elif WINDOW_SIZE[1] < value + self.get_height():
-            self.position[1] = WINDOW_SIZE[1] - self.get_height() -1
+        if value < top_limit:
+            self.position[1] = top_limit + 1
+        elif bottom_limit < value + self.get_height():
+            self.position[1] = bottom_limit - self.get_height() -1
         else:
             self.position[1] = value
 
     def set_width(self, value):
-        if value > 0:
-            self.size[0] = value
+        parent_box = self.layout.parent
+        right_limit = parent_box.get_x()+ parent_box.get_width()
+
+        if 0 < value: value = 0
+
+        if right_limit < self.get_x() + value:
+            self.size[1] = right_limit - self.get_x()
         else:
-            self.size[0] = 0
+            self.size[1] = value
 
     def set_height(self, value):
-        if value > 0:
-            self.size[1] = value
+        parent_box = self.layout.parent
+        bottom_limit = parent_box.get_y()+ parent_box.get_height()
+
+        if 0 < value: value = 0
+
+        if bottom_limit < self.get_y() + value:
+            self.size[1] = bottom_limit - self.get_y()
         else:
-            self.size[1] = 0
+            self.size[1] = value
 
     def set_layout(self, layout):
         self.layout = layout

@@ -80,7 +80,7 @@ class OCSOptimization(Optimization):
     def one_optimization_cycle(self):
         # repeat while ruleset is not converged(while new rule is generated)
         rule_not_found_or_not = True
-        while rule_not_found_or_not == True : 
+        while rule_not_found_or_not == True:
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
             Agent.exchange_rule_randomly(self.agent_set.agents)
 
