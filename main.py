@@ -72,7 +72,7 @@ def click_start_button(event):
     print "Optimization Value Before:"
     print objective_value_before
 
-    optimization.optimize()
+    #optimization.optimize()
     optimized_layout = optimization.agent_set
     optimized_layout.render(optimization_frame.base_panel)
 
