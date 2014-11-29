@@ -73,7 +73,7 @@ class OCSOptimization(Optimization):
 
         #いくら制約条件をつけてもそれを緩和するアクション・目的関数（突然変異）を作らなければ収束しきって動かない（ex. 互いにアラインアクションなど）
         i = 0
-        while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False:
+        while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False:
             self.one_optimization_cycle()
             i += 1
 
@@ -120,8 +120,7 @@ class OCSOptimization(Optimization):
             constraints = self.specification.constraints
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
-            
-            # repeat until objective converged and constraints are sutisfied
+            # repeat until objective converged and constraints are satisfied
             while abs(previous_value - current_value) > OCSOptimization.minimum_difference or constraints.evaluate(situation) == False:
 
                 selected_rule = agent.rule_select()
@@ -176,7 +175,8 @@ class OCSOptimization(Optimization):
         def compare_with_before_and_satisfy():
             constraints = self.specification.constraints
             situation = Situation(agent_set=self.agent_set.get_copy()) 
-            return constraints.evaluate(situation) == True and previous_value > current_value
+            constraints_satisfied = constraints.evaluate(situation) == True and situation.agent_set.evaluate_agent_constraint()
+            return constraints_satisfied and previous_value > current_value
 
         return compare_with_before_and_satisfy()
 
