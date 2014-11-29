@@ -88,7 +88,7 @@ class SampleLayout(Layout):
 
         margin = 20
 
-        base_box = BoxAgent([100,20], [900,900], 0)
+        base_box = BoxAgent([200,20], [950,900], 1)
 
         boxes = []
 
@@ -96,13 +96,12 @@ class SampleLayout(Layout):
         side_condition = Condition([BoxCondition.width_limit(100)] , 1)
         main_condition = Condition([BoxCondition.width_limit(800)] , 1)
 
-        boxes.append(BoxAgent([200,50], [800,100], 1, "header", header_condition))
+        boxes.append(BoxAgent([10,10], [800,100], 1, "header", header_condition))
         boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [200,400], 1, "side", side_condition))
         boxes.append(BoxAgent(boxes[1].get_right_position(margin), [100,400], 1,  "main", main_condition))
         boxes.append(BoxAgent(boxes[1].get_bottom_position(margin), [800,100], 1))
 
         layout = Layout(boxes, base_box)
-
 
         Layout.__init__(self, [base_box])
 
