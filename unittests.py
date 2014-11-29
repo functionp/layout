@@ -61,10 +61,10 @@ class TestAgent(unittest.TestCase):
 
 
     def test_set_size(self):
-        parent_box = BoxAgent([100, 100], [400, 400])
+        base_box = BoxAgent([100, 100], [400, 400])
         box1 = BoxAgent([150, 150], [100, 100])
 
-        layout = Layout([box1], parent_box)
+        layout = Layout([box1], base_box)
         box1.set_width(400)
 
         self.assertEqual(box1.get_width(), 350)

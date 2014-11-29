@@ -106,7 +106,7 @@ def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
 
 class BoxAgent(Agent):
-    def __init__(self, position=[0,0], size=[10,10], visibility=1, label="", condition=None, layout=None):
+    def __init__(self, position=[0,0], size=[10,10], visibility=1, label="", condition=None, parent_layout=None):
 
         # to avoid import error, avoid to use initial value
         if condition == None: condition = Condition()
@@ -115,7 +115,8 @@ class BoxAgent(Agent):
         self.position = position
         self.size = size
         self.visibility = visibility
-        self.set_layout(layout)
+        self.set_parent_layout(parent_layout)
+        self.set_inner_layout(None)
 
     def get_x(self):
         return self.position[0]
@@ -130,9 +131,9 @@ class BoxAgent(Agent):
         return self.size[1]
 
     def set_x(self, value):
-        parent_box = self.layout.parent
-        left_limit = parent_box.get_x()
-        right_limit = parent_box.get_x()+ parent_box.get_width()
+        base_box = self.parent_layout.base_box
+        left_limit = base_box.get_x()
+        right_limit = base_box.get_x()+ base_box.get_width()
 
         if value < left_limit:
             self.position[0] = left_limit + 1
@@ -142,9 +143,9 @@ class BoxAgent(Agent):
             self.position[0] = value
 
     def set_y(self, value):
-        parent_box = self.layout.parent
-        top_limit = parent_box.get_y()
-        bottom_limit = parent_box.get_y()+ parent_box.get_height()
+        base_box = self.parent_layout.base_box
+        top_limit = base_box.get_y()
+        bottom_limit = base_box.get_y()+ base_box.get_height()
 
         if value < top_limit:
             self.position[1] = top_limit + 1
@@ -154,8 +155,8 @@ class BoxAgent(Agent):
             self.position[1] = value
 
     def set_width(self, value):
-        parent_box = self.layout.parent
-        right_limit = parent_box.get_x()+ parent_box.get_width()
+        base_box = self.parent_layout.base_box
+        right_limit = base_box.get_x()+ base_box.get_width()
 
         if value < 0: value = 0
 
@@ -165,8 +166,8 @@ class BoxAgent(Agent):
             self.size[0] = right_limit - self.get_x()
 
     def set_height(self, value):
-        parent_box = self.layout.parent
-        bottom_limit = parent_box.get_y()+ parent_box.get_height()
+        base_box = self.parent_layout.base_box
+        bottom_limit = base_box.get_y()+ base_box.get_height()
 
         if value < 0: value = 0
 
@@ -175,8 +176,11 @@ class BoxAgent(Agent):
         else:
             self.size[1] = bottom_limit - self.get_y()
 
-    def set_layout(self, layout):
-        self.layout = layout
+    def set_parent_layout(self, parent_layout):
+        self.parent_layout = parent_layout
+
+    def set_inner_layout(self, inner_layout):
+        self.inner_layout = inner_layout
 
     def render(self, parent_panel):
         if self.visibility == 1:

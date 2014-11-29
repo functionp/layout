@@ -57,19 +57,23 @@ class AgentSet():
 
 
 class Layout(AgentSet):
-    def __init__(self, agents=[], parent=None):
+    def __init__(self, agents=[], base_box=None):
 
         # to avoid import error, avoid to use initial value
-        if parent == None: parent = BoxAgent([0,0], main.WINDOW_SIZE)
+        if base_box == None: base_box = BoxAgent([0,0], main.WINDOW_SIZE)
         self.agents = agents
-        self.parent = parent
+        self.set_base_box(base_box)
 
         for agent in agents:
-            agent.set_layout(self)
+            agent.set_parent_layout(self)
+
+    def set_base_box(self, base_box):
+        self.base_box = base_box
+        base_box.set_inner_layout(self)
 
     def add_box(self, box):
         self.agents.append(box)
-        box.set_layout(self)
+        box.set_parent_layout(self)
 
     def get_copy(self):
         return Layout(self.agents[:])
@@ -84,6 +88,8 @@ class SampleLayout(Layout):
 
         boxes = []
         margin = 20
+
+        base_box = BoxAgent([200,50], [800,100], 1)
 
         header_condition = Condition()
         side_condition = Condition([BoxCondition.width_limit(100)] , 1)
