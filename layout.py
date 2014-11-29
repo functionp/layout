@@ -64,6 +64,13 @@ class Layout(AgentSet):
         self.agents = agents
         self.parent = parent
 
+        for agent in agents:
+            agent.set_layout(self)
+
+    def add_box(self, box):
+        self.agents.append(box)
+        box.set_layout(self)
+
     def get_copy(self):
         return Layout(self.agents[:])
 

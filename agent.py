@@ -106,7 +106,7 @@ def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
 
 class BoxAgent(Agent):
-    def __init__(self, position=[0,0], size=[10,10], visibility=1, label="", condition=None):
+    def __init__(self, position=[0,0], size=[10,10], visibility=1, label="", condition=None, layout=None):
 
         # to avoid import error, avoid to use initial value
         if condition == None: condition = Condition()
@@ -115,6 +115,7 @@ class BoxAgent(Agent):
         self.position = position
         self.size = size
         self.visibility = visibility
+        self.set_layout(layout)
 
     def get_x(self):
         return self.position[0]
@@ -157,6 +158,9 @@ class BoxAgent(Agent):
             self.size[1] = value
         else:
             self.size[1] = 0
+
+    def set_layout(self, layout):
+        self.layout = layout
 
     def render(self, parent_panel):
         if self.visibility == 1:

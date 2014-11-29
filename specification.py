@@ -9,7 +9,6 @@ class Specification():
         self.objective = objective
         self.constraints = constraints
 
-
     @staticmethod
     def load_specification(file_path):
         something = ''
@@ -31,7 +30,6 @@ class Objective():
 
 class SampleObjective(Objective):
     def __init__(self):
-        
 
         def sum_of_overlapped_area(layout):
 

@@ -101,8 +101,6 @@ class TestOptimization(unittest.TestCase):
         pass
 
     def test_recorded_objective(self):
-        objective = SampleObjective()
-        specification = Specification(objective)
 
         box1 = BoxAgent([100, 100], [30, 30])
         box2 = BoxAgent([100, 200], [30, 30])
@@ -110,7 +108,10 @@ class TestOptimization(unittest.TestCase):
 
         layout = Layout([box1, box2, box3])
 
-        optimization = OCSOptimization(specification, layout)
+        objective = SampleObjective()
+        specification = Specification(layout, objective)
+
+        optimization = OCSOptimization(specification, specification.default_layout)
 
         objective_value = optimization.get_objective_value()
         best_value = optimization.update_best_value(objective_value)
