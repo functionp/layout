@@ -75,6 +75,12 @@ class Layout(AgentSet):
         self.agents.append(box)
         box.set_parent_layout(self)
 
+    def get_agent_with_label(self, label):
+        for agent in self.agents:
+            if agent.label == label:
+                return agent
+                break
+
     def get_copy(self):
         return Layout(self.agents[:])
 
@@ -98,19 +104,26 @@ class SampleLayout(Layout):
         margin = 20
 
         base_box = BoxAgent([0,0], main.WINDOW_SIZE, 0, "base")
+        max_width = main.WINDOW_SIZE[0]
+        base_layout_boxes = []
 
-        boxes = []
-
-        header_condition = Condition([BoxCondition.width_constraint(main.WINDOW_SIZE[0], main.WINDOW_SIZE[0])], 1)
-        side_condition = Condition([BoxCondition.width_constraint(100)] , 1)
+        header_condition = Condition([BoxCondition.width_constraint(max_width, max_width)], 1)
         main_condition = Condition([BoxCondition.width_constraint(800)] , 1)
 
-        boxes.append(BoxAgent([0,0], [main.WINDOW_SIZE[0], 100], 1, "header", header_condition))
-        boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [200,400], 1, "side", side_condition))
-        boxes.append(BoxAgent(boxes[1].get_right_position(margin), [100,400], 1,  "main", main_condition))
-        boxes.append(BoxAgent(boxes[1].get_bottom_position(margin), [800,100], 1))
+        base_layout_boxes.append(BoxAgent([0,0], [max_width, 100], 1, "header", header_condition))
+        base_layout_boxes.append(BoxAgent(base_layout_boxes[0].get_bottom_position(margin), [780,600], 0,  "main", main_condition))
+        base_layout_boxes.append(BoxAgent(base_layout_boxes[1].get_bottom_position(margin), [max_width,100], 1, "header"))
+        base_layout = Layout(base_layout_boxes, base_box)
 
-        layout = Layout(boxes, base_box)
+        main_box = base_layout.get_agent_with_label("main")
+        main_box.set_x(main_box.get_center_x())
+        main_layout_boxes = []
+
+        side_condition = Condition([BoxCondition.width_constraint(100)] , 1)
+
+        main_layout_boxes.append(BoxAgent([10,10], [200,580], 1, "side", side_condition))
+        main_layout_boxes.append(BoxAgent(main_layout_boxes[0].get_right_position(margin), [500,580], 1, "content"))
+        main_layout = Layout(main_layout_boxes, main_box)
 
         Layout.__init__(self, [base_box])
 

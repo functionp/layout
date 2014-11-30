@@ -245,6 +245,12 @@ class BoxAgent(Agent):
         present_x, present_y = self.position
         return [present_x, present_y + self.get_height() + margin]
 
+    def get_center_x(self):
+        return (WINDOW_SIZE[0] - self.get_width()) / 2
+
+    def get_center_y(self):
+        return (WINDOW_SIZE[1] - self.get_height()) / 2
+
     def add_x(self, amount):
         x_after_movement = (self.get_x() + amount)
         self.set_x(x_after_movement)
