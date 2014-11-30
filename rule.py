@@ -230,6 +230,12 @@ class BoxRule(Rule):
     def generate_rule_with_random_action(cls, condition, layout):
 #        action_candidates = [BoxAction.split_oneself_vertically(layout)]
         action_candidates = [BoxAction.stay(),
+                             BoxAction.move_horizontally(1),
+                             BoxAction.move_vertically(1),
+                             BoxAction.move_horizontally(-1),
+                             BoxAction.move_vertically(-1),
+                             BoxAction.change_width(10),
+                             BoxAction.change_width(-10),
                              BoxAction.align_to_nearest_box(layout),
                              BoxAction.space_most_aligned_box(20, layout),
                              BoxAction.unify_size_to_most_aligned_box(layout)]

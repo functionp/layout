@@ -19,7 +19,7 @@ class SampleSpecification(Specification):
     def __init__(self):
         default_layout = SampleLayout()
         objective = SampleObjective()
-        constraint = Condition([BoxCondition.no_overlap()], BoxCondition.all_aligned())
+        constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()], 1)
 
         Specification.__init__(self, default_layout, objective, constraint)
 
@@ -43,7 +43,17 @@ class SampleObjective(Objective):
             # return sum of distances
             return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), overlapped_area_list))
 
-        objective_function = (lambda layout: sum_of_overlapped_area(layout))
+        def width_difference(layout):
+
+            boxes = layout.agents
+            side_box = layout.get_agent_with_identifier("side")
+            content_box = layout.get_agent_with_identifier("content")
+
+            # return sum of distances
+            print "diff:" + str(abs(side_box.get_width() - content_box.get_width()))
+            return abs(side_box.get_width() - content_box.get_width()) * 10
+
+        objective_function = (lambda layout: sum_of_overlapped_area(layout) + width_difference(layout))
 
         Objective.__init__(self, 1, objective_function)
 

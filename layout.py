@@ -95,7 +95,8 @@ class Layout(AgentSet):
     def evaluate_agent_constraint(self):
         bool_list = []
         for agent in self.agents:
-            bool_list.append(agent.condition.evaluate())
+            situation = Situation(agent=agent)
+            bool_list.append(agent.condition.evaluate(situation))
 
         if len(bool_list) == 0:
             return True
@@ -112,7 +113,7 @@ class SampleLayout(Layout):
         base_layout_boxes = []
 
         header_condition = Condition([BoxCondition.width_constraint(max_width, max_width)], 1)
-        main_condition = Condition([BoxCondition.width_constraint(800)] , 1)
+        main_condition = Condition([BoxCondition.width_constraint(0, 800)] , 1)
 
         base_layout_boxes.append(BoxAgent([0,0], [max_width, 100], 1, "header", header_condition))
         base_layout_boxes.append(BoxAgent(base_layout_boxes[0].get_bottom_position(margin), [780,600], 0,  "main", main_condition))
@@ -123,11 +124,14 @@ class SampleLayout(Layout):
         main_box.set_x(main_box.get_center_x())
         main_layout_boxes = []
 
-        side_condition = Condition([BoxCondition.width_constraint(100)] , 1)
+        side_condition = Condition([BoxCondition.width_constraint(0, 210), BoxCondition.y_constraint(2), BoxCondition.x_constraint(2)] , 1)
 
-        main_layout_boxes.append(BoxAgent([10,10], [200,580], 1, "side", side_condition))
-        main_layout_boxes.append(BoxAgent(main_layout_boxes[0].get_right_position(margin), [500,580], 1, "content"))
+        main_layout_boxes.append(BoxAgent([0,0], [200,580], 1, "side", side_condition))
+        main_layout_boxes.append(BoxAgent(main_layout_boxes[0].get_right_position(margin), [500,280], 1, "content"))
         main_layout = Layout(main_layout_boxes, main_box)
+
+        content_box = base_layout.get_agent_with_identifier("content")
+        content_box.set_x(content_box.get_center_x())
 
         Layout.__init__(self, [base_box])
 

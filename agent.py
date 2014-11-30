@@ -202,7 +202,6 @@ class BoxAgent(Agent):
         else:
             border = wx.NO_BORDER
 
-        print self.position
         panel = wx.Panel(parent_panel, wx.ID_ANY, pos=self.position, size=self.size, style=border)
         panel.SetBackgroundColour("#ffffff")
 
@@ -246,10 +245,12 @@ class BoxAgent(Agent):
         return [present_x, present_y + self.get_height() + margin]
 
     def get_center_x(self):
-        return (WINDOW_SIZE[0] - self.get_width()) / 2
+        parent_box = self.parent_layout.base_box
+        return (parent_box.get_width() - self.get_width()) / 2
 
     def get_center_y(self):
-        return (WINDOW_SIZE[1] - self.get_height()) / 2
+        parent_box = self.parent_layout.base_box
+        return (parent_box.get_width() - self.get_height()) / 2
 
     def add_x(self, amount):
         x_after_movement = (self.get_x() + amount)

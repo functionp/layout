@@ -71,7 +71,7 @@ class OCSOptimization(Optimization):
 
         #for i in range(OCSOptimization.max_iteration):
 
-        #いくら制約条件をつけてもそれを緩和するアクション・目的関数（突然変異）を作らなければ収束しきって動かない（ex. 互いにアラインアクションなど）
+        #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
         i = 0
         while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False:
             self.one_optimization_cycle()
@@ -121,7 +121,8 @@ class OCSOptimization(Optimization):
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
             # repeat until objective converged and constraints are satisfied
-            while abs(previous_value - current_value) > OCSOptimization.minimum_difference or constraints.evaluate(situation) == False:
+            not_converged = abs(previous_value - current_value) > OCSOptimization.minimum_difference or abs(self.best_value - current_value) > OCSOptimization.minimum_difference
+            while not_converged or constraints.evaluate(situation) == False:
 
                 selected_rule = agent.rule_select()
 
