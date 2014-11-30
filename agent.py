@@ -116,14 +116,15 @@ class Style():
         self.visibility = visibility
 
 class BoxAgent(Agent):
-    def __init__(self, style, identifier="", condition=None, parent_layout=None):
+    def __init__(self, style, identifier="", condition=None, text=None):
 
         # to avoid import error, avoid to use initial value
         if condition == None: condition = Condition()
 
         Agent.__init__(self, condition, identifier)
         self.set_style(style)
-        self.set_parent_layout(parent_layout)
+        self.set_parent_layout(None)
+        self.set_text(text)
         self.set_inner_layout(None)
 
     def get_position(self):
@@ -209,6 +210,9 @@ class BoxAgent(Agent):
     def set_style(self, style):
         self.style = style
 
+    def set_text(self, text):
+        self.text = text
+
     def make_visible(self):
         self.style.set_visibility(1)
 
@@ -224,6 +228,11 @@ class BoxAgent(Agent):
 
         panel = wx.Panel(parent_panel, wx.ID_ANY, pos=self.get_position(), size=self.get_size(), style=border)
         panel.SetBackgroundColour("#ffffff")
+
+        if self.text:
+            text = wx.StaticText(panel, wx.ID_ANY, self.text, (0,0), size=self.get_size())
+            #text.Wrap(100)
+            text.SetBackgroundColour('#ffffff')
 
         # if this box has boxes(layout) in itself, render them
         if self.inner_layout:

@@ -130,16 +130,16 @@ class SampleLayout(Layout):
 
         # main_layout
 
-        side_style = Style([0,0], [200,580], 1)
+        side_style = Style([0,0], [400,580], 1)
         side_condition = Condition([BoxCondition.width_constraint(0, 210), BoxCondition.y_constraint(2), BoxCondition.x_constraint(2)] , 1)
-        side_box = BoxAgent(side_style, "side", side_condition)
+        side_box = BoxAgent(side_style, "side", side_condition, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatext!!")
 
         content_style = Style(side_box.get_right_position(margin), [500,280], 1)
         content_box = BoxAgent(content_style, "content")
 
         main_layout = Layout([side_box, content_box], main_box)
 
-        content_box.set_x(content_box.get_center_x())
+        #content_box.set_x(content_box.get_center_x())
 
         Layout.__init__(self, [base_box])
 

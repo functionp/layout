@@ -69,7 +69,7 @@ def click_start_button(event):
 
     main_layout = base_layout.get_agent_with_identifier("main").inner_layout
     main_optimization = OCSOptimization(specification, main_layout)
-    main_optimization.optimize()
+    #main_optimization.optimize()
 
     base_layout.render(optimization_frame.base_panel)
 
