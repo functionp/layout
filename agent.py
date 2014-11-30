@@ -189,6 +189,12 @@ class BoxAgent(Agent):
     def set_inner_layout(self, inner_layout):
         self.inner_layout = inner_layout
 
+    def make_visible(self):
+        self.visibility = 1
+
+    def make_invisible(self):
+        self.visibility = 0
+
     def render(self, parent_panel):
 
         if self.visibility == 1:

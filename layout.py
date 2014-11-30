@@ -90,22 +90,22 @@ class Layout(AgentSet):
         if len(bool_list) == 0:
             return True
         else:
-            return reduce((lambda b1, b2: b1 and b2) bool_list)
+            return reduce((lambda b1, b2: b1 and b2), bool_list)
 
 class SampleLayout(Layout):
     def __init__(self):
 
         margin = 20
 
-        base_box = BoxAgent([200,20], [950,900], 0, "base")
+        base_box = BoxAgent([0,0], main.WINDOW_SIZE, 0, "base")
 
         boxes = []
 
-        header_condition = Condition()
-        side_condition = Condition([BoxCondition.width_limit(100)] , 1)
-        main_condition = Condition([BoxCondition.width_limit(800)] , 1)
+        header_condition = Condition([BoxCondition.width_constraint(main.WINDOW_SIZE[0], main.WINDOW_SIZE[0])], 1)
+        side_condition = Condition([BoxCondition.width_constraint(100)] , 1)
+        main_condition = Condition([BoxCondition.width_constraint(800)] , 1)
 
-        boxes.append(BoxAgent([10,10], [800,100], 1, "header", header_condition))
+        boxes.append(BoxAgent([0,0], [main.WINDOW_SIZE[0], 100], 1, "header", header_condition))
         boxes.append(BoxAgent(boxes[0].get_bottom_position(margin), [200,400], 1, "side", side_condition))
         boxes.append(BoxAgent(boxes[1].get_right_position(margin), [100,400], 1,  "main", main_condition))
         boxes.append(BoxAgent(boxes[1].get_bottom_position(margin), [800,100], 1))
