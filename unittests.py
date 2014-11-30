@@ -13,8 +13,8 @@ class TestAgent(unittest.TestCase):
         pass
 
     def test_align_left(self):
-        box1 = BoxAgent([50, 100], [30, 30])
-        box2 = BoxAgent([60, 200], [30, 30])
+        box1 = BoxAgent(Style([50, 100], [30, 30]))
+        box2 = BoxAgent(Style([60, 200], [30, 30]))
 
         Layout([box1, box2])
 
@@ -22,23 +22,23 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(box2.get_x(), 50)
 
     def test_overlap_or_not(self):
-        box1 = BoxAgent([50, 50], [30, 30])
-        box2 = BoxAgent([70, 70], [30, 30])
+        box1 = BoxAgent(Style([50, 50], [30, 30]))
+        box2 = BoxAgent(Style([70, 70], [30, 30]))
 
         self.assertTrue(BoxAgent.overlap_or_not(box1, box2))
 
-        box3 = BoxAgent([50, 50], [30, 30])
-        box4 = BoxAgent([90, 90], [50, 50])
+        box3 = BoxAgent(Style([50, 50], [30, 30]))
+        box4 = BoxAgent(Style([90, 90], [50, 50]))
 
         self.assertFalse(BoxAgent.overlap_or_not(box3, box4))
 
-        box5 = BoxAgent([50, 50], [100, 100])
-        box6 = BoxAgent([60, 60], [20, 20])
+        box5 = BoxAgent(Style([50, 50], [100, 100]))
+        box6 = BoxAgent(Style([60, 60], [20, 20]))
 
         self.assertTrue(BoxAgent.overlap_or_not(box5, box6))
 
     def test_evaluating_condition(self):
-        box1 = BoxAgent()
+        box1 = BoxAgent(Style())
 
         rule1 = Rule()
         rule2 = Rule()
@@ -54,15 +54,15 @@ class TestAgent(unittest.TestCase):
         self.assertEqual(box1.get_index_of_weakest_rule(), 2)
 
     def test_overlapped_area(self):
-        box1 = BoxAgent([100, 100], [200, 200])
-        box2 = BoxAgent([320, 321], [100, 200])
+        box1 = BoxAgent(Style([100, 100], [200, 200]))
+        box2 = BoxAgent(Style([320, 321], [100, 200]))
 
         self.assertEqual(BoxAgent.get_overlaped_area(box1, box2), 0)
 
 
     def test_set_size(self):
-        base_box = BoxAgent([100, 100], [400, 400])
-        box1 = BoxAgent([150, 150], [100, 100])
+        base_box = BoxAgent(Style([100, 100], [400, 400]))
+        box1 = BoxAgent(Style([150, 150], [100, 100]))
 
         layout = Layout([box1], base_box)
         box1.set_width(400)
@@ -76,9 +76,9 @@ class TestLayout(unittest.TestCase):
         pass
 
     def test_rulesets(self):
-        box1 = BoxAgent([50, 100], [30, 30])
-        box2 = BoxAgent([60, 200], [30, 30])
-        box3 = BoxAgent([120, 100], [30, 30])
+        box1 = BoxAgent(Style([50, 100], [30, 30]))
+        box2 = BoxAgent(Style([60, 200], [30, 30]))
+        box3 = BoxAgent(Style([120, 100], [30, 30]))
 
         layout = Layout([box1, box2, box3])
 
@@ -94,9 +94,9 @@ class TestLayout(unittest.TestCase):
         self.assertEqual(box2.ruleset[1], rulesets[1][1])
 
     def test_generating_rule(self):
-        box1 = BoxAgent([50, 100], [30, 30])
-        box2 = BoxAgent([60, 200], [30, 30])
-        box3 = BoxAgent([120, 100], [30, 30])
+        box1 = BoxAgent(Style([50, 100], [30, 30]))
+        box2 = BoxAgent(Style([60, 200], [30, 30]))
+        box3 = BoxAgent(Style([120, 100], [30, 30]))
 
         layout = Layout([box1, box2, box3])
 
@@ -113,13 +113,13 @@ class TestOptimization(unittest.TestCase):
 
     def test_recorded_objective(self):
 
-        box1 = BoxAgent([100, 100], [30, 30])
-        box2 = BoxAgent([100, 200], [30, 30])
-        box3 = BoxAgent([150, 180], [30, 30])
+        box1 = BoxAgent(Style([100, 100], [30, 30]))
+        box2 = BoxAgent(Style([100, 200], [30, 30]))
+        box3 = BoxAgent(Style([150, 180], [30, 30]))
 
         layout = Layout([box1, box2, box3])
 
-        objective = SampleObjective()
+        objective = DistanceObjective()
         specification = Specification(layout, objective)
 
         optimization = OCSOptimization(specification, specification.default_layout)
@@ -140,11 +140,11 @@ class TestRule(unittest.TestCase):
         self.assertEqual(rule.strength, Rule.initial_strength)
 
     def test_reinforce(self):
-        box1 = BoxAgent([50, 100], [30, 30])
-        box2 = BoxAgent([60, 200], [30, 30])
-        box3 = BoxAgent([120, 100], [30, 30])
-        box4 = BoxAgent([100, 30], [30, 30])
-        box5 = BoxAgent([220, 200], [50, 50])
+        box1 = BoxAgent(Style([50, 100], [30, 30]))
+        box2 = BoxAgent(Style([60, 200], [30, 30]))
+        box3 = BoxAgent(Style([120, 100], [30, 30]))
+        box4 = BoxAgent(Style([100, 30], [30, 30]))
+        box5 = BoxAgent(Style([220, 200], [50, 50]))
 
         layout1 = Layout([box1, box2, box3])
         layout2 = Layout([box1, box4, box5])
@@ -172,7 +172,7 @@ class TestAction(unittest.TestCase):
         pass
 
     def test_movement(self):
-        box1 = BoxAgent([100, 100], [30, 30])
+        box1 = BoxAgent(Style([100, 100], [30, 30]))
 
         Layout([box1])
 
@@ -182,12 +182,12 @@ class TestAction(unittest.TestCase):
         action1(box1)
         action2(box1)
 
-        self.assertEqual([150,150], box1.position)
+        self.assertEqual([150,150], box1.get_position())
 
     def test_alignment(self):
-        box1 = BoxAgent([100, 100], [30, 30])
-        box2 = BoxAgent([100, 200], [30, 30])
-        box3 = BoxAgent([150, 180], [30, 30])
+        box1 = BoxAgent(Style([100, 100], [30, 30]))
+        box2 = BoxAgent(Style([100, 200], [30, 30]))
+        box3 = BoxAgent(Style([150, 180], [30, 30]))
 
         layout = Layout([box1, box2, box3])
 
@@ -197,9 +197,9 @@ class TestAction(unittest.TestCase):
         self.assertEqual(box2.get_y(), box3.get_y())
 
     def test_stay_away(self):
-        box1 = BoxAgent([100, 100], [150, 200])
-        box2 = BoxAgent([150, 150], [300, 100])
-        box3 = BoxAgent([170, 170], [50, 50])
+        box1 = BoxAgent(Style([100, 100], [150, 200]))
+        box2 = BoxAgent(Style([150, 150], [300, 100]))
+        box3 = BoxAgent(Style([170, 170], [50, 50]))
 
         layout = Layout([box1, box2])
 
@@ -209,10 +209,10 @@ class TestAction(unittest.TestCase):
         self.assertFalse(BoxAgent.overlap_or_not(box1,box2))
 
     def test_spacing(self):
-        box1 = BoxAgent([100, 100], [150, 100])
-        box2 = BoxAgent([100, 250], [300, 100])
-        box3 = BoxAgent([170, 500], [250, 150])
-        box4 = BoxAgent([100, 570], [50, 50])
+        box1 = BoxAgent(Style([100, 100], [150, 100]))
+        box2 = BoxAgent(Style([100, 250], [300, 100]))
+        box3 = BoxAgent(Style([170, 500], [250, 150]))
+        box4 = BoxAgent(Style([100, 570], [50, 50]))
 
         layout = Layout([box1, box2, box3, box4])
 
@@ -222,9 +222,9 @@ class TestAction(unittest.TestCase):
         self.assertEqual(box4.get_y(), 380)
 
     def test_unify_size(self):
-        box1 = BoxAgent([100, 100], [200, 40])
-        box2 = BoxAgent([100, 200], [50, 80])
-        box3 = BoxAgent([120, 290], [250, 150])
+        box1 = BoxAgent(Style([100, 100], [200, 40]))
+        box2 = BoxAgent(Style([100, 200], [50, 80]))
+        box3 = BoxAgent(Style([120, 290], [250, 150]))
 
         layout = Layout([box1, box2, box3])
 
@@ -235,7 +235,7 @@ class TestAction(unittest.TestCase):
 
 
     def test_split_vertically(self):
-        box1 = BoxAgent([100, 100], [200, 200])
+        box1 = BoxAgent(Style([100, 100], [200, 200]))
 
         layout = Layout([box1])
 
@@ -253,10 +253,10 @@ class TestCondition(unittest.TestCase):
         pass
         
     def test_all_aligned(self):
-        box1 = BoxAgent([100, 100], [40, 40])
-        box2 = BoxAgent([200, 100], [30, 30])
-        box3 = BoxAgent([200, 230], [50, 50])
-        box4 = BoxAgent([400, 230], [50, 50])
+        box1 = BoxAgent(Style([100, 100], [40, 40]))
+        box2 = BoxAgent(Style([200, 100], [30, 30]))
+        box3 = BoxAgent(Style([200, 230], [50, 50]))
+        box4 = BoxAgent(Style([400, 230], [50, 50]))
 
         layout = Layout([box1, box2, box3, box4])
         situation = Situation(agent_set=layout)
@@ -266,9 +266,9 @@ class TestCondition(unittest.TestCase):
         self.assertTrue(condfun(situation))
         
     def test_evaluating_condition(self):
-        box1 = BoxAgent([50, 100], [30, 30])
-        box2 = BoxAgent([60, 200], [30, 30])
-        box3 = BoxAgent([120, 100], [30, 30])
+        box1 = BoxAgent(Style([50, 100], [30, 30]))
+        box2 = BoxAgent(Style([60, 200], [30, 30]))
+        box3 = BoxAgent(Style([120, 100], [30, 30]))
 
         layout = Layout([box1, box2, box3])
         situation = Situation(agent_set=layout, agent=box1)
@@ -277,10 +277,10 @@ class TestCondition(unittest.TestCase):
         self.assertTrue(condition.evaluate(situation))
 
     def test_having_overlapped_box(self):
-        box1 = BoxAgent([50, 50], [30, 30])
-        box2 = BoxAgent([70, 70], [30, 30])
-        box3 = BoxAgent([120, 120], [30, 30])
-        box4 = BoxAgent([470, 470], [30, 30])
+        box1 = BoxAgent(Style([50, 50], [30, 30]))
+        box2 = BoxAgent(Style([70, 70], [30, 30]))
+        box3 = BoxAgent(Style([120, 120], [30, 30]))
+        box4 = BoxAgent(Style([470, 470], [30, 30]))
 
         layout = Layout([box1, box2, box3, box4])
         situation = Situation(agent_set=layout, agent=box2)
@@ -290,10 +290,10 @@ class TestCondition(unittest.TestCase):
 
 
     def test_having_box_in_given_distance(self):
-        box1 = BoxAgent([50, 50], [30, 30])
-        box2 = BoxAgent([70, 70], [30, 30])
-        box3 = BoxAgent([120, 120], [30, 30])
-        box4 = BoxAgent([470, 470], [30, 30])
+        box1 = BoxAgent(Style([50, 50], [30, 30]))
+        box2 = BoxAgent(Style([70, 70], [30, 30]))
+        box3 = BoxAgent(Style([120, 120], [30, 30]))
+        box4 = BoxAgent(Style([470, 470], [30, 30]))
 
         layout = Layout([box1, box2, box3, box4])
         situation = Situation(agent_set=layout, agent=box1)

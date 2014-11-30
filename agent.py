@@ -105,30 +105,47 @@ class Agent():
 def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
 
+
+class Style():
+    def __init__(self, position=[0,0], size=[10,10], visibility=1):
+        self.position = position
+        self.size = size
+        self.set_visibility(visibility)
+
+    def set_visibility(self, visibility):
+        self.visibility = visibility
+
 class BoxAgent(Agent):
-    def __init__(self, position=[0,0], size=[10,10], visibility=1, identifier="", condition=None, parent_layout=None):
+    def __init__(self, style, identifier="", condition=None, parent_layout=None):
 
         # to avoid import error, avoid to use initial value
         if condition == None: condition = Condition()
 
         Agent.__init__(self, condition, identifier)
-        self.position = position
-        self.size = size
-        self.visibility = visibility
+        self.set_style(style)
         self.set_parent_layout(parent_layout)
         self.set_inner_layout(None)
 
+    def get_position(self):
+        return self.style.position
+
     def get_x(self):
-        return self.position[0]
+        return self.get_position()[0]
 
     def get_y(self):
-        return self.position[1]
+        return self.get_position()[1]
+
+    def get_size(self):
+        return self.style.size
 
     def get_width(self):
-        return self.size[0]
+        return self.get_size()[0]
 
     def get_height(self):
-        return self.size[1]
+        return self.get_size()[1]
+
+    def get_visibility(self):
+        return self.style.visibility
 
     def set_x(self, value):
         x_before_movement = self.get_x()
@@ -144,7 +161,7 @@ class BoxAgent(Agent):
             x_after_movement = value
 
         amount_to_move = x_after_movement - x_before_movement
-        self.position[0] = x_after_movement
+        self.style.position[0] = x_after_movement
 
     def set_y(self, value):
         base_box = self.parent_layout.base_box
@@ -159,7 +176,7 @@ class BoxAgent(Agent):
             y_after_movement = value
 
         amount_to_move = y_after_movement - value
-        self.position[1] = y_after_movement
+        self.style.position[1] = y_after_movement
 
     def set_width(self, value):
         base_box = self.parent_layout.base_box
@@ -168,9 +185,9 @@ class BoxAgent(Agent):
         if value < 0: value = 0
 
         if self.get_x() + value < right_limit:
-            self.size[0] = value
+            self.style.size[0] = value
         else:
-            self.size[0] = right_limit - self.get_x()
+            self.style.size[0] = right_limit - self.get_x()
 
     def set_height(self, value):
         base_box = self.parent_layout.base_box
@@ -179,9 +196,9 @@ class BoxAgent(Agent):
         if value < 0: value = 0
 
         if self.get_y() + value < bottom_limit:
-            self.size[1] = value
+            self.style.size[1] = value
         else:
-            self.size[1] = bottom_limit - self.get_y()
+            self.style.size[1] = bottom_limit - self.get_y()
 
     def set_parent_layout(self, parent_layout):
         self.parent_layout = parent_layout
@@ -189,20 +206,23 @@ class BoxAgent(Agent):
     def set_inner_layout(self, inner_layout):
         self.inner_layout = inner_layout
 
+    def set_style(self, style):
+        self.style = style
+
     def make_visible(self):
-        self.visibility = 1
+        self.style.set_visibility(1)
 
     def make_invisible(self):
-        self.visibility = 0
+        self.style.set_visibility(0)
 
     def render(self, parent_panel):
 
-        if self.visibility == 1:
+        if self.get_visibility() == 1:
             border = wx.SIMPLE_BORDER
         else:
             border = wx.NO_BORDER
 
-        panel = wx.Panel(parent_panel, wx.ID_ANY, pos=self.position, size=self.size, style=border)
+        panel = wx.Panel(parent_panel, wx.ID_ANY, pos=self.get_position(), size=self.get_size(), style=border)
         panel.SetBackgroundColour("#ffffff")
 
         # if this box has boxes(layout) in itself, render them
@@ -237,11 +257,11 @@ class BoxAgent(Agent):
         return matching_rule
 
     def get_right_position(self, margin):
-        present_x, present_y = self.position
+        present_x, present_y = self.get_position()
         return [present_x + self.get_width() + margin, present_y]
 
     def get_bottom_position(self, margin):
-        present_x, present_y = self.position
+        present_x, present_y = self.get_position()
         return [present_x, present_y + self.get_height() + margin]
 
     def get_center_x(self):
@@ -271,7 +291,7 @@ class BoxAgent(Agent):
         self.set_height(self.get_height() + amount)
 
     def align_left(self, target_box):
-        self.set_x( target_box.get_x())
+        self.set_x(target_box.get_x())
 
     def align_top(self, target_box):
         self.set_y(target_box.get_y())
@@ -309,7 +329,7 @@ class BoxAgent(Agent):
         return nearest_box
 
     def get_position_difference(self,box,i):
-        return abs(self.position[i] - box.position[i])
+        return abs(self.get_position()[i] - box.get_position()[i])
 
     def get_most_aligned_box(self, layout):
 
@@ -396,11 +416,11 @@ class BoxAgent(Agent):
 
         splited_width = (self.get_width() - margin) / 2
         splited_size = [splited_width , self.get_height()]
-        box1 = BoxAgent(self.position, splited_size)
+        box1 = BoxAgent(Style(self.get_position(), splited_size))
         box1.set_ruleset(original_rule)
 
         box2_position = [self.get_x() + (self.get_width() + margin) / 2, self.get_y()]
-        box2 = BoxAgent(box2_position, splited_size)
+        box2 = BoxAgent(Style(box2_position, splited_size))
         box2.set_ruleset(original_rule)
 
         return box1, box2

@@ -46,6 +46,8 @@ class SampleObjective(Objective):
         def width_difference(layout):
 
             boxes = layout.agents
+            print "aa"
+            print boxes[0].get_position()
             side_box = layout.get_agent_with_identifier("side")
             content_box = layout.get_agent_with_identifier("content")
 
