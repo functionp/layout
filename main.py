@@ -64,19 +64,28 @@ def click_start_button(event):
 
     specification = Specification.load_specification("sample.dat")
 
-    optimization = OCSOptimization(specification, specification.default_layout)
+    base_layout = specification.default_layout
+    #base_optimization = OCSOptimization(specification, base_layout)
 
-    objective_value_before = optimization.get_objective_value()
-    print "Optimization Value Before:"
-    print objective_value_before
+    main_layout = base_layout.get_agent_with_identifier("main").inner_layout
+    main_optimization = OCSOptimization(specification, main_layout)
+
+    base_layout.render(optimization_frame.base_panel)
+
+    """
+    specification = Specification.load_specification("sample.dat")
+    base_optimization = OCSOptimization(specification, specification.default_layout)
+
+    objective_value_before = base_optimization.get_objective_value()
+    print "Optimization Value Before:" + str(objective_value_before)
 
     #optimization.optimize()
-    optimized_layout = optimization.agent_set
+    optimized_layout = base_optimization.agent_set
     optimized_layout.render(optimization_frame.base_panel)
 
-    objective_value = optimization.get_objective_value()
-    print "Optimization Value After:"
-    print objective_value
+    objective_value = base_optimization.get_objective_value()
+    print "Optimization Value After:" + str(objective_value)
+    """
 
     optimization_frame.Show()
 

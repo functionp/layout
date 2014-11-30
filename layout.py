@@ -75,11 +75,15 @@ class Layout(AgentSet):
         self.agents.append(box)
         box.set_parent_layout(self)
 
-    def get_agent_with_label(self, label):
+    def get_agent_with_identifier(self, identifier):
         for agent in self.agents:
-            if agent.label == label:
+
+            if agent.identifier == identifier:
                 return agent
                 break
+            
+            if agent.inner_layout: return agent.inner_layout.get_agent_with_identifier(identifier)
+
 
     def get_copy(self):
         return Layout(self.agents[:])
@@ -115,7 +119,7 @@ class SampleLayout(Layout):
         base_layout_boxes.append(BoxAgent(base_layout_boxes[1].get_bottom_position(margin), [max_width,100], 1, "header"))
         base_layout = Layout(base_layout_boxes, base_box)
 
-        main_box = base_layout.get_agent_with_label("main")
+        main_box = base_layout.get_agent_with_identifier("main")
         main_box.set_x(main_box.get_center_x())
         main_layout_boxes = []
 
