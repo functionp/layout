@@ -15,7 +15,7 @@ class Optimization():
 
     def __init__(self, specification, agent_set):
         self.specification = specification
-        self.agent_set = agent_set.get_copy()
+        self.agent_set = agent_set#agent_set.get_copy()
         self.reset_record()
 
     def optimize(self):

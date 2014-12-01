@@ -1,10 +1,15 @@
-class Test():
+class TestA():
     def __init__(self):
-        self.a = "soso"
-        self.__pri()
+        self.innerlayout = None
 
-    def __pri(self):
-        self.a = "souhei"
+class TestB():
+    def __init__(self):
+        self.b = "soso"
 
-s = Test()
-print s.a
+
+
+
+
+tb = TestB()
+
+

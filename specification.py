@@ -72,21 +72,23 @@ class Objective():
         # return sum of distances
         return penalty * 1000
 
+    @staticmethod
+    def width_difference(layout):
+        
+        boxes = layout.agents
+        scale = 10
+
+        distance_list = [[abs(boxes[i].get_width() - boxes[j].get_width()) * scale for j in range(i, len(boxes))] for i in range(len(boxes))]
+
+        # return sum of distances
+        return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
+
+
 
 class OverlappedAreaObjective(Objective):
     def __init__(self):
 
-        #汎用性が低いのでクラスメソッドにはしない
-        def width_difference(layout):
-
-            boxes = layout.agents
-            side_box = layout.get_agent_with_identifier("side")
-            content_box = layout.get_agent_with_identifier("content")
-
-            # return sum of distances
-            return abs(side_box.get_width() - content_box.get_width()) * 10
-
-        objective_function = (lambda layout: Objective.sum_of_overlapped_area(layout) + width_difference(layout))
+        objective_function = (lambda layout: Objective.sum_of_overlapped_area(layout) + Objective.width_difference(layout))
 
         Objective.__init__(self, 1, objective_function)
 

@@ -115,6 +115,10 @@ class Style():
     def set_visibility(self, visibility):
         self.visibility = visibility
 
+    def get_copy(self):
+        return Style(self.position[:], self.size[:], self.visibility)
+
+
 class BoxAgent(Agent):
     def __init__(self, style, identifier="", condition=None, text=None):
 
@@ -148,6 +152,9 @@ class BoxAgent(Agent):
     def get_visibility(self):
         return self.style.visibility
 
+    def get_inner_layout(self):
+        return self.inner_layout
+
     def set_x(self, value):
         x_before_movement = self.get_x()
         base_box = self.parent_layout.base_box
@@ -161,27 +168,29 @@ class BoxAgent(Agent):
         else:
             x_after_movement = value
 
-        amount_to_move = x_after_movement - x_before_movement
         self.style.position[0] = x_after_movement
 
     def set_y(self, value):
         base_box = self.parent_layout.base_box
         top_limit = 0
         bottom_limit = base_box.get_height()
+        print base_box.identifier
+        print "b-limit" + str(bottom_limit)
 
         if value < top_limit:
             y_after_movement = top_limit + 1
         elif bottom_limit < value + self.get_height():
             y_after_movement = bottom_limit - self.get_height() -1
+            print "hit"
+
         else:
             y_after_movement = value
 
-        amount_to_move = y_after_movement - value
         self.style.position[1] = y_after_movement
 
     def set_width(self, value):
         base_box = self.parent_layout.base_box
-        right_limit = base_box.get_x()+ base_box.get_width()
+        right_limit = base_box.get_width()
 
         if value < 0: value = 0
 
@@ -192,7 +201,7 @@ class BoxAgent(Agent):
 
     def set_height(self, value):
         base_box = self.parent_layout.base_box
-        bottom_limit = base_box.get_y()+ base_box.get_height()
+        bottom_limit = base_box.get_height()
 
         if value < 0: value = 0
 

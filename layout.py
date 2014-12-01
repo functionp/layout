@@ -61,6 +61,7 @@ class Layout(AgentSet):
 
         # to avoid import error, avoid to use initial value
         if base_box == None: base_box = BoxAgent(Style([0,0], main.WINDOW_SIZE, 0))
+
         self.agents = agents
         self.set_base_box(base_box)
 
@@ -90,7 +91,7 @@ class Layout(AgentSet):
         return result
 
     def get_copy(self):
-        return Layout(self.agents[:])
+        return Layout(self.agents[:], self.base_box)
 
     def render(self, parent_panel):
         for agent in self.agents:
@@ -145,12 +146,9 @@ class SoftplannerLayout(Layout):
         global_menu_item_condition = Condition([BoxCondition.width_constraint(0, 210), BoxCondition.y_constraint(2), BoxCondition.x_constraint(2)] , 1)
 
         global_menu_item_boxes = []
-        global_menu_item_boxes.append(BoxAgent(global_menu_item_style, "", global_menu_item_condition))
-        global_menu_item_boxes.append(BoxAgent(global_menu_item_style, "", global_menu_item_condition))
-        global_menu_item_boxes.append(BoxAgent(global_menu_item_style, "", global_menu_item_condition))
-        global_menu_item_boxes.append(BoxAgent(global_menu_item_style, "", global_menu_item_condition))
-        global_menu_item_boxes.append(BoxAgent(global_menu_item_style, "", global_menu_item_condition))
-        global_menu_item_boxes.append(BoxAgent(global_menu_item_style, "", global_menu_item_condition))
+        global_menu_item_boxes.append(BoxAgent(global_menu_item_style.get_copy(), "", global_menu_item_condition))
+        global_menu_item_boxes.append(BoxAgent(global_menu_item_style.get_copy(), "", global_menu_item_condition))
+        global_menu_item_boxes.append(BoxAgent(global_menu_item_style.get_copy(), "", global_menu_item_condition))
 
         global_menu_layout = Layout(global_menu_item_boxes, global_menu_box)
 
