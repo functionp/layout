@@ -133,7 +133,7 @@ class SoftplannerLayout(Layout):
 
         side_style = Style([0,0], [400,580], 1)
         side_condition = Condition([BoxCondition.width_constraint(0, 210), BoxCondition.y_constraint(2), BoxCondition.x_constraint(2)] , 1)
-        side_box = BoxAgent(side_style, "side", side_condition, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatext!!")
+        side_box = BoxAgent(side_style, "side", side_condition)
 
         content_style = Style(side_box.get_right_position(margin), [500,280], 1)
         content_box = BoxAgent(content_style, "content")
