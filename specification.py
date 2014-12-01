@@ -13,12 +13,20 @@ class Specification():
     def load_specification(file_path):
         something = ''
         #return Specification(constraint, objective)
-        return SampleSpecification()
+        return SoftplannerSpecification()
+
+class SoftplannerSpecification(Specification):
+    def __init__(self):
+        default_layout = SampleLayout()
+        objective = SoftplannerObjective()
+        constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()], 1)
+
+        Specification.__init__(self, default_layout, objective, constraint)
 
 class SampleSpecification(Specification):
     def __init__(self):
         default_layout = SampleLayout()
-        objective = SampleObjective()
+        objective = OverlappedAreaObjective()
         constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()], 1)
 
         Specification.__init__(self, default_layout, objective, constraint)
@@ -28,7 +36,14 @@ class Objective():
         self.max_min = max_min
         self.function = function
 
-class SampleObjective(Objective):
+class SoftplannerObjective(Objective):
+    def __init__(self):
+
+        objective_function = (lambda layout: 0)
+        Objective.__init__(self, 1, objective_function)
+
+
+class OverlappedAreaObjective(Objective):
     def __init__(self):
 
         def sum_of_overlapped_area(layout):
