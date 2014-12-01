@@ -61,7 +61,7 @@ def main():
 def click_start_button(event):
 
     def sample_exection1():
-        specification = Specification.load_specification("sample.dat")
+        specification = SampleSpecification()
 
         base_layout = specification.default_layout
         #base_optimization = OCSOptimization(specification, base_layout)
@@ -89,21 +89,21 @@ def click_start_button(event):
         base_layout.render(optimization_frame.base_panel)
 
     def softplanner():
-        specification = Specification.load_specification("sample.dat")
+        specification = SoftplannerSpecification()
 
         base_layout = specification.default_layout
         #base_optimization = OCSOptimization(specification, base_layout)
 
         main_layout = base_layout.get_agent_with_identifier("main").inner_layout
         main_optimization = OCSOptimization(specification, main_layout)
-        #main_optimization.optimize()
+        main_optimization.optimize()
 
         base_layout.render(optimization_frame.base_panel)
 
     optimization_app = wx.App()
     optimization_frame = OptimizationFrame(None, -1, u'optimization', pos=(400,100))
 
-    softplaner()
+    softplanner()
 
 
     optimization_frame.Show()

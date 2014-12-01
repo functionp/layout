@@ -11,14 +11,15 @@ class Specification():
 
     @staticmethod
     def load_specification(file_path):
-        something = ''
+        pass
+        #something = ''
         #return Specification(constraint, objective)
-        return SoftplannerSpecification()
+        #return SoftplannerSpecification()
 
 class SoftplannerSpecification(Specification):
     def __init__(self):
-        default_layout = SampleLayout()
-        objective = SoftplannerObjective()
+        default_layout = SoftplannerLayout()
+        objective = OverlappedAreaObjective()
         constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()], 1)
 
         Specification.__init__(self, default_layout, objective, constraint)
@@ -36,28 +37,46 @@ class Objective():
         self.max_min = max_min
         self.function = function
 
-class SoftplannerObjective(Objective):
-    def __init__(self):
+    @staticmethod
+    def sum_of_overlapped_area(layout):
 
-        objective_function = (lambda layout: 0)
-        Objective.__init__(self, 1, objective_function)
+        boxes = layout.agents
+
+        if len(boxes) > 1:
+            overlapped_area_list = [[BoxAgent.get_overlaped_area(boxes[i], boxes[j]) for j in range(i, len(boxes)) if i != j] for i in range(len(boxes))]
+        else:
+            overlapped_area_list = [[0]]
+
+        # return sum of distances
+        return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), overlapped_area_list))
+
+    @staticmethod
+    def sum_of_distance_between_gravities(layout):
+
+        boxes = layout.agents
+        distance_list = [[BoxAgent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
+
+        # return sum of distances
+        return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
+
+    @staticmethod
+    def penalize_overlap(layout):
+        boxes = layout.agents
+        penalty = 0
+
+        for i, box1 in enumerate(boxes):
+            for j in range(i+1,len(boxes) - 1):
+                if BoxAgent.overlap_or_not(boxes[i], boxes[j]):
+                    penalty += 1
+
+        # return sum of distances
+        return penalty * 1000
 
 
 class OverlappedAreaObjective(Objective):
     def __init__(self):
 
-        def sum_of_overlapped_area(layout):
-
-            boxes = layout.agents
-
-            if len(boxes) > 1:
-                overlapped_area_list = [[BoxAgent.get_overlaped_area(boxes[i], boxes[j]) for j in range(i, len(boxes)) if i != j] for i in range(len(boxes))]
-            else:
-                overlapped_area_list = [[0]]
-
-            # return sum of distances
-            return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), overlapped_area_list))
-
+        #汎用性が低いのでクラスメソッドにはしない
         def width_difference(layout):
 
             boxes = layout.agents
@@ -65,10 +84,9 @@ class OverlappedAreaObjective(Objective):
             content_box = layout.get_agent_with_identifier("content")
 
             # return sum of distances
-            print "diff:" + str(abs(side_box.get_width() - content_box.get_width()))
             return abs(side_box.get_width() - content_box.get_width()) * 10
 
-        objective_function = (lambda layout: sum_of_overlapped_area(layout) + width_difference(layout))
+        objective_function = (lambda layout: Objective.sum_of_overlapped_area(layout) + width_difference(layout))
 
         Objective.__init__(self, 1, objective_function)
 
@@ -76,28 +94,7 @@ class OverlappedAreaObjective(Objective):
 class DistanceObjective(Objective):
     def __init__(self):
 
-        def sum_of_distance_between_gravities(layout):
-
-            boxes = layout.agents
-            distance_list = [[BoxAgent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
-
-            # return sum of distances
-            return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
-
-        #重なり数ではなく重なり面積とかにすれば改善されそう
-        def penalize_overlap(layout):
-            boxes = layout.agents
-            penalty = 0
-
-            for i, box1 in enumerate(boxes):
-                for j in range(i+1,len(boxes) - 1):
-                    if BoxAgent.overlap_or_not(boxes[i], boxes[j]):
-                        penalty += 1
-
-            # return sum of distances
-            return penalty * 1000
-
-        objective_function = (lambda layout: sum_of_distance_between_gravities(layout) + penalize_overlap(layout))
+        objective_function = (lambda layout: Objective.sum_of_distance_between_gravities(layout) + Objective.penalize_overlap(layout))
 
         Objective.__init__(self, 1, objective_function)
 
