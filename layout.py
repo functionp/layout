@@ -142,8 +142,8 @@ class SoftplannerLayout(Layout):
         # global_menu_layout
 
         #ほんとはコンテントだけ指定してボックスは勝手に作られる
-        global_menu_item_style = Style([10,10], [50,50], 1)
-        global_menu_item_condition = Condition([BoxCondition.width_constraint(0, 210), BoxCondition.y_constraint(2), BoxCondition.x_constraint(2)] , 1)
+        global_menu_item_style = Style([200,10], [50,50], 1)
+        global_menu_item_condition = Condition([BoxCondition.width_constraint(90), BoxCondition.y_constraint(2), BoxCondition.x_constraint(200)] , 1)
 
         global_menu_item_boxes = []
         global_menu_item_boxes.append(BoxAgent(global_menu_item_style.get_copy(), "", global_menu_item_condition))
