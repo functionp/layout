@@ -73,7 +73,17 @@ class OCSOptimization(Optimization):
 
         #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
         i = 0
-        while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False:
+        constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
+        while i < OCSOptimization.max_iteration or constraints_not_satisfied or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
+
+            constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
+
+            print "itera" + str(i < OCSOptimization.max_iteration)
+            print "whole const" + str(constraints.evaluate(situation) == False)
+            print "agent const" + str(situation.agent_set.evaluate_agent_constraint() == False)
+            print self.best_value
+            print self.get_objective_value()
+            print "best" + str(abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference)
             self.one_optimization_cycle()
             i += 1
 
@@ -83,9 +93,13 @@ class OCSOptimization(Optimization):
         while rule_not_found_or_not == True:
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
             Agent.exchange_rule_randomly(self.agent_set.agents)
+            
+        self.display_status()
 
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
+
+        print "reinforce owatta"
 
         self.agent_set.delete_weak_rules()
 
@@ -123,11 +137,14 @@ class OCSOptimization(Optimization):
             # repeat until objective converged and constraints are satisfied
             not_converged = abs(previous_value - current_value) > OCSOptimization.minimum_difference or abs(self.best_value - current_value) > OCSOptimization.minimum_difference
             while not_converged or constraints.evaluate(situation) == False:
-
+                print "=-=-="
+                print self.best_value
+                print current_value
                 selected_rule = agent.rule_select()
 
                 # skip too weak rule (to avoid infinite loop)
                 if selected_rule.strength < 0.001:
+                    print "hoge"
                     break
 
                 # apply selected rule, and record objective values before and after execution
@@ -143,8 +160,7 @@ class OCSOptimization(Optimization):
                 applied_pairs.append(pair_of_episode_and_rule)
 
                 #おそらく無限ループの原因はどんなアクションによっても体系が変化しない組み方になるから　制約がいつまでも解消されない→報酬減→削除→生成→無理
-                print "im here "
-                self.display_status()
+                print "episode" + str(episode)
                 episode += 1
 
                 self.reward_process(current_value, previous_value, applied_pairs)

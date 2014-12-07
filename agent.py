@@ -96,11 +96,13 @@ class Agent():
 
         if agents[i1].get_number_of_rules() != 0:
             sending_rule1 = agents[i1].get_sorted_ruleset()[0]
-            agents[i2].replace_weakest_rule(sending_rule1)
+            #agents[i2].replace_weakest_rule(sending_rule1)
+            agents[i2].add_rule(sending_rule1)
 
         if agents[i2].get_number_of_rules() != 0:
             sending_rule2 = agents[i2].get_sorted_ruleset()[0]
-            agents[i1].replace_weakest_rule(sending_rule2)
+            #agents[i1].replace_weakest_rule(sending_rule2)
+            agents[i1].add_rule(sending_rule2)
 
 def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)
@@ -174,15 +176,11 @@ class BoxAgent(Agent):
         base_box = self.parent_layout.base_box
         top_limit = 0
         bottom_limit = base_box.get_height()
-        print base_box.identifier
-        print "b-limit" + str(bottom_limit)
 
         if value < top_limit:
             y_after_movement = top_limit + 1
         elif bottom_limit < value + self.get_height():
             y_after_movement = bottom_limit - self.get_height() -1
-            print "hit"
-
         else:
             y_after_movement = value
 
