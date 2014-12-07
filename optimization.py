@@ -147,8 +147,10 @@ class OCSOptimization(Optimization):
                     print "hoge"
                     break
 
-                # apply selected rule, and record objective values before and after execution
+                # record objective value, constraint satisfaction before execution
                 previous_value = self.get_objective_value()
+                previous_whole_constraints_satisfied = constraints.evaluate(situation)
+                previous_agent_constraints_satisfied = situation.agent_set.evaluate_agent_constraint()
 
                 agent.execute_action(selected_rule.action)
 
@@ -163,15 +165,17 @@ class OCSOptimization(Optimization):
                 print "episode" + str(episode)
                 episode += 1
 
-                self.reward_process(current_value, previous_value, applied_pairs)
+                #self.display_status()
 
-    def reward_process(self, current_value, previous_value, applied_pairs):
+                self.reward_process(previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied, applied_pairs)
+
+    def reward_process(self, previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied, applied_pairs):
 
         fixed_value = (lambda x: 0.05)
         decreasing_function = (lambda x: (0.1)**x)
 
         #報酬関数を減少関数にするとあっという間に強度が収束してデッドロックに陥る
-        if self.positive_reward_or_not(current_value, previous_value):
+        if self.positive_reward_or_not(previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied):
             reward_function = (lambda x: fixed_value(x))
         else:
             reward_function = (lambda x: -1 * fixed_value(x))
@@ -179,7 +183,8 @@ class OCSOptimization(Optimization):
         self.give_rewards(applied_pairs, reward_function)
 
     # return True if positive reward is to be given, otherwise return False
-    def positive_reward_or_not(self, current_value, previous_value):
+    def positive_reward_or_not(self, previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied):
+        current_value = self.get_objective_value()
         half_value = self.get_half_value()
 
         def compare_with_before():
@@ -192,8 +197,9 @@ class OCSOptimization(Optimization):
         def compare_with_before_and_satisfy():
             constraints = self.specification.constraints
             situation = Situation(agent_set=self.agent_set.get_copy()) 
-            constraints_satisfied = constraints.evaluate(situation) == True and situation.agent_set.evaluate_agent_constraint()
-            return constraints_satisfied and previous_value > current_value
+            whole_constraints_satisfied = previous_whole_constraints_satisfied == False and constraints.evaluate(situation) == True
+            agent_constraints_satisfied = previous_agent_constraints_satisfied == False and situation.agent_set.evaluate_agent_constraint()
+            return whole_constraints_satisfied or agent_constraints_satisfied or previous_value > current_value
 
         return compare_with_before_and_satisfy()
 
