@@ -74,16 +74,17 @@ class OCSOptimization(Optimization):
         #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
         i = 0
         constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
-        while i < OCSOptimization.max_iteration or constraints_not_satisfied or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
+        while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False: #or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
 
-            constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
+            #constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
+            #すごい速度で収束　あとはエージェントコンディション
 
-            print "itera" + str(i < OCSOptimization.max_iteration)
-            print "whole const" + str(constraints.evaluate(situation) == False)
-            print "agent const" + str(situation.agent_set.evaluate_agent_constraint() == False)
+            print "itera: " + str(i < OCSOptimization.max_iteration)
+            print "whole const: " + str(constraints.evaluate(situation) == False)
+            print "agent const: " + str(situation.agent_set.evaluate_agent_constraint() == False)
             print self.best_value
             print self.get_objective_value()
-            print "best" + str(abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference)
+            print "best:" + str(abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference)
             self.one_optimization_cycle()
             i += 1
 
@@ -136,7 +137,7 @@ class OCSOptimization(Optimization):
 
             # repeat until objective converged and constraints are satisfied
             not_converged = abs(previous_value - current_value) > OCSOptimization.minimum_difference or abs(self.best_value - current_value) > OCSOptimization.minimum_difference
-            while not_converged or constraints.evaluate(situation) == False:
+            while abs(previous_value - current_value) > OCSOptimization.minimum_difference or abs(self.best_value - current_value) > OCSOptimization.minimum_difference or constraints.evaluate(situation) == False:
                 print "=-=-="
                 print self.best_value
                 print current_value
@@ -186,6 +187,10 @@ class OCSOptimization(Optimization):
     def positive_reward_or_not(self, previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied):
         current_value = self.get_objective_value()
         half_value = self.get_half_value()
+        constraints = self.specification.constraints
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
+        whole_constraints_satisfied = previous_whole_constraints_satisfied == False and constraints.evaluate(situation) == True
+        agent_constraints_satisfied = previous_agent_constraints_satisfied == False and situation.agent_set.evaluate_agent_constraint()
 
         def compare_with_before():
             return (previous_value > current_value)
@@ -195,10 +200,6 @@ class OCSOptimization(Optimization):
 
         # do not give reward to the rule which does not satisfy the constraint
         def compare_with_before_and_satisfy():
-            constraints = self.specification.constraints
-            situation = Situation(agent_set=self.agent_set.get_copy()) 
-            whole_constraints_satisfied = previous_whole_constraints_satisfied == False and constraints.evaluate(situation) == True
-            agent_constraints_satisfied = previous_agent_constraints_satisfied == False and situation.agent_set.evaluate_agent_constraint()
             return whole_constraints_satisfied or agent_constraints_satisfied or previous_value > current_value
 
         return compare_with_before_and_satisfy()
