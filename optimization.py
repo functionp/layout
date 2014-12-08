@@ -188,13 +188,13 @@ class OCSOptimization(Optimization):
 
     # return True if positive reward is to be given, otherwise return False
     def positive_reward_or_not(self, previous_situation):
-        previous_value = self.get_objective_function()(previous_situation.get_agent_set)
+        constraints = self.specification.constraints
+        previous_value = self.get_objective_function()(previous_situation.agent_set)
         previous_whole_constraints_satisfied = constraints.evaluate(previous_situation)
         previous_agent_constraints_satisfied = previous_situation.agent_set.evaluate_agent_constraint()
 
         current_value = self.get_objective_value()
         half_value = self.get_half_value()
-        constraints = self.specification.constraints
         situation = Situation(agent_set=self.agent_set.get_copy()) 
         whole_constraints_satisfied = previous_whole_constraints_satisfied == False and constraints.evaluate(situation) == True
         agent_constraints_satisfied = previous_agent_constraints_satisfied == False and situation.agent_set.evaluate_agent_constraint()

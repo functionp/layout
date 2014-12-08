@@ -139,7 +139,7 @@ class BoxAgent(Agent):
         self.set_inner_layout(None)
 
     def get_copy(self):
-        box = BoxAgent(style.get_copy(), self.identifier, self.condition.get_copy(), self.text)
+        box = BoxAgent(self.style.get_copy(), self.identifier, self.condition.get_copy(), self.text)
         box.set_parent_layout(self.parent_layout)
         box.set_inner_layout(self.inner_layout)
         return box

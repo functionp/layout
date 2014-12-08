@@ -6,7 +6,7 @@ class Situation():
         self.agent = kwargs.get('agent', None)
 
     def get_copy(self):
-        return Situation(self.agent_set.get_copy(), self.agent.get_copy())
+        return Situation(agent_set=self.agent_set.get_copy(), agent=self.agent.get_copy())
 
 
 # return True if relation between given box and any box in given layout satisfies the given bool function
