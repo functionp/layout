@@ -5,6 +5,10 @@ class Situation():
         self.agent_set = kwargs.get('agent_set', None)
         self.agent = kwargs.get('agent', None)
 
+    def get_copy(self):
+        return Situation(self.agent_set.get_copy(), self.agent.get_copy())
+
+
 # return True if relation between given box and any box in given layout satisfies the given bool function
 def bool_for_layout_and_box(agent_set, agent, bool_function):
 
@@ -43,6 +47,9 @@ class Condition():
                 return reduce(lambda b1,b2: b1 or b2, results)
         else:
             return True
+
+    def get_copy(self):
+        return Condition(self.condfuns, self.and_or)
 
     def get_size(self):
         return len(self.condfuns)

@@ -14,6 +14,11 @@ class Agent():
     def set_ruleset(self, ruleset):
         self.ruleset = ruleset
 
+    def get_copy(self):
+        agent = Agent(condition, identifier)
+        agent.set_ruleset(self.get_copy_of_ruleset)
+        return agent
+
     def get_copy_of_ruleset(self):
         return self.ruleset[:]
 
@@ -132,6 +137,12 @@ class BoxAgent(Agent):
         self.set_parent_layout(None)
         self.set_text(text)
         self.set_inner_layout(None)
+
+    def get_copy(self):
+        box = BoxAgent(style.get_copy(), self.identifier, self.condition.get_copy(), self.text)
+        box.set_parent_layout(self.parent_layout)
+        box.set_inner_layout(self.inner_layout)
+        return box
 
     def get_position(self):
         return self.style.position

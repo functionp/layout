@@ -25,8 +25,12 @@ class Optimization():
         self.set_best_value(100000)
         self.set_worst_value(0)
 
+    def get_objective_function(self):
+        return self.specification.objective.function
+
     def get_objective_value(self):
-        return self.specification.objective.function(self.agent_set)
+        objective_funtion = self.get_objective_function()
+        return objective_funtion(self.agent_set)
 
     def get_rulesets(self):
         return self.agent_set.get_rulesets()
@@ -149,9 +153,8 @@ class OCSOptimization(Optimization):
                     break
 
                 # record objective value, constraint satisfaction before execution
+                previous_situation = situation.get_copy()
                 previous_value = self.get_objective_value()
-                previous_whole_constraints_satisfied = constraints.evaluate(situation)
-                previous_agent_constraints_satisfied = situation.agent_set.evaluate_agent_constraint()
 
                 agent.execute_action(selected_rule.action)
 
@@ -168,15 +171,15 @@ class OCSOptimization(Optimization):
 
                 #self.display_status()
 
-                self.reward_process(previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied, applied_pairs)
+                self.reward_process(previous_situation, applied_pairs)
 
-    def reward_process(self, previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied, applied_pairs):
+    def reward_process(self, previous_situation, applied_pairs):
 
         fixed_value = (lambda x: 0.05)
         decreasing_function = (lambda x: (0.1)**x)
 
         #報酬関数を減少関数にするとあっという間に強度が収束してデッドロックに陥る
-        if self.positive_reward_or_not(previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied):
+        if self.positive_reward_or_not(previous_situation):
             reward_function = (lambda x: fixed_value(x))
         else:
             reward_function = (lambda x: -1 * fixed_value(x))
@@ -184,7 +187,11 @@ class OCSOptimization(Optimization):
         self.give_rewards(applied_pairs, reward_function)
 
     # return True if positive reward is to be given, otherwise return False
-    def positive_reward_or_not(self, previous_value, previous_whole_constraints_satisfied, previous_agent_constraints_satisfied):
+    def positive_reward_or_not(self, previous_situation):
+        previous_value = self.get_objective_function()(previous_situation.get_agent_set)
+        previous_whole_constraints_satisfied = constraints.evaluate(previous_situation)
+        previous_agent_constraints_satisfied = previous_situation.agent_set.evaluate_agent_constraint()
+
         current_value = self.get_objective_value()
         half_value = self.get_half_value()
         constraints = self.specification.constraints
