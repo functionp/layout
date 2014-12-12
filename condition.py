@@ -69,11 +69,11 @@ class Condition():
     def make_condition(cls, situation):
         #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
 #        condfun_candidates = [BoxCondition.in_the_edge(), 
-                              BoxCondition.having_box_in_given_distance(100), 
-                              BoxCondition.having_box_in_given_distance(200), 
-                              BoxCondition.having_box_in_given_distance(400), 
-                              BoxCondition.keeping_given_distance_from_box(300), 
-                              BoxCondition.having_overlapped_box()]
+                              BoxCondFun.having_box_in_given_distance(100), 
+                              BoxCondFun.having_box_in_given_distance(200), 
+                              BoxCondFun.having_box_in_given_distance(400), 
+                              BoxCondFun.keeping_given_distance_from_box(300), 
+                              BoxCondFun.having_overlapped_box()]
 
         # extract which matches given state(layout and box)
         matched_condfuns = [condfun for condfun in condfun_candidates if condfun.evalate_condition(situation) == True]
@@ -107,6 +107,9 @@ class BoxCondition(Condition):
     pass
 
 class CondFun():
+    pass
+
+class BoxCondFun(CondFun):
     def __init__(self, condition, objective=(lambda x: 0)):
         self.set_condition(condition)
         self.set_objective(objective)
@@ -148,7 +151,7 @@ class CondFun():
             box = situation.agent
             return lower_limit <= box.get_height() and box.get_height() <= upper_limit
 
-        return _height_constraint
+        return CondFun(_height_constraint)
 
     @classmethod
     def x_constraint(cls, lower_limit, upper_limit=10000):
@@ -156,7 +159,7 @@ class CondFun():
             box = situation.agent
             return lower_limit <= box.get_x() and box.get_x() <= upper_limit
 
-        return _x_constraint
+        return CondFun(_x_constraint)
 
     @classmethod
     def y_constraint(cls, lower_limit, upper_limit=10000):
@@ -164,7 +167,7 @@ class CondFun():
             box = situation.agent
             return lower_limit <= box.get_y() and box.get_y() <= upper_limit
 
-        return _y_constraint
+        return CondFun(_y_constraint)
 
     @classmethod
     def in_the_edge(cls):
@@ -180,7 +183,7 @@ class CondFun():
 
             return result
 
-        return _in_the_edge
+        return CondFun(_in_the_edge)
 
     @classmethod
     def no_overlap(cls):
@@ -197,7 +200,7 @@ class CondFun():
 
             return result
 
-        return _no_overlap
+        return CondFun(_no_overlap)
 
     @classmethod
     def all_aligned(cls):
@@ -222,7 +225,7 @@ class CondFun():
             # return True only if all the element is True
             return reduce((lambda b1,b2: b1 and b2), list_of_having_aligned_box_or_not)
 
-        return _all_aligned
+        return CondFun(_all_aligned)
 
     @classmethod
     def having_box_in_given_distance(cls, distance):
@@ -234,12 +237,12 @@ class CondFun():
 
             return bool_for_layout_and_box(layout, box, bool_function)
 
-        return _having_box_in_given_distance
+        return CondFun(_having_box_in_given_distance)
 
     @classmethod
     def keeping_given_distance_from_box(cls, distance):
         f = BoxCondition.having_box_in_given_distance(distance)
-        return (lambda situation: not f(situation))
+        return CondFun((lambda situation: not f(situation)))
 
     @classmethod
     def having_overlapped_box(cls):
@@ -251,7 +254,7 @@ class CondFun():
 
             return bool_for_layout_and_box(layout, box, bool_function)
 
-        return _having_overlapped_box
+        return CondFun(_having_overlapped_box)
 
 # imports - - - - - - -
 from layout import *
