@@ -81,7 +81,7 @@ class OCSOptimization(Optimization):
         while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False: #or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
 
             #constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
-            #すごい速度で収束　あとはエージェントコンディション
+            #すごい速度で収束　あとはエージェントコンディション→制約を目的関数とセットにすれば良い　あとでここの条件と強化学習の条件を直す
 
             print "itera: " + str(i < OCSOptimization.max_iteration)
             print "whole const: " + str(constraints.evaluate(situation) == False)
