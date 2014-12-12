@@ -38,7 +38,7 @@ class Condition():
     def evaluate(self, situation):
 
         if self.condfuns != []:
-            results = [condfun(situation) for condfun in self.condfuns]
+            results = [condfun.evaluate_condition(situation) for condfun in self.condfuns]
 
             # case of "and"
             if self.and_or == 1:
@@ -68,7 +68,7 @@ class Condition():
     # make Condition instance which represents given situation(layout and box)
     def make_condition(cls, situation):
         #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
-#        condfun_candidates = [BoxCondition.in_the_edge(), 
+        condfun_candidates = [BoxCondFun.in_the_edge(), 
                               BoxCondFun.having_box_in_given_distance(100), 
                               BoxCondFun.having_box_in_given_distance(200), 
                               BoxCondFun.having_box_in_given_distance(400), 
@@ -76,7 +76,7 @@ class Condition():
                               BoxCondFun.having_overlapped_box()]
 
         # extract which matches given state(layout and box)
-        matched_condfuns = [condfun for condfun in condfun_candidates if condfun.evalate_condition(situation) == True]
+        matched_condfuns = [condfun for condfun in condfun_candidates if condfun.evaluate_condition(situation) == True]
 
         and_or = 1 # represents "and"
         condition = Condition(matched_condfuns, and_or)
@@ -87,7 +87,7 @@ class Condition():
 
         return condition
 
-    # # # CONDFUNS # # #
+        # # # CONDFUNS # # #
 
     @classmethod
     def minimum_member(cls, number):
@@ -107,9 +107,6 @@ class BoxCondition(Condition):
     pass
 
 class CondFun():
-    pass
-
-class BoxCondFun(CondFun):
     def __init__(self, condition, objective=(lambda x: 0)):
         self.set_condition(condition)
         self.set_objective(objective)
@@ -123,8 +120,12 @@ class BoxCondFun(CondFun):
     def get_objective_value(self, situation):
         return self.objective(situation)
 
-    def evalate_condition(self, situation):
+    def evaluate_condition(self, situation):
         return self.condition(situation)
+
+class BoxCondFun(CondFun):
+    def __init__(self, condition, objective=(lambda x: 0)):
+        CondFun.__init__(self, condition, objective)
 
     # # # CONDFUNS # # #
 
@@ -241,8 +242,8 @@ class BoxCondFun(CondFun):
 
     @classmethod
     def keeping_given_distance_from_box(cls, distance):
-        f = BoxCondition.having_box_in_given_distance(distance)
-        return CondFun((lambda situation: not f(situation)))
+        condfun = BoxCondFun.having_box_in_given_distance(distance)
+        return CondFun((lambda situation: not condfun.evaluate_condition(situation)))
 
     @classmethod
     def having_overlapped_box(cls):

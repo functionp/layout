@@ -28,7 +28,7 @@ class SampleSpecification(Specification):
     def __init__(self):
         default_layout = SampleLayout()
         objective = OverlappedAreaObjective()
-        constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()], 1)
+        constraint = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
 
         Specification.__init__(self, default_layout, objective, constraint)
 
