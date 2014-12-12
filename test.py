@@ -1,15 +1,12 @@
 class TestA():
-    def __init__(self):
-        self.innerlayout = None
+    def __init__(self, hoge):
+        self.innerlayout = hoge
 
-class TestB():
-    def __init__(self):
-        self.b = "soso"
+    @classmethod
+    def classmethod1(cls, a):
+        return TestA(a)
 
-
-
-
-
-tb = TestB()
+ins = TestA.classmethod1("soso")
+print ins.innerlayout
 
 

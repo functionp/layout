@@ -64,12 +64,11 @@ class Condition():
     def remove_condfun(self, index):
         del(self.condfuns[index])
 
-
     @classmethod
     # make Condition instance which represents given situation(layout and box)
     def make_condition(cls, situation):
         #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
-        condfun_candidates = [BoxCondition.in_the_edge(), 
+#        condfun_candidates = [BoxCondition.in_the_edge(), 
                               BoxCondition.having_box_in_given_distance(100), 
                               BoxCondition.having_box_in_given_distance(200), 
                               BoxCondition.having_box_in_given_distance(400), 
@@ -77,12 +76,12 @@ class Condition():
                               BoxCondition.having_overlapped_box()]
 
         # extract which matches given state(layout and box)
-        matched_condfuns = [condfun for condfun in condfun_candidates if condfun(situation) == True]
+        matched_condfuns = [condfun for condfun in condfun_candidates if condfun.evalate_condition(situation) == True]
 
         and_or = 1 # represents "and"
         condition = Condition(matched_condfuns, and_or)
 
-        # remove if condition has a lot of condfuns (loosing condition)
+        # remove if condition has a lot of condfuns (loosening condition)
         if 3 < condition.get_size():
             condition.remove_random_condfun()
 
@@ -105,6 +104,24 @@ class Condition():
 
 
 class BoxCondition(Condition):
+    pass
+
+class CondFun():
+    def __init__(self, condition, objective=(lambda x: 0)):
+        self.set_condition(condition)
+        self.set_objective(objective)
+
+    def set_condition(self, condition):
+        self.condition = condition
+
+    def set_objective(self, objective):
+        self.objective = objective
+
+    def get_objective_value(self, situation):
+        return self.objective(situation)
+
+    def evalate_condition(self, situation):
+        return self.condition(situation)
 
     # # # CONDFUNS # # #
 
@@ -114,7 +131,16 @@ class BoxCondition(Condition):
             box = situation.agent
             return lower_limit <= box.get_width() and box.get_width() <= upper_limit
 
-        return _width_constraint
+        def _width_constraint_objective(situation):
+            box = situation.agent
+            if box.get_width() < lower_limit:
+                return abs(lower_limit - box.get_width())
+            elif upper_limit < box.get_width():
+                return abs(box.get_width() - upper_limit)
+            else:
+                return 0
+
+        return CondFun(_width_constraint, _width_constraint_objective)
 
     @classmethod
     def height_constraint(cls, lower_limit, upper_limit=10000):
