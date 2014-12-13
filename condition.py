@@ -54,6 +54,10 @@ class Condition():
     def get_size(self):
         return len(self.condfuns)
 
+    def get_sum_of_constraint_objective(self, situation):
+        objective_value_list = [condfun.get_objective_value(situation) for condfun in self.condfuns]
+        return reduce((lambda x, y: x+y), objective_value_list)
+
     def add_condfun(self, condfun):
         self.condfuns.append(condfun)
 
