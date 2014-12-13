@@ -28,7 +28,7 @@ class SampleSpecification(Specification):
     def __init__(self):
         default_layout = SampleLayout()
         objective = OverlappedAreaObjective()
-        constraint = Condition([BoxCondition.no_overlap(), BoxCondition.all_aligned()], 1)
+        constraint = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
 
         Specification.__init__(self, default_layout, objective, constraint)
 
@@ -38,9 +38,9 @@ class Objective():
         self.function = function
 
     @staticmethod
-    def sum_of_overlapped_area(layout):
-
-        boxes = layout.agents
+    def sum_of_overlapped_area(situation):
+        
+        boxes = situation.agent_set.agents
 
         if len(boxes) > 1:
             overlapped_area_list = [[BoxAgent.get_overlaped_area(boxes[i], boxes[j]) for j in range(i, len(boxes)) if i != j] for i in range(len(boxes))]
@@ -51,17 +51,17 @@ class Objective():
         return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), overlapped_area_list))
 
     @staticmethod
-    def sum_of_distance_between_gravities(layout):
+    def sum_of_distance_between_gravities(situation):
 
-        boxes = layout.agents
+        boxes = situation.agent_set.agents
         distance_list = [[BoxAgent.get_gravity_distance(boxes[i], boxes[j]) for j in range(i, len(boxes))] for i in range(len(boxes))]
 
         # return sum of distances
         return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
 
     @staticmethod
-    def penalize_overlap(layout):
-        boxes = layout.agents
+    def penalize_overlap(situation):
+        boxes = situation.agent_set.agents
         penalty = 0
 
         for i, box1 in enumerate(boxes):
@@ -73,9 +73,9 @@ class Objective():
         return penalty * 1000
 
     @staticmethod
-    def width_difference(layout):
-        
-        boxes = layout.agents
+    def width_difference(situation):
+
+        boxes = situation.agent_set.agents
         scale = 10
 
         distance_list = [[abs(boxes[i].get_width() - boxes[j].get_width()) * scale for j in range(i, len(boxes))] for i in range(len(boxes))]

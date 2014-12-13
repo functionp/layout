@@ -152,7 +152,16 @@ class BoxCondFun(CondFun):
             box = situation.agent
             return lower_limit <= box.get_height() and box.get_height() <= upper_limit
 
-        return CondFun(_height_constraint)
+        def _height_constraint_objective(situation):
+            box = situation.agent
+            if box.get_height() < lower_limit:
+                return abs(lower_limit - box.get_height())
+            elif upper_limit < box.get_height():
+                return abs(box.get_height() - upper_limit)
+            else:
+                return 0
+
+        return CondFun(_height_constraint, _height_constraint_objective)
 
     @classmethod
     def x_constraint(cls, lower_limit, upper_limit=10000):
@@ -160,7 +169,16 @@ class BoxCondFun(CondFun):
             box = situation.agent
             return lower_limit <= box.get_x() and box.get_x() <= upper_limit
 
-        return CondFun(_x_constraint)
+        def _x_constraint_objective(situation):
+            box = situation.agent
+            if box.get_x() < lower_limit:
+                return abs(lower_limit - box.get_x())
+            elif upper_limit < box.get_x():
+                return abs(box.get_x() - upper_limit)
+            else:
+                return 0
+
+        return CondFun(_x_constraint, _x_constraint_objective)
 
     @classmethod
     def y_constraint(cls, lower_limit, upper_limit=10000):
@@ -168,7 +186,16 @@ class BoxCondFun(CondFun):
             box = situation.agent
             return lower_limit <= box.get_y() and box.get_y() <= upper_limit
 
-        return CondFun(_y_constraint)
+        def _y_constraint_objective(situation):
+            box = situation.agent
+            if box.get_y() < lower_limit:
+                return abs(lower_limit - box.get_y())
+            elif upper_limit < box.get_y():
+                return abs(box.get_y() - upper_limit)
+            else:
+                return 0
+
+        return CondFun(_y_constraint, _y_constraint_objective)
 
     @classmethod
     def in_the_edge(cls):
