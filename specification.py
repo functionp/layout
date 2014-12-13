@@ -85,10 +85,11 @@ class Objective():
 
 
 
+
 class OverlappedAreaObjective(Objective):
     def __init__(self):
 
-        objective_function = (lambda layout: Objective.sum_of_overlapped_area(layout) + Objective.width_difference(layout))
+        objective_function = (lambda situation: Objective.sum_of_overlapped_area(situation) + Objective.width_difference(situation))
 
         Objective.__init__(self, 1, objective_function)
 

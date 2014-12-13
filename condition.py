@@ -45,8 +45,8 @@ class Condition():
                 return reduce(lambda b1,b2: b1 and b2, results)
             else:
                 return reduce(lambda b1,b2: b1 or b2, results)
-        else:
-            return True
+            else:
+                return True
 
     def get_copy(self):
         return Condition(self.condfuns, self.and_or)
@@ -118,7 +118,7 @@ class CondFun():
         self.objective = objective
 
     def get_objective_value(self, situation):
-        return self.objective(situation)
+        return self.objective.function(situation)
 
     def evaluate_condition(self, situation):
         return self.condition(situation)
@@ -144,7 +144,7 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_width_constraint, _width_constraint_objective)
+        return CondFun(_width_constraint, Objective(1, _width_constraint_objective))
 
     @classmethod
     def height_constraint(cls, lower_limit, upper_limit=10000):
@@ -161,7 +161,7 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_height_constraint, _height_constraint_objective)
+        return CondFun(_height_constraint, Objective(1, _height_constraint_objective))
 
     @classmethod
     def x_constraint(cls, lower_limit, upper_limit=10000):
@@ -178,7 +178,7 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_x_constraint, _x_constraint_objective)
+        return CondFun(_x_constraint, Objective(1, _x_constraint_objective))
 
     @classmethod
     def y_constraint(cls, lower_limit, upper_limit=10000):
@@ -195,7 +195,7 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_y_constraint, _y_constraint_objective)
+        return CondFun(_y_constraint, Objective(1, _y_constraint_objective))
 
     @classmethod
     def in_the_edge(cls):
@@ -228,7 +228,7 @@ class BoxCondFun(CondFun):
 
             return result
 
-        return CondFun(_no_overlap)
+        return CondFun(_no_overlap, Objective(1, Objective.sum_of_overlapped_area))
 
     @classmethod
     def all_aligned(cls):
