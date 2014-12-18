@@ -160,7 +160,7 @@ class OCSOptimization(Optimization):
                 agent.execute_action(selected_rule.action)
 
                 current_value = self.get_objective_value()
-                situation = Situation(agent_set=agent_set.get_copy(), agent=agent)
+                situation = Situation(agent_set=agent_set.get_copy(), agent=agent.get_copy())
 
                 # rememebr applied rule with episode(time)
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
@@ -172,15 +172,15 @@ class OCSOptimization(Optimization):
 
                 #self.display_status()
 
-                self.reward_process(previous_situation, applied_pairs)
+                self.reward_process(situation, previous_situation, applied_pairs)
 
-    def reward_process(self, previous_situation, applied_pairs):
+    def reward_process(self, present_situation, previous_situation, applied_pairs):
 
         fixed_value = (lambda x: 0.05)
         decreasing_function = (lambda x: (0.1)**x)
 
         #報酬関数を減少関数にするとあっという間に強度が収束してデッドロックに陥る
-        if self.positive_reward_or_not(previous_situation):
+        if self.positive_reward_or_not(present_situation, previous_situation):
             reward_function = (lambda x: fixed_value(x))
         else:
             reward_function = (lambda x: -1 * fixed_value(x))
@@ -188,29 +188,29 @@ class OCSOptimization(Optimization):
         self.give_rewards(applied_pairs, reward_function)
 
     # return True if positive reward is to be given, otherwise return False
-    def positive_reward_or_not(self, previous_situation):
-        constraints = self.specification.constraints
+    def positive_reward_or_not(self, present_situation, previous_situation):
+        whole_constraints = self.specification.constraints
+        agent_constraints = previous_situation.agent.condition
+
         previous_value = self.get_objective_function()(previous_situation)
-        previous_whole_constraints_satisfied = constraints.evaluate(previous_situation)
-        previous_agent_constraints_satisfied = previous_situation.agent_set.evaluate_agent_constraint()
+        #previous_whole_constraints_satisfied = whole_constraints.evaluate(previous_situation)
+        #previous_agent_constraints_satisfied = agent_constraints.evaluate(previous_situation)
+        previous_whole_constraints_objective = whole_constraints.get_sum_of_constraint_objective(previous_situation)
+        previous_agent_constraints_objective = agent_constraints.get_sum_of_constraint_objective(previous_situation)
 
         current_value = self.get_objective_value()
         half_value = self.get_half_value()
-        situation = Situation(agent_set=self.agent_set.get_copy()) 
-        whole_constraints_satisfied = previous_whole_constraints_satisfied == False and constraints.evaluate(situation) == True
-        agent_constraints_satisfied = previous_agent_constraints_satisfied == False and situation.agent_set.evaluate_agent_constraint()
+        #whole_constraints_satisfied = previous_whole_constraints_satisfied == False and whole_constraints.evaluate(present_situation) == True
+        #agent_constraints_satisfied = previous_agent_constraints_satisfied == False and agent_constraints.evaluate(present_situation) == True
+        whole_constraints_objective = whole_constraints.get_sum_of_constraint_objective(present_situation)
+        agent_constraints_objective = agent_constraints.get_sum_of_constraint_objective(present_situation)
 
-        def compare_with_before():
-            return (previous_value > current_value)
+        compare_with_half = (half_value > current_value)
+        compare_with_before = (previous_value > current_value)
+        compare_with_before_whole = (previous_whole_constraints_objective > whole_constraints_objective)
+        compare_with_before_agent = (previous_agent_constraints_objective > agent_constraints_objective)
 
-        def compare_with_half():
-            return (half_value > current_value)
-
-        # do not give reward to the rule which does not satisfy the constraint
-        def compare_with_before_and_satisfy():
-            return whole_constraints_satisfied or agent_constraints_satisfied or previous_value > current_value
-
-        return compare_with_before_and_satisfy()
+        return compare_with_before or compare_with_before_whole or compare_with_before_agent
 
     # give rewards to serial rules at one time
     def give_rewards(self, pairs, reward_function):

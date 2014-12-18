@@ -131,7 +131,7 @@ class BoxAgent(Agent):
 
         # to avoid import error, avoid to use initial value
         if condition == None: condition = Condition()
-
+        
         Agent.__init__(self, condition, identifier)
         self.set_style(style)
         self.set_parent_layout(None)
