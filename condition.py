@@ -45,8 +45,8 @@ class Condition():
                 return reduce(lambda b1,b2: b1 and b2, results)
             else:
                 return reduce(lambda b1,b2: b1 or b2, results)
-            else:
-                return True
+        else:
+            return True
 
     def get_copy(self):
         return Condition(self.condfuns, self.and_or)
