@@ -67,6 +67,18 @@ class OCSOptimization(Optimization):
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets
 
+    def get_whole_constraints_satisfied_or_not(self):
+        constraints = self.specification.constraints
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
+        return constraints.evaluate(situation)
+
+    def get_agent_constraints_satisfied_or_not(self):
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
+        return situation.agent_set.evaluate_agent_constraint()
+
+    def get_best_value_now_or_not(self):
+        return abs(self.best_value - self.get_objective_value()) < OCSOptimization.minimum_difference
+
     def optimize(self):
         # use organizational rulesets for default rulesets
         self.agent_set.set_rulesets(self.organizational_rulesets)
@@ -79,8 +91,8 @@ class OCSOptimization(Optimization):
         #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
         i = 0
         while True:
-            constraints_satisfied = constraints.evaluate(situation) == True and situation.agent_set.evaluate_agent_constraint() == True
-            best_value_now = abs(self.best_value - self.get_objective_value()) < OCSOptimization.minimum_difference
+            constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
+            best_value_now = self.get_best_value_now_or_not()
             iteration_finished = i > OCSOptimization.minimum_iteration
 
             if constraints_satisfied and best_value_now and iteration_finished: break
@@ -224,9 +236,9 @@ class OCSOptimization(Optimization):
         situation = Situation(agent_set=self.agent_set.get_copy()) 
 
         print "---------------------------------------------"
-        print "whole const: " + str(constraints.evaluate(situation) == False)
+        print "whole const: " + str(self.get_whole_constraints_satisfied_or_not)
         print "   whole objective:  " + str(constraints.get_sum_of_constraint_objective(situation))
-        print "agent const: " + str(situation.agent_set.evaluate_agent_constraint() == False)
+        print "agent const: " + str(self.get_agent_constraints_satisfied_or_not)
         agents = self.agent_set.agents
 
         for i,agent in enumerate(agents):
@@ -235,7 +247,7 @@ class OCSOptimization(Optimization):
             print "       objective:  " + str(agent.condition.get_sum_of_constraint_objective(situation_with_agent))
 
 
-        print "best condition:" + str(abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference)
+        print "best value now:" + str(self.get_best_value_now_or_not())
         print "best value: " + str(self.best_value)
         print "current vaue: " + str(self.get_objective_value())
 
