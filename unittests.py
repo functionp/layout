@@ -67,7 +67,8 @@ class TestAgent(unittest.TestCase):
         layout = Layout([box1], base_box)
         box1.set_width(400)
 
-        self.assertEqual(box1.get_width(), 350)
+        # size should be 250 because box1's x is relative(400 - 150 = 250)
+        self.assertEqual(box1.get_width(), 250)
 
 
 class TestLayout(unittest.TestCase):
