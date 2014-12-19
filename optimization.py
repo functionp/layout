@@ -53,7 +53,7 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    max_iteration = 30
+    minimum_iteration = 30
     max_cycle_of_learning = 1
     minimum_difference = 20
 
@@ -79,17 +79,12 @@ class OCSOptimization(Optimization):
         #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
         i = 0
         constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
-        while i < OCSOptimization.max_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False: #or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
+        while i < OCSOptimization.minimum_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False: #or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
+
+            self.display_break_condition()
 
             #constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
             #すごい速度で収束　あとはエージェントコンディション→制約を目的関数とセットにすれば良い　あとでここの条件と強化学習の条件を直す
-
-            print "itera: " + str(i < OCSOptimization.max_iteration)
-            print "whole const: " + str(constraints.evaluate(situation) == False)
-            print "agent const: " + str(situation.agent_set.evaluate_agent_constraint() == False)
-            print self.best_value
-            print self.get_objective_value()
-            print "best:" + str(abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference)
             self.one_optimization_cycle()
             i += 1
 
@@ -170,7 +165,7 @@ class OCSOptimization(Optimization):
                 print "episode" + str(episode)
                 episode += 1
 
-                #self.display_status()
+                self.display_status()
 
                 self.reward_process(situation, previous_situation, applied_pairs)
 
@@ -218,6 +213,18 @@ class OCSOptimization(Optimization):
             rule = pair['rule']
             episode = pair['episode']
             rule.reinforce(episode, reward_function)
+
+    def display_break_condition(self):
+
+        constraints = self.specification.constraints
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
+
+        print "---------------------------------------------"
+        print "whole const: " + str(constraints.evaluate(situation) == False)
+        print "agent const: " + str(situation.agent_set.evaluate_agent_constraint() == False)
+        print "best condition:" + str(abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference)
+        print "best value: " + str(self.best_value)
+        print "current vaue: " + str(self.get_objective_value())
 
     def display_status(self):
 
