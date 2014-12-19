@@ -79,7 +79,7 @@ class OCSOptimization(Optimization):
         #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
         i = 0
         constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
-        while i < OCSOptimization.minimum_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False: #or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
+        while i < OCSOptimization.minimum_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
 
             self.display_break_condition()
 
@@ -125,7 +125,7 @@ class OCSOptimization(Optimization):
 
         #てか収束してんだから繰り返しても意味ないのでは？
         for i in range(OCSOptimization.max_cycle_of_learning):
- 
+
             episode = 1
             applied_pairs = []
 
@@ -221,7 +221,16 @@ class OCSOptimization(Optimization):
 
         print "---------------------------------------------"
         print "whole const: " + str(constraints.evaluate(situation) == False)
+        print "   whole objective:  " + str(constraints.get_sum_of_constraint_objective(situation))
         print "agent const: " + str(situation.agent_set.evaluate_agent_constraint() == False)
+        agents = self.agent_set.agents
+
+        for i,agent in enumerate(agents):
+            situation_with_agent = Situation(agent_set=self.agent_set.get_copy(), agent=agent.get_copy())
+            print "   Agent Number " + str(i) + ": " + str(agent.condition.evaluate(situation_with_agent))
+            print "       objective:  " + str(agent.condition.get_sum_of_constraint_objective(situation_with_agent))
+
+
         print "best condition:" + str(abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference)
         print "best value: " + str(self.best_value)
         print "current vaue: " + str(self.get_objective_value())

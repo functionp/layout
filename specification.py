@@ -22,7 +22,7 @@ class Specification():
 class SoftplannerSpecification(Specification):
     def __init__(self):
         default_layout = SoftplannerLayout()
-        objective = OverlappedAreaObjective()
+        objective = Objective()#OverlappedAreaObjective()
         constraint = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
 
         Specification.__init__(self, default_layout, objective, constraint)
@@ -36,7 +36,7 @@ class SampleSpecification(Specification):
         Specification.__init__(self, default_layout, objective, constraint)
 
 class Objective():
-    def __init__(self, max_min, function):
+    def __init__(self, max_min=1, function=(lambda x: 0)):
         self.max_min = max_min
         self.function = function
 
@@ -92,7 +92,7 @@ class Objective():
 class OverlappedAreaObjective(Objective):
     def __init__(self):
 
-        objective_function = (lambda situation: Objective.sum_of_overlapped_area(situation) + Objective.width_difference(situation))
+        objective_function = (lambda situation: Objective.sum_of_overlapped_area(situation) )
 
         Objective.__init__(self, 1, objective_function)
 

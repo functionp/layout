@@ -115,7 +115,7 @@ class CondFun():
     def __init__(self, function, objective=None):
 
         # to avoid import error, avoid to use initial value
-        if objective == None: objective = Objective(1, (lambda x: 0))
+        if objective == None: objective = Objective()
 
         self.set_function(function)
         self.set_objective(objective)
