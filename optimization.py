@@ -78,8 +78,12 @@ class OCSOptimization(Optimization):
 
         #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
         i = 0
-        constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
-        while i < OCSOptimization.minimum_iteration or constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False or abs(self.best_value - self.get_objective_value()) > OCSOptimization.minimum_difference:
+        while True:
+            constraints_satisfied = constraints.evaluate(situation) == True and situation.agent_set.evaluate_agent_constraint() == True
+            best_value_now = abs(self.best_value - self.get_objective_value()) < OCSOptimization.minimum_difference
+            iteration_finished = i > OCSOptimization.minimum_iteration
+
+            if constraints_satisfied and best_value_now and iteration_finished: break
 
             self.display_break_condition()
 
