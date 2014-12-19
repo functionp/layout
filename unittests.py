@@ -263,7 +263,7 @@ class TestCondition(unittest.TestCase):
 
         condfun = BoxCondFun.all_aligned()
 
-        self.assertTrue(condfun.condition(situation))
+        self.assertTrue(condfun.function(situation))
         
     def test_evaluating_condition(self):
         box1 = BoxAgent(Style([50, 100], [30, 30]))
@@ -286,7 +286,7 @@ class TestCondition(unittest.TestCase):
         situation = Situation(agent_set=layout, agent=box2)
 
         condfun = BoxCondFun.having_overlapped_box()
-        self.assertTrue(condfun.condition(situation))
+        self.assertTrue(condfun.function(situation))
 
 
     def test_having_box_in_given_distance(self):
@@ -299,7 +299,7 @@ class TestCondition(unittest.TestCase):
         situation = Situation(agent_set=layout, agent=box1)
 
         condfun = BoxCondFun.having_box_in_given_distance(30)
-        self.assertTrue(condfun.condition(situation))
+        self.assertTrue(condfun.function(situation))
 
 if __name__ == "__main__":
     unittest.main()
