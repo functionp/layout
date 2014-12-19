@@ -1,5 +1,6 @@
 #-*- coding: utf-8 -*-
 
+
 class Situation():
     def __init__(self, **kwargs):
         self.agent_set = kwargs.get('agent_set', None)
@@ -111,7 +112,11 @@ class BoxCondition(Condition):
     pass
 
 class CondFun():
-    def __init__(self, condition, objective=(lambda x: 0)):
+    def __init__(self, condition, objective=None):
+
+        # to avoid import error, avoid to use initial value
+        if objective == None: objective = Objective(1, (lambda x: 0))
+
         self.set_condition(condition)
         self.set_objective(objective)
 

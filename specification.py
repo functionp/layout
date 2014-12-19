@@ -1,10 +1,13 @@
 #-*- coding: utf-8 -*-
 
-from condition import *
 
 #制約条件も目的関数に取り込む方針で　カプセル化の意味でSpecificationは消さない
 class Specification():
-    def __init__(self, default_layout, objective, constraints=Condition()):
+    def __init__(self, default_layout, objective, constraints=None):
+
+        # to avoid import error, avoid to use initial value
+        if constraints == None: constraints = Condition()
+
         self.default_layout = default_layout
         self.objective = objective
         self.constraints = constraints
@@ -105,6 +108,7 @@ class DistanceObjective(Objective):
 from layout import *
 from agent import *
 from rule import *
+from condition import *
 import math
 
 from compiler.node import *
