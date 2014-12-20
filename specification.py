@@ -22,7 +22,7 @@ class Specification():
 class SoftplannerSpecification(Specification):
     def __init__(self):
         default_layout = SoftplannerLayout()
-        objective = Objective()#OverlappedAreaObjective()
+        objective = Objective()#Objective(1, Objective.width_difference)
         constraint = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
 
         Specification.__init__(self, default_layout, objective, constraint)

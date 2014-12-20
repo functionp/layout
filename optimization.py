@@ -124,7 +124,7 @@ class OCSOptimization(Optimization):
         self.update_worst_value(current_objective_value)
         self.update_organizational_rulesets(current_objective_value)
 
-        self.display_status()
+        #self.display_status()
 
     #update objective value if it is the best, and record the rulesets
     def update_organizational_rulesets(self, new_value):
@@ -151,22 +151,23 @@ class OCSOptimization(Optimization):
             constraints = self.specification.constraints
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
+            #とにかく強度が下がってhogeでbreakするという流れができていて、本来の条件はほぼ無視
             while True:
                 converged = abs(previous_value - current_value) < OCSOptimization.minimum_difference
                 whole_constraints_satisfied = self.get_whole_constraints_satisfied_or_not() 
                 best_value_now = self.get_best_value_now_or_not()
 
                 if converged and whole_constraints_satisfied and best_value_now : break
+                print converged
+                print whole_constraints_satisfied
+                print best_value_now
 
-                print "=-=-="
-                print self.best_value
-                print current_value
                 selected_rule = agent.rule_select()
 
                 # skip too weak rule (to avoid infinite loop)
                 if selected_rule.strength < 0.001:
-                    print "hoge"
-                    break
+                    print "break"
+                    #break
 
                 # record objective value, constraint satisfaction before execution
                 previous_situation = situation.get_copy()
@@ -181,11 +182,10 @@ class OCSOptimization(Optimization):
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
                 applied_pairs.append(pair_of_episode_and_rule)
 
-                #おそらく無限ループの原因はどんなアクションによっても体系が変化しない組み方になるから　制約がいつまでも解消されない→報酬減→削除→生成→無理
                 print "episode" + str(episode)
                 episode += 1
 
-                self.display_status()
+                #self.display_status()
 
                 self.reward_process(situation, previous_situation, applied_pairs)
 
@@ -215,8 +215,8 @@ class OCSOptimization(Optimization):
 
         current_value = self.get_objective_value()
         half_value = self.get_half_value()
-        #whole_constraints_satisfied = previous_whole_constraints_satisfied == False and whole_constraints.evaluate(present_situation) == True
-        #agent_constraints_satisfied = previous_agent_constraints_satisfied == False and agent_constraints.evaluate(present_situation) == True
+        #whole_constraints_satisfied = previous_whole_constraints_satisfied == False and self.get_whole_constraints_satisfied_or_not() == True
+        #agent_constraints_satisfied = previous_agent_constraints_satisfied == False and self.get_agent_constraints_satisfied_or_not() == True
         whole_constraints_objective = whole_constraints.get_sum_of_constraint_objective(present_situation)
         agent_constraints_objective = agent_constraints.get_sum_of_constraint_objective(present_situation)
 
@@ -240,20 +240,19 @@ class OCSOptimization(Optimization):
         situation = Situation(agent_set=self.agent_set.get_copy()) 
 
         print "---------------------------------------------"
-        print "whole const: " + str(self.get_whole_constraints_satisfied_or_not)
-        print "   whole objective:  " + str(constraints.get_sum_of_constraint_objective(situation))
-        print "agent const: " + str(self.get_agent_constraints_satisfied_or_not)
+        print "Whole Constraints: " + str(self.get_whole_constraints_satisfied_or_not())
+        print "   Whole Objective:  " + str(constraints.get_sum_of_constraint_objective(situation))
+        print "Agent Constraints: " + str(self.get_agent_constraints_satisfied_or_not())
         agents = self.agent_set.agents
 
         for i,agent in enumerate(agents):
             situation_with_agent = Situation(agent_set=self.agent_set.get_copy(), agent=agent.get_copy())
             print "   Agent Number " + str(i) + ": " + str(agent.condition.evaluate(situation_with_agent))
-            print "       objective:  " + str(agent.condition.get_sum_of_constraint_objective(situation_with_agent))
+            print "       Objective:  " + str(agent.condition.get_sum_of_constraint_objective(situation_with_agent))
 
-
-        print "best value now:" + str(self.get_best_value_now_or_not())
-        print "best value: " + str(self.best_value)
-        print "current vaue: " + str(self.get_objective_value())
+        print "Best Value now:" + str(self.get_best_value_now_or_not())
+        print "Best Value: " + str(self.best_value)
+        print "Current Value: " + str(self.get_objective_value())
 
     def display_status(self):
 
@@ -261,6 +260,7 @@ class OCSOptimization(Optimization):
         print "Best Value so far: " + str(self.best_value)
         print "Worst Value so far: " + str(self.worst_value)
         print "Current Value: " + str(self.get_objective_value())
+        print ""
         agents = self.agent_set.agents
         
         for i,agent in enumerate(agents):
