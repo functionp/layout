@@ -158,16 +158,14 @@ class OCSOptimization(Optimization):
                 best_value_now = self.get_best_value_now_or_not()
 
                 if converged and whole_constraints_satisfied and best_value_now : break
-                print converged
-                print whole_constraints_satisfied
-                print best_value_now
+                #if converged: break #ここの条件ゆるめただけで強度がガン上がり
 
                 selected_rule = agent.rule_select()
 
                 # skip too weak rule (to avoid infinite loop)
                 if selected_rule.strength < 0.001:
                     print "break"
-                    #break
+                    break
 
                 # record objective value, constraint satisfaction before execution
                 previous_situation = situation.get_copy()
@@ -186,6 +184,7 @@ class OCSOptimization(Optimization):
                 episode += 1
 
                 #self.display_status()
+                #raw_input()
 
                 self.reward_process(situation, previous_situation, applied_pairs)
 

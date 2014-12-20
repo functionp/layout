@@ -100,12 +100,12 @@ class Agent():
         i2 = random.randint(0,len(agents)-1)
 
         if agents[i1].get_number_of_rules() != 0:
-            sending_rule1 = agents[i1].get_sorted_ruleset()[0]
+            sending_rule1 = agents[i1].get_sorted_ruleset()[0].get_copy()
             #agents[i2].replace_weakest_rule(sending_rule1)
             agents[i2].add_rule(sending_rule1)
 
         if agents[i2].get_number_of_rules() != 0:
-            sending_rule2 = agents[i2].get_sorted_ruleset()[0]
+            sending_rule2 = agents[i2].get_sorted_ruleset()[0].get_copy()
             #agents[i1].replace_weakest_rule(sending_rule2)
             agents[i1].add_rule(sending_rule2)
 

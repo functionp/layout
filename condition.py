@@ -50,7 +50,7 @@ class Condition():
             return True
 
     def get_copy(self):
-        return Condition(self.condfuns, self.and_or)
+        return Condition(self.condfuns[:], self.and_or)
 
     def get_size(self):
         return len(self.condfuns)

@@ -213,7 +213,7 @@ class Rule():
         self.set_strength(self.strength +  amount)
 
     def get_copy(self):
-        return Rule(self.condition, self.action, self.strength)
+        return Rule(self.condition.get_copy(), self.action, self.strength)
 
     # increase(decrease) strength
     def reinforce(self, episode, reward_function):
