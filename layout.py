@@ -154,8 +154,8 @@ class SoftplannerLayout(Layout):
         header_inner_item_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), ] , 1)
 
         header_inner_item_boxes = []
-        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "", header_inner_item_condition))
-        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "", header_inner_item_condition))
+        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "logo", header_inner_item_condition))
+        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "pohone", header_inner_item_condition))
 
         header_inner_layout = Layout(header_inner_item_boxes, header_inner_box)
 
