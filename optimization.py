@@ -109,14 +109,15 @@ class OCSOptimization(Optimization):
         rule_not_found_or_not = True
         while rule_not_found_or_not == True:
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
+
             Agent.exchange_rule_randomly(self.agent_set.agents)
 
-        self.display_status()
+        #self.display_status()
 
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
 
-        print "reinforce owatta"
+        print "finish reinforcement"
 
         self.agent_set.delete_weak_rules()
 
@@ -180,7 +181,7 @@ class OCSOptimization(Optimization):
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
                 applied_pairs.append(pair_of_episode_and_rule)
 
-                print "episode" + str(episode)
+                #print "episode" + str(episode)
                 episode += 1
 
                 #self.display_status()

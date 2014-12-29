@@ -264,6 +264,7 @@ class BoxAgent(Agent):
         if condition.condfuns != []:
             new_rule = BoxRule.generate_rule_with_random_action(condition, layout)
             self.add_rule(new_rule)
+            print [condfun.function for condfun in condition.condfuns]
             return True
 
         # if no condition can be represents current situation, add no rule

@@ -42,7 +42,7 @@ class Objective():
 
     @staticmethod
     def sum_of_overlapped_area(situation):
-        
+
         boxes = situation.agent_set.agents
 
         if len(boxes) > 1:
