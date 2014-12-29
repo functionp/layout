@@ -83,10 +83,11 @@ class Layout(AgentSet):
 
             if agent.identifier == identifier:
                 result = agent
-                break
+                break 
 
             if agent.inner_layout: 
                 result = agent.inner_layout.get_agent_with_identifier(identifier)
+                if result != None: break
 
         return result
 
@@ -109,9 +110,10 @@ class Layout(AgentSet):
             return reduce((lambda b1, b2: b1 and b2), bool_list)
 
 
-class SampleLayout2(Layout):
+class SoftplannerLayout(Layout):
     def __init__(self):
 
+        MAIN_WIDTH = 750
         margin = 20
 
         # base_layout
@@ -127,7 +129,7 @@ class SampleLayout2(Layout):
         global_menu_condition = Condition()
         global_menu_box = BoxAgent(global_menu_style, "global_menu", global_menu_condition)
 
-        main_style = Style(global_menu_box.get_bottom_position(margin), [780,600], 0)
+        main_style = Style(global_menu_box.get_bottom_position(margin), [MAIN_WIDTH, 600], 1)
         main_condition = Condition([BoxCondFun.width_constraint(0, 800)] , 1)
         main_box = BoxAgent(main_style, "main", main_condition)
 
@@ -139,7 +141,32 @@ class SampleLayout2(Layout):
 
         main_box.set_x(main_box.get_center_x())
 
+        # header_layout
+
+        header_inner_style = Style([0,0], [MAIN_WIDTH, header_box.get_height()], 1)
+        header_inner_condition = Condition()
+        header_inner_box = BoxAgent(header_inner_style, "header_inner_menu", header_inner_condition)
+
+        header_inner_layout = Layout([header_inner_box], header_box)
+        header_inner_box.set_x(header_inner_box.get_center_x())
+
+        header_inner_item_style = Style([200,10], [75,50], 1)
+        header_inner_item_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), ] , 1)
+
+        header_inner_item_boxes = []
+        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "", header_inner_item_condition))
+        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "", header_inner_item_condition))
+
+        header_inner_layout = Layout(header_inner_item_boxes, header_inner_box)
+
         # global_menu_layout
+
+        global_inner_menu_style = Style([0,0], [MAIN_WIDTH, global_menu_box.get_height()], 1)
+        global_inner_menu_condition = Condition()
+        global_inner_menu_box = BoxAgent(global_inner_menu_style, "global_inner_menu", global_inner_menu_condition)
+
+        global_inner_menu_layout = Layout([global_inner_menu_box], global_menu_box)
+        global_inner_menu_box.set_x(global_inner_menu_box.get_center_x())
 
         #ほんとはコンテントだけ指定してボックスは勝手に作られる
         global_menu_item_style = Style([200,10], [75,50], 1)
@@ -151,7 +178,7 @@ class SampleLayout2(Layout):
         global_menu_item_boxes.append(BoxAgent(global_menu_item_style.get_copy(), "", global_menu_item_condition))
         global_menu_item_boxes.append(BoxAgent(global_menu_item_style.get_copy(), "", global_menu_item_condition))
 
-        global_menu_layout = Layout(global_menu_item_boxes, global_menu_box)
+        global_menu_layout = Layout(global_menu_item_boxes, global_inner_menu_box)
 
         # main_layout
 
