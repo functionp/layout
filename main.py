@@ -60,54 +60,30 @@ def main():
 
 def click_start_button(event):
 
-    def sample_exection1():
-        specification = SampleSpecification()
-
-        base_layout = specification.default_layout
-        #base_optimization = OCSOptimization(specification, base_layout)
-
-        main_layout = base_layout.get_agent_with_identifier("main").inner_layout
-        main_optimization = OCSOptimization(specification, main_layout)
-        #main_optimization.optimize()
-
-        base_layout.render(optimization_frame.base_panel)
-
-    def sample_exection2():
-        specification = Specification.load_specification("sample.dat")
-        base_optimization = OCSOptimization(specification, specification.default_layout)
-
-        objective_value_before = base_optimization.get_objective_value()
-        print "Optimization Value Before:" + str(objective_value_before)
-
-        #optimization.optimize()
-        optimized_layout = base_optimization.agent_set
-        optimized_layout.render(optimization_frame.base_panel)
-
-        objective_value = base_optimization.get_objective_value()
-        print "Optimization Value After:" + str(objective_value)
-
-        base_layout.render(optimization_frame.base_panel)
-
     def softplanner():
-        specification = SoftplannerSpecification()
+        #specification = SoftplannerSpecification()
+        constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
 
-        base_layout = specification.default_layout
+        base_layout = SoftplannerLayout()
         #base_optimization = OCSOptimization(specification, base_layout)
 
         header_menu_layout = base_layout.get_agent_with_identifier("header_inner_menu").inner_layout
-        header_menu_optimization = OCSOptimization(specification, header_menu_layout)
-        #header_menu_optimization.optimize()
+        header_menu_specification = Specification(header_menu_layout, constraint1)
+        header_menu_optimization = OCSOptimization(header_menu_specification, header_menu_layout)
+        header_menu_optimization.optimize()
 
         #global_menu_layout = base_layout.get_agent_with_identifier("global_inner_menu").inner_layout
         #global_menu_optimization = OCSOptimization(specification, global_menu_layout)
         #global_menu_optimization.optimize()
 
         image_area_layout = base_layout.get_agent_with_identifier("image_area_inner").inner_layout
-        image_area_optimization = OCSOptimization(specification, image_area_layout)
+        image_area_specification = Specification(image_area_layout, constraint1)
+        image_area_optimization = OCSOptimization(image_area_specification, image_area_layout)
         #image_area_optimization.optimize()
 
         main_layout = base_layout.get_agent_with_identifier("main").inner_layout
-        main_optimization = OCSOptimization(specification, main_layout)
+        main_specification = Specification(main_layout, constraint1)
+        main_optimization = OCSOptimization(main_specification, main_layout)
         #main_optimization.optimize()
 
         base_layout.render(optimization_frame.base_panel)
