@@ -94,7 +94,11 @@ def click_start_button(event):
         base_layout = specification.default_layout
         #base_optimization = OCSOptimization(specification, base_layout)
 
-        global_menu_layout = base_layout.get_agent_with_identifier("global_menu").inner_layout
+        header_menu_layout = base_layout.get_agent_with_identifier("header_inner_menu").inner_layout
+        header_menu_optimization = OCSOptimization(specification, global__layout)
+        header_menu_optimization.optimize()
+
+        global_menu_layout = base_layout.get_agent_with_identifier("global_inner_menu").inner_layout
         global_menu_optimization = OCSOptimization(specification, global_menu_layout)
         global_menu_optimization.optimize()
 
@@ -108,6 +112,7 @@ def click_start_button(event):
     optimization_frame = OptimizationFrame(None, -1, u'optimization', pos=(400,100))
 
     softplanner()
+
 
     optimization_frame.Show()
 

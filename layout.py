@@ -168,9 +168,7 @@ class SoftplannerLayout(Layout):
         global_inner_menu_layout = Layout([global_inner_menu_box], global_menu_box)
         global_inner_menu_box.set_x(global_inner_menu_box.get_center_x())
 
-        #ほんとはコンテントだけ指定してボックスは勝手に作られる
         global_menu_item_style = Style([200,10], [75,50], 1)
-        #global_menu_item_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(200)] , 1)
         global_menu_item_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), ] , 1)
 
         global_menu_item_boxes = []
@@ -195,7 +193,7 @@ class SoftplannerLayout(Layout):
 
         Layout.__init__(self, [base_box])
 
-class SampleLayout2(Layout):
+class SampleLayout(Layout):
     def __init__(self):
 
         margin = 20
@@ -244,46 +242,6 @@ class SampleLayout2(Layout):
         side_style = Style([10,10], [200,580], 1)
         side_condition = Condition([BoxCondFun.width_constraint(0, 210), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(2)] , 1)
         side_box = BoxAgent(side_style, "side", side_condition)
-
-        content_style = Style(side_box.get_right_position(margin), [500,280], 1)
-        content_box = BoxAgent(content_style, "content")
-
-        main_layout = Layout([side_box, content_box], main_box)
-
-        #content_box.set_x(content_box.get_center_x())
-
-        Layout.__init__(self, [base_box])
-
-class SampleLayout(Layout):
-    def __init__(self):
-
-        margin = 20
-
-        # base_layout
-
-        base_box = BoxAgent(Style([0,0], main.WINDOW_SIZE, 0), "base")
-        max_width = main.WINDOW_SIZE[0]
-
-        header_style = Style([0,0], [max_width, 100], 1)
-        header_condition = Condition([BoxCondFun.width_constraint(max_width, max_width)], 1)
-        header_box = BoxAgent(header_style, "header", header_condition)
-
-        main_style = Style(header_box.get_bottom_position(margin), [780,600], 0)
-        main_condition = Condition([BoxCondFun.width_constraint(0, 800)] , 1)
-        main_box = BoxAgent(main_style,  "main", main_condition)
-
-        footer_style = Style(main_box.get_bottom_position(margin), [max_width,100], 1)
-        footer_box = BoxAgent(footer_style, "header")
-
-        base_layout = Layout([header_box, main_box, footer_box], base_box)
-
-        main_box.set_x(main_box.get_center_x())
-
-        # main_layout
-
-        side_style = Style([0,0], [400,580], 1)
-        side_condition = Condition([BoxCondFun.width_constraint(0, 210), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(2)] , 1)
-        side_box = BoxAgent(side_style, "side", side_condition, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaatext!!")
 
         content_style = Style(side_box.get_right_position(margin), [500,280], 1)
         content_box = BoxAgent(content_style, "content")
