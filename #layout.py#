@@ -151,7 +151,7 @@ class SoftplannerLayout(Layout):
         header_inner_box.set_x(header_inner_box.get_center_x())
 
         header_inner_item_style = Style([200,10], [75,50], 1)
-        logo_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(0, 10), ] , 1)
+        logo_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(0, 10) ] , 1)
         phone_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2)] , 1)
 
         header_inner_item_boxes = []

@@ -102,11 +102,13 @@ class Agent():
         if agents[i1].get_number_of_rules() != 0:
             sending_rule1 = agents[i1].get_sorted_ruleset()[0].get_copy()
             #agents[i2].replace_weakest_rule(sending_rule1)
+            sending_rule1.set_strength(Rule.initial_strength)
             agents[i2].add_rule(sending_rule1)
 
         if agents[i2].get_number_of_rules() != 0:
             sending_rule2 = agents[i2].get_sorted_ruleset()[0].get_copy()
             #agents[i1].replace_weakest_rule(sending_rule2)
+            sending_rule2.set_strength(Rule.initial_strength)
             agents[i1].add_rule(sending_rule2)
 
 def length_of_vector(vector):
@@ -264,7 +266,6 @@ class BoxAgent(Agent):
         if condition.condfuns != []:
             new_rule = BoxRule.generate_rule_with_random_action(condition, layout)
             self.add_rule(new_rule)
-            print [condfun.function for condfun in condition.condfuns]
             return True
 
         # if no condition can be represents current situation, add no rule
