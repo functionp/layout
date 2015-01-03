@@ -102,13 +102,13 @@ class Agent():
         if agents[i1].get_number_of_rules() != 0:
             sending_rule1 = agents[i1].get_sorted_ruleset()[0].get_copy()
             #agents[i2].replace_weakest_rule(sending_rule1)
-            sending_rule1.set_strength(Rule.initial_strength)
+            #sending_rule1.set_strength(Rule.initial_strength)
             agents[i2].add_rule(sending_rule1)
 
         if agents[i2].get_number_of_rules() != 0:
             sending_rule2 = agents[i2].get_sorted_ruleset()[0].get_copy()
             #agents[i1].replace_weakest_rule(sending_rule2)
-            sending_rule2.set_strength(Rule.initial_strength)
+            #sending_rule2.set_strength(Rule.initial_strength)
             agents[i1].add_rule(sending_rule2)
 
 def length_of_vector(vector):
@@ -352,8 +352,11 @@ class BoxAgent(Agent):
         pairs = [(BoxAgent.get_gravity_distance(self, box), box)  for box in layout.agents]
         pairs.sort()
 
-        # take 1st box as nearest box because 0th box is box itself
-        nearest_box = pairs[1][1]
+        if len(pairs) == 1 :
+            nearest_box = pairs[0][1]
+        else: 
+            # take 1st box as nearest box because 0th box is box itself
+            nearest_box = pairs[1][1]
 
         return nearest_box
 
@@ -372,8 +375,11 @@ class BoxAgent(Agent):
 
         pairs.sort()
 
-        # take 1st box as most_aligned box because 0th box is box itself
-        most_aligned_box = pairs[1][1]
+        if len(pairs) == 1 :
+            most_aligned_box = pairs[0][1]
+        else: 
+            # take 1st box as nearest box because 0th box is box itself
+            most_aligned_box = pairs[1][1]
 
         return most_aligned_box
 

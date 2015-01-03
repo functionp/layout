@@ -151,8 +151,8 @@ class SoftplannerLayout(Layout):
         header_inner_box.set_x(header_inner_box.get_center_x())
 
         header_inner_item_style = Style([200,10], [75,50], 1)
-        logo_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(0, 10), ] , 1)
-        phone_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2)] , 1)
+        logo_condition = Condition([BoxCondFun.width_constraint(120,150), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(0, 10) ] , 1)
+        phone_condition = Condition([BoxCondFun.width_constraint(120,170), BoxCondFun.y_constraint(2), BoxCondFun.x_end_constraint(MAIN_WIDTH-10, MAIN_WIDTH)] , 1)
 
         header_inner_item_boxes = []
         header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "logo", logo_condition))
@@ -170,12 +170,14 @@ class SoftplannerLayout(Layout):
         image_area_inner_box.set_x(image_area_inner_box.get_center_x())
 
         image_area_item_style = Style([200,10], [75,50], 1)
-        image_area_item_condition = Condition([BoxCondFun.width_constraint(70), BoxCondFun.y_constraint(2), ] , 1)
+        dl_button_condition = Condition([BoxCondFun.width_constraint(210,230), BoxCondFun.height_constraint(40, 50)] , 1)
+        pc_image_condition = Condition([BoxCondFun.width_constraint(340,360), BoxCondFun.height_constraint(190,210)] , 1)
+        pr_text_condition = Condition([BoxCondFun.width_constraint(490, 510), BoxCondFun.height_constraint(110,130)] , 1)
 
         image_area_item_boxes = []
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "", image_area_item_condition))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "", image_area_item_condition))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "", image_area_item_condition))
+        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition))
+        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition))
+        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition))
 
         image_area_layout = Layout(image_area_item_boxes, image_area_inner_box)
 

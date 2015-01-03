@@ -57,7 +57,11 @@ class Condition():
 
     def get_sum_of_constraint_objective(self, situation):
         objective_value_list = [condfun.get_objective_value(situation) for condfun in self.condfuns]
-        return reduce((lambda x, y: x+y), objective_value_list)
+
+        if len(objective_value_list) == 1:
+            return objective_value_list[0]
+        else:
+            return reduce((lambda x, y: x+y), objective_value_list)
 
     def add_condfun(self, condfun):
         self.condfuns.append(condfun)
@@ -281,21 +285,24 @@ class BoxCondFun(CondFun):
             layout = situation.agent_set
             boxes = layout.agents
 
-            list_of_number_of_aligned_box = []
-            for i in range(len(boxes)):
+            if len(boxes) != 1:
+                list_of_number_of_aligned_box = []
+                for i in range(len(boxes)):
 
-                number_of_aligned_box = 0
-                for j in range(len(boxes)):
-                    if BoxAgent.aligned_or_not(boxes[i], boxes[j]) == True:
-                        number_of_aligned_box += 1
+                    number_of_aligned_box = 0
+                    for j in range(len(boxes)):
+                        if BoxAgent.aligned_or_not(boxes[i], boxes[j]) == True:
+                            number_of_aligned_box += 1
 
-                # minus 1 because every box aligned to the box itself
-                list_of_number_of_aligned_box.append(number_of_aligned_box - 1)
+                    # minus 1 because every box aligned to the box itself
+                    list_of_number_of_aligned_box.append(number_of_aligned_box - 1)
 
-            list_of_having_aligned_box_or_not = map((lambda x: x >= 1), list_of_number_of_aligned_box)
+                list_of_having_aligned_box_or_not = map((lambda x: x >= 1), list_of_number_of_aligned_box)
 
-            # return True only if all the element is True
-            return reduce((lambda b1,b2: b1 and b2), list_of_having_aligned_box_or_not)
+                # return True only if all the element is True
+                return reduce((lambda b1,b2: b1 and b2), list_of_having_aligned_box_or_not)
+            else:
+                return True
 
         return CondFun(_all_aligned)
 
