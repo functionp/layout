@@ -76,6 +76,7 @@ def click_start_button(event):
         #global_menu_optimization = OCSOptimization(specification, global_menu_layout)
         #global_menu_optimization.optimize()
 
+        #制約候補にエージェント制約追加してみた　中身どんなんか観察
         image_area_layout = base_layout.get_agent_with_identifier("image_area_inner").inner_layout
         image_area_specification = Specification(image_area_layout, constraint1)
         image_area_optimization = OCSOptimization(image_area_specification, image_area_layout)

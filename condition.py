@@ -78,11 +78,16 @@ class Condition():
     def make_condition(cls, situation):
         #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
         condfun_candidates = [BoxCondFun.in_the_edge(), 
+                              BoxCondFun.width_constraint(100,200),
                               BoxCondFun.having_box_in_given_distance(100), 
                               BoxCondFun.having_box_in_given_distance(200), 
                               BoxCondFun.having_box_in_given_distance(400), 
                               BoxCondFun.keeping_given_distance_from_box(300), 
                               BoxCondFun.having_overlapped_box()]
+
+        # add agent condition to candidate
+        if situation.agent:
+            condfun_candidates.extend(situation.agent.condition.condfuns)
 
         # extract which matches given state(layout and box)
         matched_condfuns = [condfun for condfun in condfun_candidates if condfun.evaluate_function(situation) == True]
@@ -116,25 +121,32 @@ class BoxCondition(Condition):
     pass
 
 class CondFun():
-    def __init__(self, function, objective=None):
+    def __init__(self, function, objective=None, soft_hard=1):
 
         # to avoid import error, avoid to use initial value
         if objective == None: objective = Objective()
 
         self.set_function(function)
         self.set_objective(objective)
+        self.set_soft_hard(soft_hard)
 
     def set_function(self, function):
         self.function = function
 
     def set_objective(self, objective):
         self.objective = objective
+        
+    def set_soft_hard(self, soft_hard):
+        self.soft_hard = soft_hard
 
     def get_objective_value(self, situation):
         return self.objective.function(situation)
 
     def evaluate_function(self, situation):
-        return self.function(situation)
+        if self.soft_hard == 1:
+            return self.function(situation)
+        else:
+            return True
 
 class BoxCondFun(CondFun):
     def __init__(self, function, objective=(lambda x: 0)):

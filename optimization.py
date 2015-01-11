@@ -111,7 +111,7 @@ class OCSOptimization(Optimization):
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
             #Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
 
-        #self.display_status()
+        self.display_status()
 
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
@@ -268,7 +268,7 @@ class OCSOptimization(Optimization):
 
             for rule_i, rule in enumerate(ruleset):
                 print "  Rule Number " + str(rule_i) + ": " + str(rule.strength)
-                print rule.condition.condfuns
+                print [condfun.function for condfun in rule.condition.condfuns]
                 print rule.action
 
             print ""
