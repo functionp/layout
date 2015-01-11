@@ -92,24 +92,28 @@ class Agent():
         return _greedy(self)
 
     @classmethod
-    # exchange two rules of randomly chosen two agents (DESTRUCTIVE)
+    # exchange two rules between agents having same condition (DESTRUCTIVE)
     def exchange_rule_randomly(cls, agents):
         BORDER = 3
 
         i1 = random.randint(0,len(agents)-1)
-        i2 = random.randint(0,len(agents)-1)
+        agent1 = agents[i1]
 
-        if agents[i1].get_number_of_rules() != 0:
-            sending_rule1 = agents[i1].get_sorted_ruleset()[0].get_copy()
-            #agents[i2].replace_weakest_rule(sending_rule1)
-            #sending_rule1.set_strength(Rule.initial_strength)
-            agents[i2].add_rule(sending_rule1)
+        # make array of agents which has same rule with agent1
+        agents_with_same_condition = [agent for agent in agents if agent.condition == agent1.condition and agent != agent1]
 
-        if agents[i2].get_number_of_rules() != 0:
-            sending_rule2 = agents[i2].get_sorted_ruleset()[0].get_copy()
-            #agents[i1].replace_weakest_rule(sending_rule2)
-            #sending_rule2.set_strength(Rule.initial_strength)
-            agents[i1].add_rule(sending_rule2)
+        if len(agents_with_same_condition) != 0:
+            i2 = random.randint(0,len(agents_with_same_condition)-1)
+            agent2 = agents_with_same_condition[i2]
+            if agent1.get_number_of_rules() != 0:
+                sending_rule1 = agent1.get_sorted_ruleset()[0].get_copy()
+                #sending_rule1.set_strength(Rule.initial_strength)
+                agent2.add_rule(sending_rule1)
+
+            if agent2.get_number_of_rules() != 0:
+                sending_rule2 = agent2.get_sorted_ruleset()[0].get_copy()
+                #sending_rule2.set_strength(Rule.initial_strength)
+                agent1.add_rule(sending_rule2)
 
 def length_of_vector(vector):
     return math.sqrt(vector[0] ** 2 + vector[1] ** 2)

@@ -57,6 +57,7 @@ class Condition():
 
     def get_sum_of_constraint_objective(self, situation):
         objective_value_list = [condfun.get_objective_value(situation) for condfun in self.condfuns]
+        print objective_value_list
 
         if len(objective_value_list) == 1:
             return objective_value_list[0]
@@ -79,6 +80,7 @@ class Condition():
         #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
         condfun_candidates = [BoxCondFun.in_the_edge(), 
                               BoxCondFun.width_constraint(100,200),
+                              BoxCondFun.height_constraint(110,180),
                               BoxCondFun.having_box_in_given_distance(100), 
                               BoxCondFun.having_box_in_given_distance(200), 
                               BoxCondFun.having_box_in_given_distance(400), 
@@ -155,7 +157,7 @@ class BoxCondFun(CondFun):
     # # # CONDFUNS # # #
 
     @classmethod
-    def width_constraint(cls, lower_limit, upper_limit=10000):
+    def width_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
         def _width_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_width() and box.get_width() <= upper_limit
@@ -169,10 +171,10 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_width_constraint, Objective(1, _width_constraint_objective))
+        return CondFun(_width_constraint, Objective(1, _width_constraint_objective), soft_hard)
 
     @classmethod
-    def height_constraint(cls, lower_limit, upper_limit=10000):
+    def height_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
         def _height_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_height() and box.get_height() <= upper_limit
@@ -186,10 +188,10 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_height_constraint, Objective(1, _height_constraint_objective))
+        return CondFun(_height_constraint, Objective(1, _height_constraint_objective), soft_hard)
 
     @classmethod
-    def x_constraint(cls, lower_limit, upper_limit=10000):
+    def x_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
         def _x_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_x() and box.get_x() <= upper_limit
@@ -203,10 +205,10 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_x_constraint, Objective(1, _x_constraint_objective))
+        return CondFun(_x_constraint, Objective(1, _x_constraint_objective), soft_hard)
 
     @classmethod
-    def y_constraint(cls, lower_limit, upper_limit=10000):
+    def y_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
         def _y_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_y() and box.get_y() <= upper_limit
@@ -220,8 +222,7 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_y_constraint, Objective(1, _y_constraint_objective))
-        return CondFun(_height_constraint, Objective(1, _height_constraint_objective))
+        return CondFun(_y_constraint, Objective(1, _y_constraint_objective), soft_hard)
 
     @classmethod
     def x_end_constraint(cls, lower_limit, upper_limit=10000):

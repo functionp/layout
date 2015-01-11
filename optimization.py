@@ -109,7 +109,7 @@ class OCSOptimization(Optimization):
         rule_not_found_or_not = True
         while rule_not_found_or_not == True:
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
-            #Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
+            Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
 
         self.display_status()
 
