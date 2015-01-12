@@ -9,10 +9,13 @@ class Agent():
     def __init__(self, condition, identifier=""):
         self.set_ruleset([])
         self.condition = condition
-        self.identifier = identifier
+        self.set_identifier(identifier)
 
     def set_ruleset(self, ruleset):
         self.ruleset = ruleset
+
+    def set_identifier(self, identifier):
+        self.identifier = identifier
 
     def get_copy(self):
         agent = Agent(condition, identifier)
@@ -174,11 +177,16 @@ class BoxAgent(Agent):
     def get_inner_layout(self):
         return self.inner_layout
 
+    def get_limit_position(self):
+        if self.parent_layout:
+            base_box = self.parent_layout.base_box
+            return base_box.get_size()
+        else:
+            return WINDOW_SIZE
+
     def set_x(self, value):
-        x_before_movement = self.get_x()
-        base_box = self.parent_layout.base_box
         left_limit = 0
-        right_limit = base_box.get_width()
+        right_limit = self.get_limit_position()[0]
 
         if value < left_limit:
             x_after_movement = left_limit + 1
@@ -190,9 +198,8 @@ class BoxAgent(Agent):
         self.style.position[0] = x_after_movement
 
     def set_y(self, value):
-        base_box = self.parent_layout.base_box
         top_limit = 0
-        bottom_limit = base_box.get_height()
+        bottom_limit = self.get_limit_position()[1]
 
         if value < top_limit:
             y_after_movement = top_limit + 1
@@ -204,8 +211,7 @@ class BoxAgent(Agent):
         self.style.position[1] = y_after_movement
 
     def set_width(self, value):
-        base_box = self.parent_layout.base_box
-        right_limit = base_box.get_width()
+        right_limit = self.get_limit_position()[0]
 
         if value < 0: value = 0
 
@@ -222,8 +228,7 @@ class BoxAgent(Agent):
 
 
     def set_height(self, value):
-        base_box = self.parent_layout.base_box
-        bottom_limit = base_box.get_height()
+        bottom_limit = self.get_limit_position()[1]
 
         if value < 0: value = 0
 
