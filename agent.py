@@ -223,7 +223,9 @@ class BoxAgent(Agent):
         if self.get_y() + value < bottom_limit:
             self.style.size[1] = value
         else:
-            self.style.size[1] = bottom_limit - self.get_y()
+            self.set_y(bottom_limit - value)
+            self.style.size[1] = value
+            #self.style.size[1] = bottom_limit - self.get_y()
 
     def set_parent_layout(self, parent_layout):
         self.parent_layout = parent_layout
@@ -283,7 +285,7 @@ class BoxAgent(Agent):
         current_situation = Situation(agent_set=layout, agent=self)
 
         for rule in self.ruleset:
-            if rule.condition.evaluate(current_situation):
+            if rule.condition.evaluate(current_situation, 1):
                 matching_rule = rule
                 break
 

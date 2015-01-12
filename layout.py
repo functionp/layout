@@ -137,6 +137,7 @@ class SoftplannerLayout(Layout):
         footer_condition = Condition([BoxCondFun.width_constraint(0, 800)] , 1)
         footer_box = BoxAgent(footer_style, "footer")
 
+        #base_layout = Layout([header_box, image_area_box], base_box)
         base_layout = Layout([header_box, image_area_box, main_box, footer_box], base_box)
 
         main_box.set_x(main_box.get_center_x())
@@ -155,8 +156,8 @@ class SoftplannerLayout(Layout):
         phone_condition = Condition([BoxCondFun.width_constraint(120,170), BoxCondFun.y_constraint(2), BoxCondFun.x_end_constraint(MAIN_WIDTH-10, MAIN_WIDTH)] , 1)
 
         header_inner_item_boxes = []
-        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "logo", logo_condition))
-        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "phone", phone_condition))
+        #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "logo", logo_condition))
+        #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "phone", phone_condition))
 
         header_inner_layout = Layout(header_inner_item_boxes, header_inner_box)
 
@@ -172,17 +173,17 @@ class SoftplannerLayout(Layout):
         image_area_item_style = Style([200,10], [75,180], 1)
         dl_button_condition = Condition([BoxCondFun.width_constraint(210,230), BoxCondFun.height_constraint(40, 50)] , 1)
         pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,1), BoxCondFun.height_constraint(190,210,1)] , 1)
-        pr_text_condition = Condition([BoxCondFun.width_constraint(490, 510, 0), BoxCondFun.height_constraint(110,130, 0)] , 1) #height と widthどっちかならできるけどどっちもはむずい
+        pr_text_condition = Condition([BoxCondFun.width_constraint(490, 510, 1), BoxCondFun.height_constraint(110,130, 0)] , 1) #height と widthどっちかならできるけどどっちもはむずい
 
         image_area_item_boxes = []
         #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition))
-        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition))
+        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition))
+        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition))
 
         image_area_layout = Layout(image_area_item_boxes, image_area_inner_box)
 
         # main_layout
-
+        
         side_style = Style([10,10], [200,580], 1)
         side_condition = Condition([BoxCondFun.width_constraint(0, 210), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(2)] , 1)
         side_box = BoxAgent(side_style, "side", side_condition)
@@ -190,8 +191,9 @@ class SoftplannerLayout(Layout):
         content_style = Style(side_box.get_right_position(margin), [500,280], 1)
         content_box = BoxAgent(content_style, "content")
 
-        main_layout = Layout([side_box, content_box], main_box)
-
+        main_layout = Layout([], main_box)
+        #main_layout = Layout([side_box, content_box], main_box)
+        
         #content_box.set_x(content_box.get_center_x())
 
         Layout.__init__(self, [base_box])

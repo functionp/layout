@@ -59,6 +59,12 @@ def main():
     main_app.MainLoop()
 
 def click_start_button(event):
+    def render_closure(layout):
+        def _render_closure():
+            layout.render(optimization_frame.base_panel)
+            optimization_frame.Show()
+            wx.Yield()
+        return _render_closure
 
     def softplanner():
         #specification = SoftplannerSpecification()
@@ -80,6 +86,7 @@ def click_start_button(event):
         image_area_layout = base_layout.get_agent_with_identifier("image_area_inner").inner_layout
         image_area_specification = Specification(image_area_layout, constraint1)
         image_area_optimization = OCSOptimization(image_area_specification, image_area_layout)
+        image_area_optimization.set_render_function(render_closure(base_layout))
         image_area_optimization.optimize()
 
         main_layout = base_layout.get_agent_with_identifier("main").inner_layout

@@ -21,6 +21,12 @@ class Optimization():
     def optimize(self):
         pass
 
+    def set_render_function(self, render_function):
+        self.render_function = render_function
+
+    def render(self):
+        self.render_function()
+
     def reset_record(self):
         self.set_best_value(100000)
         self.set_worst_value(0)
@@ -111,12 +117,12 @@ class OCSOptimization(Optimization):
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
             Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
 
-        self.display_status()
+        #self.display_status()
 
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
 
-        print "finish reinforcement"
+        self.render()
 
         self.agent_set.delete_weak_rules()
 
