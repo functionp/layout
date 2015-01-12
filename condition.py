@@ -36,16 +36,18 @@ class Condition():
         self.and_or = and_or
 
     # evaluate the condition with given situation and return True or False
-    def evaluate(self, situation):
+    def evaluate(self, situation, latitude=0):
 
         if self.condfuns != []:
             results = [condfun.evaluate_function(situation) for condfun in self.condfuns]
+            number_of_true = reduce(lambda a,b: a + b, results) # Bool value is calculatable (True = 1, False = 0)
+            number_of_false = len(results) - number_of_true
 
             # case of "and"
             if self.and_or == 1:
-                return reduce(lambda b1,b2: b1 and b2, results)
+                return number_of_false <= latitude
             else:
-                return reduce(lambda b1,b2: b1 or b2, results)
+                return number_of_true >= 1
         else:
             return True
 
@@ -57,7 +59,7 @@ class Condition():
 
     def get_sum_of_constraint_objective(self, situation):
         objective_value_list = [condfun.get_objective_value(situation) for condfun in self.condfuns]
-        print objective_value_list
+        #print objective_value_list
 
         if len(objective_value_list) == 1:
             return objective_value_list[0]
@@ -79,8 +81,30 @@ class Condition():
     def make_condition(cls, situation):
         #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
         condfun_candidates = [BoxCondFun.in_the_edge(), 
-                              BoxCondFun.width_constraint(100,200),
-                              BoxCondFun.height_constraint(110,180),
+                              BoxCondFun.width_constraint(0,25),
+                              BoxCondFun.width_constraint(26,50),
+                              BoxCondFun.width_constraint(51,75),
+                              BoxCondFun.width_constraint(76,100),
+                              BoxCondFun.width_constraint(101,125),
+                              BoxCondFun.width_constraint(126,150),
+                              BoxCondFun.width_constraint(151,175),
+                              BoxCondFun.width_constraint(176,200),
+                              BoxCondFun.width_constraint(201,225),
+                              BoxCondFun.width_constraint(226,250),
+                              BoxCondFun.width_constraint(251,275),
+                              BoxCondFun.width_constraint(276,300),
+                              BoxCondFun.height_constraint(0,25),
+                              BoxCondFun.height_constraint(26,50),
+                              BoxCondFun.height_constraint(51,75),
+                              BoxCondFun.height_constraint(76,100),
+                              BoxCondFun.height_constraint(101,125),
+                              BoxCondFun.height_constraint(126,150),
+                              BoxCondFun.height_constraint(151,175),
+                              BoxCondFun.height_constraint(176,200),
+                              BoxCondFun.height_constraint(201,225),
+                              BoxCondFun.height_constraint(226,250),
+                              BoxCondFun.height_constraint(251,275),
+                              BoxCondFun.height_constraint(276,300),
                               BoxCondFun.having_box_in_given_distance(100), 
                               BoxCondFun.having_box_in_given_distance(200), 
                               BoxCondFun.having_box_in_given_distance(400), 

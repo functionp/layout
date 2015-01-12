@@ -171,13 +171,13 @@ class SoftplannerLayout(Layout):
 
         image_area_item_style = Style([200,10], [75,180], 1)
         dl_button_condition = Condition([BoxCondFun.width_constraint(210,230), BoxCondFun.height_constraint(40, 50)] , 1)
-        pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,1), BoxCondFun.height_constraint(190,210,0)] , 1)
+        pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,1), BoxCondFun.height_constraint(190,210,1)] , 1)
         pr_text_condition = Condition([BoxCondFun.width_constraint(490, 510, 0), BoxCondFun.height_constraint(110,130, 0)] , 1) #height と widthどっちかならできるけどどっちもはむずい
 
         image_area_item_boxes = []
         #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition))
         image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition))
+        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition))
 
         image_area_layout = Layout(image_area_item_boxes, image_area_inner_box)
 
