@@ -209,10 +209,17 @@ class BoxAgent(Agent):
 
         if value < 0: value = 0
 
-        if self.get_x() + value < right_limit:
-            self.style.size[0] = value
-        else:
-            self.style.size[0] = right_limit - self.get_x()
+        # in case of overflow
+        if self.get_x() + value > right_limit:
+
+            if right_limit - value > 0:
+                self.set_x(right_limit - value)
+            else:
+                self.set_x(0)
+                value = right_limit
+
+        self.style.size[0] = value
+
 
     def set_height(self, value):
         base_box = self.parent_layout.base_box
@@ -220,12 +227,17 @@ class BoxAgent(Agent):
 
         if value < 0: value = 0
 
-        if self.get_y() + value < bottom_limit:
-            self.style.size[1] = value
-        else:
-            self.set_y(bottom_limit - value)
-            self.style.size[1] = value
-            #self.style.size[1] = bottom_limit - self.get_y()
+        # in case of overflow
+        if self.get_y() + value > bottom_limit:
+
+            if bottom_limit - value > 0:
+                self.set_y(bottom_limit - value)
+            else:
+                self.set_y(0)
+                value = bottom_limit
+
+        self.style.size[1] = value
+
 
     def set_parent_layout(self, parent_layout):
         self.parent_layout = parent_layout
