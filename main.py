@@ -42,17 +42,31 @@ class MainFrame(wx.Frame):
         self.base_panel = wx.Panel(self, wx.ID_ANY)
 
 def main():
+
+    def get_right_position(basic_object, margin):
+        basic_x, basic_y = basic_object.Position
+        basic_width, basic_height = basic_object.Size
+        return [basic_x + basic_width + margin, basic_y]
+        
+    def get_bottom_position(basic_object, margin):
+        basic_x, basic_y = basic_object.Position
+        basic_width, basic_height = basic_object.Size
+        return [basic_x, basic_y + basic_height + margin]
+
     main_app = wx.App()
-    main_frame = MainFrame(None, -1, u'controller', pos=(100,100),size=(260,300))
+    MAIN_WINDOW_SIZE = (900,550)
+    MAIN_PADDING = (30,30)
+    main_frame = MainFrame(None, -1, u'controller', pos=(100,100),size=MAIN_WINDOW_SIZE)
 
-    child_panel = wx.Panel(main_frame.base_panel, wx.ID_ANY, pos=(30,30), size=(200,200))
+    main_panel = wx.Panel(main_frame.base_panel, wx.ID_ANY, pos=MAIN_PADDING, size=(MAIN_WINDOW_SIZE[0], MAIN_WINDOW_SIZE[1]))
 
-    start_button = wx.Button(child_panel, wx.ID_ANY, "Start")
+    list_box = wx.ListBox(main_panel, wx.ID_ANY, choices=["1", "2"], style=wx.LB_SINGLE, pos=(2,2), size=(150, 300))
+
+    label_map = wx.StaticText(main_panel, wx.ID_ANY, "base_box", pos=get_right_position(list_box, 10))
+    text_map = wx.TextCtrl(main_panel,wx.ID_ANY, pos=get_bottom_position(label_map, 10))
+
+    start_button = wx.Button(main_panel, wx.ID_ANY, "Start", pos=get_bottom_position(text_map, 10))
     start_button.Bind(wx.EVT_BUTTON, click_start_button)
-
-    sizer = wx.BoxSizer(wx.VERTICAL)
-    sizer.Add(start_button)
-    child_panel.SetSizer(sizer)
 
     main_frame.Show()
 
