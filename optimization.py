@@ -177,6 +177,10 @@ class OCSOptimization(Optimization):
                 previous_situation = situation.get_copy()
                 previous_value = self.get_objective_value()
 
+                print "==Executed Rule"
+                print selected_rule.condition
+                print selected_rule.action
+                print selected_rule.strength
                 agent.execute_action(selected_rule.action)
 
                 current_value = self.get_objective_value()
@@ -196,7 +200,7 @@ class OCSOptimization(Optimization):
 
     def reward_process(self, present_situation, previous_situation, applied_pairs):
 
-        fixed_value = (lambda x: 0.05)
+        fixed_value = (lambda x: 0.5)
         decreasing_function = (lambda x: (0.1)**x)
 
         #報酬関数を減少関数にするとあっという間に強度が収束してデッドロックに陥る
