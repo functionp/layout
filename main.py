@@ -220,6 +220,7 @@ def main():
     main_app.MainLoop()
 
 def select_list_box(event):
+    update()
     current_box = g_main_frame.current_box
 
     object = event.GetEventObject()
@@ -259,7 +260,27 @@ def update():
     current_box.set_height(int(get_widget_by_id(5).GetValue()))
     current_box.set_x(int(get_widget_by_id(2).GetValue()))
     current_box.set_y(int(get_widget_by_id(3).GetValue()))
-    
+
+    current_box.condition.remove_condfun_by_name("_x_constraint")
+    if get_widget_by_id(19).GetValue() or get_widget_by_id(21).GetValue():
+        new_condfun = BoxCondFun.x_constraint(int(get_widget_by_id(19).GetValue()), int(get_widget_by_id(21).GetValue()), 1)
+        current_box.condition.add_condfun(new_condfun)
+
+    current_box.condition.remove_condfun_by_name("_y_constraint")
+    if get_widget_by_id(23).GetValue() or get_widget_by_id(25).GetValue():
+        new_condfun = BoxCondFun.y_constraint(int(get_widget_by_id(23).GetValue()), int(get_widget_by_id(25).GetValue()), 1)
+        current_box.condition.add_condfun(new_condfun)
+
+    current_box.condition.remove_condfun_by_name("_width_constraint")
+    if get_widget_by_id(27).GetValue() or get_widget_by_id(29).GetValue():
+        new_condfun = BoxCondFun.width_constraint(int(get_widget_by_id(27).GetValue()), int(get_widget_by_id(29).GetValue()), 1)
+        current_box.condition.add_condfun(new_condfun)
+
+    current_box.condition.remove_condfun_by_name("_height_constraint")
+    if get_widget_by_id(31).GetValue() or get_widget_by_id(33).GetValue():
+        new_condfun = BoxCondFun.height_constraint(int(get_widget_by_id(31).GetValue()), int(get_widget_by_id(33).GetValue()), 1)
+        current_box.condition.add_condfun(new_condfun)
+
     if current_box.inner_layout:
         current_box.inner_layout.set_optimization_needed(get_widget_by_id(15).GetValue())
 

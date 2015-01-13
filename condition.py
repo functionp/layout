@@ -69,6 +69,12 @@ class Condition():
     def add_condfun(self, condfun):
         self.condfuns.append(condfun)
 
+    def remove_condfun_by_name(self, name):
+        for i, condfun in enumerate(self.condfuns):
+            if condfun.function.__name__ == name:
+                self.remove_condfun(i)
+                break
+
     def remove_random_condfun(self):
         index = random.randint(0, len(self.condfuns) - 1)
         self.remove_condfun(index)
