@@ -45,7 +45,7 @@ def widget_factory(widget_class,parent,widget_id,*args,**kwargs):
     return widget
 
 def get_widget_by_id(widget_id):
-    return g_widgets[widget_id]
+    return g_widgets.get(widget_id, None)
 
 class MainFrame(wx.Frame):
 
@@ -74,7 +74,14 @@ class MainFrame(wx.Frame):
 
         list_box = wx.ListBox(main_panel, wx.ID_ANY, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 300))
 
-        label_map = wx.StaticText(main_panel, wx.ID_ANY, target_box.identifier, pos=get_right_position(list_box, 10))
+        if get_widget_by_id(222): 
+            print get_widget_by_id(222).GetLabel()
+            print get_widget_by_id(222)
+            get_widget_by_id(222).SetLabel("")
+        else:
+            print "naiyo"
+        label_map = widget_factory(wx.StaticText, main_panel, 222, target_box.identifier, pos=get_right_position(list_box, 10))
+        print label_map.GetId()
 
         label_name = wx.StaticText(main_panel, wx.ID_ANY, "Name", pos=get_bottom_position(label_map, 10))
         text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5))
@@ -137,6 +144,7 @@ def click_update_button(event):
     g_main_frame.current_box.set_y(int(get_widget_by_id(3).GetValue()))
     g_main_frame.current_box.set_width(int(get_widget_by_id(4).GetValue()))
     g_main_frame.current_box.set_height(int(get_widget_by_id(5).GetValue()))
+    g_main_frame.refresh(g_main_frame.current_box)
 
 def click_start_button(event):
     def render_closure(layout):
