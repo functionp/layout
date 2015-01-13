@@ -59,6 +59,17 @@ def get_map(box):
     else:
         return box.identifier
 
+
+def get_right_position(basic_object, margin, y_adjustment=0):
+    basic_x, basic_y = basic_object.Position
+    basic_width, basic_height = basic_object.Size
+    return [basic_x + basic_width + margin, basic_y + y_adjustment]
+
+def get_bottom_position(basic_object, margin, x_adjustment=0):
+    basic_x, basic_y = basic_object.Position
+    basic_width, basic_height = basic_object.Size
+    return [basic_x + x_adjustment, basic_y + basic_height + margin]
+
 class MainFrame(wx.Frame):
 
     def __init__(self, current_box, parent=None, id=-1, title=None, *args, **kwargs):
@@ -72,60 +83,95 @@ class MainFrame(wx.Frame):
     def set_current_box(self, current_box):
         self.current_box = current_box
 
+    def set_main_panel(self, main_panel):
+        self.main_panel = main_panel
+
     def set_base_box(self, base_box):
         self.base_box = base_box
 
     def get_base_box(self):
         return self.base_box
 
-    def refresh(self, target_box):
-        def get_right_position(basic_object, margin, y_adjustment=0):
-            basic_x, basic_y = basic_object.Position
-            basic_width, basic_height = basic_object.Size
-            return [basic_x + basic_width + margin, basic_y + y_adjustment]
+    def render_box_options(self, target_box):
+        ADJUST= 2
+        main_panel = self.main_panel
 
-        def get_bottom_position(basic_object, margin, x_adjustment=0):
-            basic_x, basic_y = basic_object.Position
-            basic_width, basic_height = basic_object.Size
-            return [basic_x + x_adjustment, basic_y + basic_height + margin]
-
-        main_panel = wx.Panel(self.base_panel, wx.ID_ANY, pos=MAIN_PADDING, size=(MAIN_WINDOW_SIZE[0], MAIN_WINDOW_SIZE[1]))
-
-        for child in g_widgets.values():
-            child.Destroy()
-
-        list_box = widget_factory(wx.ListBox, main_panel, 15, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 300))
-        list_box.Bind(wx.EVT_LISTBOX, select_list_box)
-
-        if get_widget_by_id(0): 
-            get_widget_by_id(0).SetLabel("")
-
-        label_map = widget_factory(wx.StaticText, main_panel, 0, get_map(target_box), pos=get_right_position(list_box, 10))
+        label_map = widget_factory(wx.StaticText, main_panel, 0, get_map(target_box), pos=get_right_position(get_widget_by_id(15), 10))
 
         label_name = widget_factory(wx.StaticText, main_panel, 6, "Name", pos=get_bottom_position(label_map, 10))
-        text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5), size=(240, 23))
+        text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5, -ADJUST), size=(240, 23))
 
-        STYLE_TEXT_SIZE = (60,23)
+        STYLE_TEXT_SIZE = (50,23)
         label_x = widget_factory(wx.StaticText, main_panel, 7, "X", pos=get_bottom_position(label_name, 10))
-        text_x = widget_factory(wx.TextCtrl, main_panel, 2, str(target_box.get_x()) , pos=get_right_position(label_x, 5), size=STYLE_TEXT_SIZE)
+        text_x = widget_factory(wx.TextCtrl, main_panel, 2, str(target_box.get_x()) , pos=get_right_position(label_x, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         text_x.SetMaxLength(4)
 
-        label_y = widget_factory(wx.StaticText, main_panel, 8, "Y", pos=get_right_position(text_x, 20))
-        text_y = widget_factory(wx.TextCtrl, main_panel, 3, str(target_box.get_y()), pos=get_right_position(label_y, 5), size=STYLE_TEXT_SIZE)
+        label_y = widget_factory(wx.StaticText, main_panel, 8, "Y", pos=get_right_position(text_x, 20, ADJUST))
+        text_y = widget_factory(wx.TextCtrl, main_panel, 3, str(target_box.get_y()), pos=get_right_position(label_y, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         text_y.SetMaxLength(4)
 
-        label_width = widget_factory(wx.StaticText, main_panel, 9, "Width", pos=get_right_position(text_y, 20))
-        text_width = widget_factory(wx.TextCtrl, main_panel, 4, str(target_box.get_width()), pos=get_right_position(label_width, 5), size=STYLE_TEXT_SIZE)
+        label_width = widget_factory(wx.StaticText, main_panel, 9, "Width", pos=get_right_position(text_y, 20, ADJUST))
+        text_width = widget_factory(wx.TextCtrl, main_panel, 4, str(target_box.get_width()), pos=get_right_position(label_width, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         text_width.SetMaxLength(4)
 
-        label_height = widget_factory(wx.StaticText, main_panel, 10, "Height", pos=get_right_position(text_width, 20))
-        text_height = widget_factory(wx.TextCtrl, main_panel, 5, str(target_box.get_height()), pos=get_right_position(label_height, 5), size=STYLE_TEXT_SIZE)
+        label_height = widget_factory(wx.StaticText, main_panel, 10, "Height", pos=get_right_position(text_width, 20, ADJUST))
+        text_height = widget_factory(wx.TextCtrl, main_panel, 5, str(target_box.get_height()), pos=get_right_position(label_height, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         text_height.SetMaxLength(4)
 
-        check_optimization = widget_factory( wx.CheckBox, main_panel, 15, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
-        check_optimization.SetValue(target_box.inner_layout.optimization_needed)
+        if target_box.inner_layout:
+            check_optimization = widget_factory( wx.CheckBox, main_panel, 15, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
+            check_optimization.SetValue(target_box.inner_layout.optimization_needed)
 
-        make_button = widget_factory(wx.Button, main_panel, 11, "Make New Box", pos=get_bottom_position(check_optimization, 30))
+    def render_conditions(self, target_box):
+        ADJUST= 2
+        main_panel = self.main_panel
+
+        def get_func_dict_value(box, name, key):
+            function = None
+            for condfun in box.condition.condfuns:
+                if condfun.function.__name__ == name:
+                    function = condfun.function
+                    break
+
+            if function:
+                return function.func_dict[key]
+            else:
+                return ""
+
+        STYLE_TEXT_SIZE = (50,23)
+        label_x_from = widget_factory(wx.StaticText, main_panel, 18, "X Constraint", pos=get_bottom_position(get_widget_by_id(16), 20))
+        text_x_from = widget_factory(wx.TextCtrl, main_panel, 19, str(get_func_dict_value(target_box, '_x_constraint', 'lower')) , pos=get_right_position(label_x_from, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        label_x_to = widget_factory(wx.StaticText, main_panel, 20, " - ", pos=get_right_position(text_x_from, 5, ADJUST))
+        text_x_to = widget_factory(wx.TextCtrl, main_panel, 21, str(get_func_dict_value(target_box, '_x_constraint', 'upper')) , pos=get_right_position(label_x_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        text_x_from.SetMaxLength(4)
+        text_x_to.SetMaxLength(4)
+
+        label_y_from = widget_factory(wx.StaticText, main_panel, 22, "Y Constraint", pos=get_bottom_position(label_x_from, 10))
+        text_y_from = widget_factory(wx.TextCtrl, main_panel, 23, str(get_func_dict_value(target_box, '_y_constraint', 'lower')) , pos=get_right_position(label_y_from, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        label_y_to = widget_factory(wx.StaticText, main_panel, 24, " - ", pos=get_right_position(text_y_from, 5, ADJUST))
+        text_y_to = widget_factory(wx.TextCtrl, main_panel, 25, str(get_func_dict_value(target_box, '_y_constraint', 'upper')) , pos=get_right_position(label_y_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        text_y_from.SetMaxLength(4)
+        text_y_to.SetMaxLength(4)
+
+        label_width_from = widget_factory(wx.StaticText, main_panel, 26, "Width Constraint", pos=get_bottom_position(label_y_from, 10))
+        text_width_from = widget_factory(wx.TextCtrl, main_panel, 27, str(get_func_dict_value(target_box, '_width_constraint', 'lower')) , pos=get_right_position(label_width_from, 9, -ADJUST), size=STYLE_TEXT_SIZE)
+        label_width_to = widget_factory(wx.StaticText, main_panel, 28, " - ", pos=get_right_position(text_width_from, 5, ADJUST))
+        text_width_to = widget_factory(wx.TextCtrl, main_panel, 29, str(get_func_dict_value(target_box, '_width_constraint', 'upper')) , pos=get_right_position(label_width_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        text_width_from.SetMaxLength(4)
+        text_width_to.SetMaxLength(4)
+
+        label_height_from = widget_factory(wx.StaticText, main_panel, 30, "Height Constraint", pos=get_bottom_position(label_width_from, 10))
+        text_height_from = widget_factory(wx.TextCtrl, main_panel, 31, str(get_func_dict_value(target_box, '_height_constraint', 'lower')) , pos=get_right_position(label_height_from, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        label_height_to = widget_factory(wx.StaticText, main_panel, 32, " - ", pos=get_right_position(text_height_from, 5, ADJUST))
+        text_height_to = widget_factory(wx.TextCtrl, main_panel, 33, str(get_func_dict_value(target_box, '_height_constraint', 'upper')) , pos=get_right_position(label_height_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        text_height_from.SetMaxLength(4)
+        text_height_to.SetMaxLength(4)
+
+
+    def render_buttons(self):
+        main_panel = self.main_panel
+
+        make_button = widget_factory(wx.Button, main_panel, 11, "Make New Box", pos=get_bottom_position(get_widget_by_id(17), 10))
         make_button.Bind(wx.EVT_BUTTON, click_make_button)
 
         upper_button = widget_factory(wx.Button, main_panel, 12, "Upper Layer", pos=get_right_position(make_button, 10, -4))
@@ -136,6 +182,27 @@ class MainFrame(wx.Frame):
 
         start_button = widget_factory(wx.Button, main_panel, 14, "Start", pos=get_right_position(update_button, 10, -4))
         start_button.Bind(wx.EVT_BUTTON, click_start_button)
+
+    def refresh(self, target_box):
+
+        self.set_main_panel(wx.Panel(self.base_panel, wx.ID_ANY, pos=MAIN_PADDING, size=(MAIN_WINDOW_SIZE[0], MAIN_WINDOW_SIZE[1])))
+        main_panel = self.main_panel
+
+        for child in g_widgets.values():
+            child.Destroy()
+
+        list_box = widget_factory(wx.ListBox, main_panel, 15, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 300))
+        list_box.Bind(wx.EVT_LISTBOX, select_list_box)
+
+        self.render_box_options(target_box)
+
+        line1 = widget_factory(wx.StaticLine, main_panel, 16, pos=get_bottom_position(get_widget_by_id(7), 60), size=(600,2))
+
+        self.render_conditions(target_box)
+
+        line1 = widget_factory(wx.StaticLine, main_panel, 17, pos=get_bottom_position(get_widget_by_id(7), 260), size=(600,2))
+
+        self.render_buttons()
 
         self.Show()
         wx.Yield() 
@@ -211,6 +278,7 @@ def click_start_button(event):
         def optimize_layout_inside(layout):
             constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
             if layout:
+                print layout.optimization_needed
                 if layout.optimization_needed == True:
                     specification = Specification(layout, constraint1)
                     optimization = OCSOptimization(specification, layout) #あとでoptimizationのinitのlayout外す
@@ -225,43 +293,10 @@ def click_start_button(event):
         optimize_layout_inside(base_layout)
         base_layout.render(optimization_frame.base_panel)
 
-
-    def softplanner():
-        #specification = SoftplannerSpecification()
-        constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
-
-        base_layout = Layout.get_softplanner_layout()
-        #base_optimization = OCSOptimization(specification, base_layout)
-
-        header_menu_layout = base_layout.get_agent_with_identifier("header_inner_menu").inner_layout
-        header_menu_specification = Specification(header_menu_layout, constraint1)
-        header_menu_optimization = OCSOptimization(header_menu_specification, header_menu_layout)
-        #header_menu_optimization.optimize()
-
-        #global_menu_layout = base_layout.get_agent_with_identifier("global_inner_menu").inner_layout
-        #global_menu_optimization = OCSOptimization(specification, global_menu_layout)
-        #global_menu_optimization.optimize()
-
-        #制約候補にエージェント制約追加してみた　中身どんなんか観察
-        image_area_layout = base_layout.get_agent_with_identifier("image_area_inner").inner_layout
-        image_area_specification = Specification(image_area_layout, constraint1)
-        image_area_optimization = OCSOptimization(image_area_specification, image_area_layout)
-        image_area_optimization.set_render_function(render_closure(base_layout))
-        image_area_optimization.optimize()
-
-        main_layout = base_layout.get_agent_with_identifier("main").inner_layout
-        main_specification = Specification(main_layout, constraint1)
-        main_optimization = OCSOptimization(main_specification, main_layout)
-        #main_optimization.optimize()
-
-        base_layout.render(optimization_frame.base_panel)
-
     optimization_app = wx.App()
     optimization_frame = OptimizationFrame(None, -1, u'optimization', pos=(400,100))
 
-    #softplanner()
     start_optimization()
-
 
     optimization_frame.Show()
 

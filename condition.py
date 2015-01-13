@@ -195,6 +195,9 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
+        _width_constraint.func_dict['lower'] = lower_limit
+        _width_constraint.func_dict['upper'] = upper_limit
+
         return CondFun(_width_constraint, Objective(1, _width_constraint_objective), soft_hard)
 
     @classmethod
@@ -211,6 +214,9 @@ class BoxCondFun(CondFun):
                 return abs(box.get_height() - upper_limit)
             else:
                 return 0
+
+        _height_constraint.func_dict['lower'] = lower_limit
+        _height_constraint.func_dict['upper'] = upper_limit
 
         return CondFun(_height_constraint, Objective(1, _height_constraint_objective), soft_hard)
 
@@ -229,6 +235,9 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
+        _x_constraint.func_dict['lower'] = lower_limit
+        _x_constraint.func_dict['upper'] = upper_limit
+
         return CondFun(_x_constraint, Objective(1, _x_constraint_objective), soft_hard)
 
     @classmethod
@@ -245,6 +254,9 @@ class BoxCondFun(CondFun):
                 return abs(box.get_y() - upper_limit)
             else:
                 return 0
+
+        _y_constraint.func_dict['lower'] = lower_limit
+        _y_constraint.func_dict['upper'] = upper_limit
 
         return CondFun(_y_constraint, Objective(1, _y_constraint_objective), soft_hard)
 

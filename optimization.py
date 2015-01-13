@@ -106,7 +106,6 @@ class OCSOptimization(Optimization):
             self.display_break_condition()
 
             #constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
-            #すごい速度で収束　あとはエージェントコンディション→制約を目的関数とセットにすれば良い　あとでここの条件と強化学習の条件を直す
             self.one_optimization_cycle()
             i += 1
 
