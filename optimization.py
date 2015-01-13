@@ -122,7 +122,7 @@ class OCSOptimization(Optimization):
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
 
-        #self.render()
+        self.render()
 
         self.agent_set.delete_weak_rules()
 

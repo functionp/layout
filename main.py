@@ -66,21 +66,28 @@ class MainFrame(wx.Frame):
 
         self.base_panel = wx.Panel(self, wx.ID_ANY)
         self.set_current_box(current_box)
+        self.set_base_box(current_box)
         self.refresh(self.current_box)
 
     def set_current_box(self, current_box):
         self.current_box = current_box
 
-    def refresh(self, target_box):
-        def get_right_position(basic_object, margin):
-            basic_x, basic_y = basic_object.Position
-            basic_width, basic_height = basic_object.Size
-            return [basic_x + basic_width + margin, basic_y]
+    def set_base_box(self, base_box):
+        self.base_box = base_box
 
-        def get_bottom_position(basic_object, margin):
+    def get_base_box(self):
+        return self.base_box
+
+    def refresh(self, target_box):
+        def get_right_position(basic_object, margin, y_adjustment=0):
             basic_x, basic_y = basic_object.Position
             basic_width, basic_height = basic_object.Size
-            return [basic_x, basic_y + basic_height + margin]
+            return [basic_x + basic_width + margin, basic_y + y_adjustment]
+
+        def get_bottom_position(basic_object, margin, x_adjustment=0):
+            basic_x, basic_y = basic_object.Position
+            basic_width, basic_height = basic_object.Size
+            return [basic_x + x_adjustment, basic_y + basic_height + margin]
 
         main_panel = wx.Panel(self.base_panel, wx.ID_ANY, pos=MAIN_PADDING, size=(MAIN_WINDOW_SIZE[0], MAIN_WINDOW_SIZE[1]))
 
@@ -96,7 +103,7 @@ class MainFrame(wx.Frame):
         label_map = widget_factory(wx.StaticText, main_panel, 0, get_map(target_box), pos=get_right_position(list_box, 10))
 
         label_name = widget_factory(wx.StaticText, main_panel, 6, "Name", pos=get_bottom_position(label_map, 10))
-        text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5))
+        text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5), size=(240, 23))
 
         STYLE_TEXT_SIZE = (60,23)
         label_x = widget_factory(wx.StaticText, main_panel, 7, "X", pos=get_bottom_position(label_name, 10))
@@ -115,16 +122,19 @@ class MainFrame(wx.Frame):
         text_height = widget_factory(wx.TextCtrl, main_panel, 5, str(target_box.get_height()), pos=get_right_position(label_height, 5), size=STYLE_TEXT_SIZE)
         text_height.SetMaxLength(4)
 
-        make_button = widget_factory(wx.Button, main_panel, 11, "Make New Box", pos=get_bottom_position(label_x, 30))
+        check_optimization = widget_factory( wx.CheckBox, main_panel, 15, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
+        check_optimization.SetValue(target_box.inner_layout.optimization_needed)
+
+        make_button = widget_factory(wx.Button, main_panel, 11, "Make New Box", pos=get_bottom_position(check_optimization, 30))
         make_button.Bind(wx.EVT_BUTTON, click_make_button)
 
-        upper_button = widget_factory(wx.Button, main_panel, 12, "Upper Layer", pos=get_right_position(make_button, 10))
+        upper_button = widget_factory(wx.Button, main_panel, 12, "Upper Layer", pos=get_right_position(make_button, 10, -4))
         upper_button.Bind(wx.EVT_BUTTON, click_upper_button)
 
-        update_button = widget_factory(wx.Button, main_panel, 13, "Update", pos=get_right_position(upper_button, 10))
+        update_button = widget_factory(wx.Button, main_panel, 13, "Update", pos=get_right_position(upper_button, 10, -4))
         update_button.Bind(wx.EVT_BUTTON, click_update_button)
 
-        start_button = widget_factory(wx.Button, main_panel, 14, "Start", pos=get_right_position(update_button, 10))
+        start_button = widget_factory(wx.Button, main_panel, 14, "Start", pos=get_right_position(update_button, 10, -4))
         start_button.Bind(wx.EVT_BUTTON, click_start_button)
 
         self.Show()
@@ -134,8 +144,10 @@ def main():
     global g_main_frame
 
     main_app = wx.App()
-    base_box =  BoxAgent(Style([0,0], WINDOW_SIZE, 0), "base")
-    Layout([], base_box)
+    base_layout = Layout.get_softplanner_layout()
+    base_box =  base_layout.base_box
+    #base_box =  BoxAgent(Style([0,0], WINDOW_SIZE, 0), "base")
+    #Layout([], base_box)
     g_main_frame = MainFrame(base_box, None, -1, u'controller', pos=(100,100),size=MAIN_WINDOW_SIZE)
 
     main_app.MainLoop()
@@ -174,26 +186,51 @@ def click_update_button(event):
     update()
 
 def update():
-    g_main_frame.current_box.set_identifier(get_widget_by_id(1).GetValue())
-    g_main_frame.current_box.set_width(int(get_widget_by_id(4).GetValue()))
-    g_main_frame.current_box.set_height(int(get_widget_by_id(5).GetValue()))
-    g_main_frame.current_box.set_x(int(get_widget_by_id(2).GetValue()))
-    g_main_frame.current_box.set_y(int(get_widget_by_id(3).GetValue()))
-    g_main_frame.refresh(g_main_frame.current_box)
+    current_box = g_main_frame.current_box
+    current_box.set_identifier(get_widget_by_id(1).GetValue())
+    current_box.set_width(int(get_widget_by_id(4).GetValue()))
+    current_box.set_height(int(get_widget_by_id(5).GetValue()))
+    current_box.set_x(int(get_widget_by_id(2).GetValue()))
+    current_box.set_y(int(get_widget_by_id(3).GetValue()))
+    
+    if current_box.inner_layout:
+        current_box.inner_layout.set_optimization_needed(get_widget_by_id(15).GetValue())
+
+    g_main_frame.refresh(current_box)
 
 def click_start_button(event):
-    def render_closure(layout):
-        def _render_closure():
-            layout.render(optimization_frame.base_panel)
-            optimization_frame.Show()
-            wx.Yield()
-        return _render_closure
+
+    def start_optimization():
+        def render_closure():
+            def _render_closure():
+                base_layout.render(optimization_frame.base_panel)
+                optimization_frame.Show()
+                wx.Yield()
+            return _render_closure
+
+        def optimize_layout_inside(layout):
+            constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
+            if layout:
+                if layout.optimization_needed == True:
+                    specification = Specification(layout, constraint1)
+                    optimization = OCSOptimization(specification, layout) #あとでoptimizationのinitのlayout外す
+
+                    optimization.set_render_function(render_closure())
+                    optimization.optimize()
+
+                for agent in layout.agents:
+                    optimize_layout_inside(agent.inner_layout)
+        
+        base_layout = g_main_frame.get_base_box().inner_layout
+        optimize_layout_inside(base_layout)
+        base_layout.render(optimization_frame.base_panel)
+
 
     def softplanner():
         #specification = SoftplannerSpecification()
         constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
 
-        base_layout = SoftplannerLayout()
+        base_layout = Layout.get_softplanner_layout()
         #base_optimization = OCSOptimization(specification, base_layout)
 
         header_menu_layout = base_layout.get_agent_with_identifier("header_inner_menu").inner_layout
@@ -222,7 +259,8 @@ def click_start_button(event):
     optimization_app = wx.App()
     optimization_frame = OptimizationFrame(None, -1, u'optimization', pos=(400,100))
 
-    softplanner()
+    #softplanner()
+    start_optimization()
 
 
     optimization_frame.Show()

@@ -64,6 +64,7 @@ class Layout(AgentSet):
 
         self.agents = agents
         self.set_base_box(base_box)
+        self.optimization = False
 
         for agent in agents:
             agent.set_parent_layout(self)
@@ -71,6 +72,9 @@ class Layout(AgentSet):
     def set_base_box(self, base_box):
         self.base_box = base_box
         base_box.set_inner_layout(self)
+
+    def set_optimization_needed(self, value):
+        self.optimization_needed = value
 
     def add_box(self, box):
         self.agents.append(box)
@@ -109,9 +113,8 @@ class Layout(AgentSet):
         else:
             return reduce((lambda b1, b2: b1 and b2), bool_list)
 
-
-class SoftplannerLayout(Layout):
-    def __init__(self):
+    @classmethod
+    def get_softplanner_layout(cls):
 
         MAIN_WIDTH = 750
         margin = 20
@@ -138,7 +141,8 @@ class SoftplannerLayout(Layout):
         footer_box = BoxAgent(footer_style, "footer")
 
         #base_layout = Layout([header_box, image_area_box], base_box)
-        base_layout = Layout([header_box, image_area_box, main_box, footer_box], base_box)
+        base_layout = Layout([header_box, image_area_box, main_box], base_box)
+        base_layout.set_optimization_needed(False)
 
         main_box.set_x(main_box.get_center_x())
 
@@ -148,7 +152,9 @@ class SoftplannerLayout(Layout):
         header_inner_condition = Condition()
         header_inner_box = BoxAgent(header_inner_style, "header_inner_menu", header_inner_condition)
 
-        header_inner_layout = Layout([header_inner_box], header_box)
+        header_layout = Layout([header_inner_box], header_box)
+        header_layout.set_optimization_needed(False)
+
         header_inner_box.set_x(header_inner_box.get_center_x())
 
         header_inner_item_style = Style([200,10], [75,50], 1)
@@ -160,6 +166,7 @@ class SoftplannerLayout(Layout):
         #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "phone", phone_condition))
 
         header_inner_layout = Layout(header_inner_item_boxes, header_inner_box)
+        header_inner_layout.set_optimization_needed(False)
 
         # image_area_layout
 
@@ -167,7 +174,9 @@ class SoftplannerLayout(Layout):
         image_area_inner_condition = Condition()
         image_area_inner_box = BoxAgent(image_area_inner_style, "image_area_inner", image_area_inner_condition)
 
-        image_area_inner_layout = Layout([image_area_inner_box], image_area_box)
+        image_area_layout = Layout([image_area_inner_box], image_area_box)
+        image_area_layout.set_optimization_needed(False)
+
         image_area_inner_box.set_x(image_area_inner_box.get_center_x())
 
         image_area_item_style = Style([200,10], [75,180], 1)
@@ -180,10 +189,11 @@ class SoftplannerLayout(Layout):
         image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition))
         image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition))
 
-        image_area_layout = Layout(image_area_item_boxes, image_area_inner_box)
+        image_area_inner_layout = Layout(image_area_item_boxes, image_area_inner_box)
+        image_area_inner_layout.set_optimization_needed(True)
 
         # main_layout
-        
+
         side_style = Style([10,10], [200,580], 1)
         side_condition = Condition([BoxCondFun.width_constraint(0, 210), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(2)] , 1)
         side_box = BoxAgent(side_style, "side", side_condition)
@@ -192,11 +202,12 @@ class SoftplannerLayout(Layout):
         content_box = BoxAgent(content_style, "content")
 
         main_layout = Layout([], main_box)
+        main_layout.set_optimization_needed(False)
         #main_layout = Layout([side_box, content_box], main_box)
-        
+
         #content_box.set_x(content_box.get_center_x())
 
-        Layout.__init__(self, [base_box])
+        return base_layout
 
 class SampleLayout(Layout):
     def __init__(self):
