@@ -79,9 +79,11 @@ class MainFrame(wx.Frame):
         main_panel = wx.Panel(self.base_panel, wx.ID_ANY, pos=MAIN_PADDING, size=(MAIN_WINDOW_SIZE[0], MAIN_WINDOW_SIZE[1]))
 
         list_box = wx.ListBox(main_panel, wx.ID_ANY, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 300))
+        list_box.Bind(wx.EVT_LISTBOX, select_list_box)
 
         if get_widget_by_id(222): 
             get_widget_by_id(222).SetLabel("")
+
         label_map = widget_factory(wx.StaticText, main_panel, 222, target_box.identifier, pos=get_right_position(list_box, 10))
 
         label_name = wx.StaticText(main_panel, wx.ID_ANY, "Name", pos=get_bottom_position(label_map, 10))
@@ -128,10 +130,21 @@ def main():
 
     main_app.MainLoop()
 
+def select_list_box(event):
+    current_box = g_main_frame.current_box
+
+    object = event.GetEventObject()
+    nth = object.GetSelection()
+    selected_box = current_box.inner_layout.agents[nth]
+
+    g_main_frame.set_current_box(current_box.inner_layout.agents[nth])
+    g_main_frame.refresh(selected_box)
+
 def click_make_button(event):
     update()
     new_box = BoxAgent(Style([0,0], [0,0], 1), "new box")
 
+    # in case current box has no inner layout
     if not g_main_frame.current_box.inner_layout:
         inner_layout = Layout()
         inner_layout.set_base_box(g_main_frame.current_box)
