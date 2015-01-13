@@ -191,7 +191,7 @@ class BoxAgent(Agent):
         if value < left_limit:
             x_after_movement = left_limit + 1
         elif right_limit < value + self.get_width():
-            x_after_movement = right_limit - self.get_width() - 1
+            x_after_movement = right_limit - self.get_width()
         else:
             x_after_movement = value
 
@@ -204,7 +204,7 @@ class BoxAgent(Agent):
         if value < top_limit:
             y_after_movement = top_limit + 1
         elif bottom_limit < value + self.get_height():
-            y_after_movement = bottom_limit - self.get_height() -1
+            y_after_movement = bottom_limit - self.get_height()
         else:
             y_after_movement = value
 
