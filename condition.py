@@ -187,7 +187,11 @@ class BoxCondFun(CondFun):
     # # # CONDFUNS # # #
 
     @classmethod
-    def width_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
+    def width_constraint(cls, lower_limit=None, upper_limit=None, soft_hard=1):
+
+        if lower_limit == None: lower_limit = 0
+        if upper_limit == None: upper_limit = 9999
+
         def _width_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_width() and box.get_width() <= upper_limit
@@ -203,11 +207,16 @@ class BoxCondFun(CondFun):
 
         _width_constraint.func_dict['lower'] = lower_limit
         _width_constraint.func_dict['upper'] = upper_limit
+        _width_constraint.func_dict['soft_hard'] = soft_hard
 
         return CondFun(_width_constraint, Objective(1, _width_constraint_objective), soft_hard)
 
     @classmethod
-    def height_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
+    def height_constraint(cls, lower_limit=None, upper_limit=None, soft_hard=1):
+
+        if lower_limit == None: lower_limit = 0
+        if upper_limit == None: upper_limit = 9999
+
         def _height_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_height() and box.get_height() <= upper_limit
@@ -223,11 +232,16 @@ class BoxCondFun(CondFun):
 
         _height_constraint.func_dict['lower'] = lower_limit
         _height_constraint.func_dict['upper'] = upper_limit
+        _height_constraint.func_dict['soft_hard'] = soft_hard
 
         return CondFun(_height_constraint, Objective(1, _height_constraint_objective), soft_hard)
 
     @classmethod
-    def x_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
+    def x_constraint(cls, lower_limit=None, upper_limit=None, soft_hard=1):
+
+        if lower_limit == None: lower_limit = 0
+        if upper_limit == None: upper_limit = 9999
+
         def _x_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_x() and box.get_x() <= upper_limit
@@ -243,11 +257,16 @@ class BoxCondFun(CondFun):
 
         _x_constraint.func_dict['lower'] = lower_limit
         _x_constraint.func_dict['upper'] = upper_limit
+        _x_constraint.func_dict['soft_hard'] = soft_hard
 
         return CondFun(_x_constraint, Objective(1, _x_constraint_objective), soft_hard)
 
     @classmethod
-    def y_constraint(cls, lower_limit, upper_limit=10000, soft_hard=1):
+    def y_constraint(cls, lower_limit=None, upper_limit=None, soft_hard=1):
+
+        if lower_limit == None: lower_limit = 0
+        if upper_limit == None: upper_limit = 9999
+
         def _y_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_y() and box.get_y() <= upper_limit
@@ -263,11 +282,12 @@ class BoxCondFun(CondFun):
 
         _y_constraint.func_dict['lower'] = lower_limit
         _y_constraint.func_dict['upper'] = upper_limit
+        _y_constraint.func_dict['soft_hard'] = soft_hard
 
         return CondFun(_y_constraint, Objective(1, _y_constraint_objective), soft_hard)
 
     @classmethod
-    def x_end_constraint(cls, lower_limit, upper_limit=10000):
+    def x_end_constraint(cls, lower_limit, upper_limit=9999):
         def _x_end_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_x() + box.get_width() and box.get_x() + box.get_width() <= upper_limit
@@ -284,7 +304,7 @@ class BoxCondFun(CondFun):
         return CondFun(_x_end_constraint, Objective(1, _x_end_constraint_objective))
 
     @classmethod
-    def y_end_constraint(cls, lower_limit, upper_limit=10000):
+    def y_end_constraint(cls, lower_limit, upper_limit=9999):
         def _y_end_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_y() + box.get_height() and box.get_y() + box.get_height() <= upper_limit

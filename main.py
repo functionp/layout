@@ -8,7 +8,7 @@ from optimization import *
 from layout import *
 
 WINDOW_SIZE = [1200,900]
-MAIN_WINDOW_SIZE = (900,550)
+MAIN_WINDOW_SIZE = (710,400)
 MAIN_PADDING = (30,30)
 
 g_main_frame = None
@@ -96,7 +96,7 @@ class MainFrame(wx.Frame):
         ADJUST= 2
         main_panel = self.main_panel
 
-        label_map = widget_factory(wx.StaticText, main_panel, 0, get_map(target_box), pos=get_right_position(get_widget_by_id(15), 10))
+        label_map = widget_factory(wx.StaticText, main_panel, 0, get_map(target_box), pos=get_right_position(get_widget_by_id(15), 20))
 
         label_name = widget_factory(wx.StaticText, main_panel, 6, "Name", pos=get_bottom_position(label_map, 10))
         text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5, -ADJUST), size=(240, 23))
@@ -143,6 +143,8 @@ class MainFrame(wx.Frame):
         text_x_from = widget_factory(wx.TextCtrl, main_panel, 19, str(get_func_dict_value(target_box, '_x_constraint', 'lower')) , pos=get_right_position(label_x_from, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         label_x_to = widget_factory(wx.StaticText, main_panel, 20, " - ", pos=get_right_position(text_x_from, 5, ADJUST))
         text_x_to = widget_factory(wx.TextCtrl, main_panel, 21, str(get_func_dict_value(target_box, '_x_constraint', 'upper')) , pos=get_right_position(label_x_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        check_x_constraint = widget_factory(wx.CheckBox, main_panel, 34, "Hard Constraint", pos=get_right_position(text_x_to, 20, 3))
+        check_x_constraint.SetValue(bool(get_func_dict_value(target_box, '_x_constraint', 'soft_hard')))
         text_x_from.SetMaxLength(4)
         text_x_to.SetMaxLength(4)
 
@@ -150,6 +152,8 @@ class MainFrame(wx.Frame):
         text_y_from = widget_factory(wx.TextCtrl, main_panel, 23, str(get_func_dict_value(target_box, '_y_constraint', 'lower')) , pos=get_right_position(label_y_from, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         label_y_to = widget_factory(wx.StaticText, main_panel, 24, " - ", pos=get_right_position(text_y_from, 5, ADJUST))
         text_y_to = widget_factory(wx.TextCtrl, main_panel, 25, str(get_func_dict_value(target_box, '_y_constraint', 'upper')) , pos=get_right_position(label_y_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        check_y_constraint = widget_factory(wx.CheckBox, main_panel, 35, "Hard Constraint", pos=get_right_position(text_y_to, 20, 3))
+        check_y_constraint.SetValue(bool(get_func_dict_value(target_box, '_y_constraint', 'soft_hard')))
         text_y_from.SetMaxLength(4)
         text_y_to.SetMaxLength(4)
 
@@ -157,6 +161,8 @@ class MainFrame(wx.Frame):
         text_width_from = widget_factory(wx.TextCtrl, main_panel, 27, str(get_func_dict_value(target_box, '_width_constraint', 'lower')) , pos=get_right_position(label_width_from, 9, -ADJUST), size=STYLE_TEXT_SIZE)
         label_width_to = widget_factory(wx.StaticText, main_panel, 28, " - ", pos=get_right_position(text_width_from, 5, ADJUST))
         text_width_to = widget_factory(wx.TextCtrl, main_panel, 29, str(get_func_dict_value(target_box, '_width_constraint', 'upper')) , pos=get_right_position(label_width_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        check_width_constraint = widget_factory(wx.CheckBox, main_panel, 36, "Hard Constraint", pos=get_right_position(text_width_to, 20, 3))
+        check_width_constraint.SetValue(bool(get_func_dict_value(target_box, '_width_constraint', 'soft_hard')))
         text_width_from.SetMaxLength(4)
         text_width_to.SetMaxLength(4)
 
@@ -164,6 +170,8 @@ class MainFrame(wx.Frame):
         text_height_from = widget_factory(wx.TextCtrl, main_panel, 31, str(get_func_dict_value(target_box, '_height_constraint', 'lower')) , pos=get_right_position(label_height_from, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         label_height_to = widget_factory(wx.StaticText, main_panel, 32, " - ", pos=get_right_position(text_height_from, 5, ADJUST))
         text_height_to = widget_factory(wx.TextCtrl, main_panel, 33, str(get_func_dict_value(target_box, '_height_constraint', 'upper')) , pos=get_right_position(label_height_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
+        check_height_constraint = widget_factory(wx.CheckBox, main_panel, 37, "Hard Constraint", pos=get_right_position(text_height_to, 20, 3))
+        check_height_constraint.SetValue(bool(get_func_dict_value(target_box, '_height_constraint', 'soft_hard')))
         text_height_from.SetMaxLength(4)
         text_height_to.SetMaxLength(4)
 
@@ -191,16 +199,16 @@ class MainFrame(wx.Frame):
         for child in g_widgets.values():
             child.Destroy()
 
-        list_box = widget_factory(wx.ListBox, main_panel, 15, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 300))
+        list_box = widget_factory(wx.ListBox, main_panel, 15, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 315))
         list_box.Bind(wx.EVT_LISTBOX, select_list_box)
 
         self.render_box_options(target_box)
 
-        line1 = widget_factory(wx.StaticLine, main_panel, 16, pos=get_bottom_position(get_widget_by_id(7), 60), size=(600,2))
+        line1 = widget_factory(wx.StaticLine, main_panel, 16, pos=get_bottom_position(get_widget_by_id(7), 60), size=(490,2))
 
         self.render_conditions(target_box)
 
-        line1 = widget_factory(wx.StaticLine, main_panel, 17, pos=get_bottom_position(get_widget_by_id(7), 260), size=(600,2))
+        line1 = widget_factory(wx.StaticLine, main_panel, 17, pos=get_bottom_position(get_widget_by_id(7), 205), size=(490,2))
 
         self.render_buttons()
 
@@ -253,6 +261,12 @@ def click_upper_button(event):
 def click_update_button(event):
     update()
 
+def myint(value):
+    if value == "" or value == "None":
+        return None
+    else:
+        return int(value)
+
 def update():
     current_box = g_main_frame.current_box
     current_box.set_identifier(get_widget_by_id(1).GetValue())
@@ -263,22 +277,22 @@ def update():
 
     current_box.condition.remove_condfun_by_name("_x_constraint")
     if get_widget_by_id(19).GetValue() or get_widget_by_id(21).GetValue():
-        new_condfun = BoxCondFun.x_constraint(int(get_widget_by_id(19).GetValue()), int(get_widget_by_id(21).GetValue()), 1)
+        new_condfun = BoxCondFun.x_constraint(myint(get_widget_by_id(19).GetValue()), myint(get_widget_by_id(21).GetValue()), int(get_widget_by_id(34).GetValue()))
         current_box.condition.add_condfun(new_condfun)
 
     current_box.condition.remove_condfun_by_name("_y_constraint")
     if get_widget_by_id(23).GetValue() or get_widget_by_id(25).GetValue():
-        new_condfun = BoxCondFun.y_constraint(int(get_widget_by_id(23).GetValue()), int(get_widget_by_id(25).GetValue()), 1)
+        new_condfun = BoxCondFun.y_constraint(myint(get_widget_by_id(23).GetValue()), myint(get_widget_by_id(25).GetValue()), int(get_widget_by_id(35).GetValue()))
         current_box.condition.add_condfun(new_condfun)
 
     current_box.condition.remove_condfun_by_name("_width_constraint")
     if get_widget_by_id(27).GetValue() or get_widget_by_id(29).GetValue():
-        new_condfun = BoxCondFun.width_constraint(int(get_widget_by_id(27).GetValue()), int(get_widget_by_id(29).GetValue()), 1)
+        new_condfun = BoxCondFun.width_constraint(myint(get_widget_by_id(27).GetValue()), myint(get_widget_by_id(29).GetValue()), int(get_widget_by_id(36).GetValue()))
         current_box.condition.add_condfun(new_condfun)
 
     current_box.condition.remove_condfun_by_name("_height_constraint")
     if get_widget_by_id(31).GetValue() or get_widget_by_id(33).GetValue():
-        new_condfun = BoxCondFun.height_constraint(int(get_widget_by_id(31).GetValue()), int(get_widget_by_id(33).GetValue()), 1)
+        new_condfun = BoxCondFun.height_constraint(myint(get_widget_by_id(31).GetValue()), myint(get_widget_by_id(33).GetValue()), int(get_widget_by_id(37).GetValue()))
         current_box.condition.add_condfun(new_condfun)
 
     if current_box.inner_layout:
@@ -299,7 +313,6 @@ def click_start_button(event):
         def optimize_layout_inside(layout):
             constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
             if layout:
-                print layout.optimization_needed
                 if layout.optimization_needed == True:
                     specification = Specification(layout, constraint1)
                     optimization = OCSOptimization(specification, layout) #あとでoptimizationのinitのlayout外す
