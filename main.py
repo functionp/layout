@@ -47,6 +47,12 @@ def widget_factory(widget_class,parent,widget_id,*args,**kwargs):
 def get_widget_by_id(widget_id):
     return g_widgets.get(widget_id, None)
 
+def get_agent_list(box):
+    if box.inner_layout:
+        return [agent.identifier for agent in box.inner_layout.agents]
+    else:
+        return []
+
 class MainFrame(wx.Frame):
 
     def __init__(self, current_box, parent=None, id=-1, title=None, *args, **kwargs):
@@ -101,7 +107,10 @@ class MainFrame(wx.Frame):
         make_button = wx.Button(main_panel, wx.ID_ANY, "Make New Box", pos=get_bottom_position(label_x, 30))
         make_button.Bind(wx.EVT_BUTTON, click_make_button)
 
-        update_button = wx.Button(main_panel, wx.ID_ANY, "Update", pos=get_right_position(make_button, 10))
+        upper_button = wx.Button(main_panel, wx.ID_ANY, "Upper Layer", pos=get_right_position(make_button, 10))
+        upper_button.Bind(wx.EVT_BUTTON, click_upper_button)
+
+        update_button = wx.Button(main_panel, wx.ID_ANY, "Update", pos=get_right_position(upper_button, 10))
         update_button.Bind(wx.EVT_BUTTON, click_update_button)
 
         start_button = wx.Button(main_panel, wx.ID_ANY, "Start", pos=get_right_position(update_button, 10))
@@ -119,21 +128,31 @@ def main():
 
     main_app.MainLoop()
 
-def get_agent_list(box):
-    if box.inner_layout:
-        return [agent.identifier for agent in box.inner_layout.agents]
-    else:
-        return []
-
-
 def click_make_button(event):
+    update()
     new_box = BoxAgent(Style([0,0], [0,0], 1), "new box")
-    Layout([new_box], g_main_frame.current_box)
+
+    if not g_main_frame.current_box.inner_layout:
+        inner_layout = Layout()
+        inner_layout.set_base_box(g_main_frame.current_box)
+
+    g_main_frame.current_box.inner_layout.add_box(new_box)
 
     g_main_frame.set_current_box(new_box)
     g_main_frame.refresh(new_box)
 
+def click_upper_button(event):
+    update()
+    parent_layout = g_main_frame.current_box.parent_layout
+    if parent_layout:
+        g_main_frame.set_current_box(parent_layout.base_box)
+        g_main_frame.refresh(g_main_frame.current_box)
+
+
 def click_update_button(event):
+    update()
+
+def update():
     g_main_frame.current_box.set_identifier(get_widget_by_id(1).GetValue())
     g_main_frame.current_box.set_width(int(get_widget_by_id(4).GetValue()))
     g_main_frame.current_box.set_height(int(get_widget_by_id(5).GetValue()))
