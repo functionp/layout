@@ -53,6 +53,12 @@ def get_agent_list(box):
     else:
         return []
 
+def get_map(box):
+    if box.parent_layout:
+        return get_map(box.parent_layout.base_box) + " > " + box.identifier
+    else:
+        return box.identifier
+
 class MainFrame(wx.Frame):
 
     def __init__(self, current_box, parent=None, id=-1, title=None, *args, **kwargs):
@@ -84,7 +90,7 @@ class MainFrame(wx.Frame):
         if get_widget_by_id(222): 
             get_widget_by_id(222).SetLabel("")
 
-        label_map = widget_factory(wx.StaticText, main_panel, 222, target_box.identifier, pos=get_right_position(list_box, 10))
+        label_map = widget_factory(wx.StaticText, main_panel, 222, get_map(target_box), pos=get_right_position(list_box, 10))
 
         label_name = wx.StaticText(main_panel, wx.ID_ANY, "Name", pos=get_bottom_position(label_map, 10))
         text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5))
@@ -126,6 +132,7 @@ def main():
 
     main_app = wx.App()
     base_box =  BoxAgent(Style([0,0], WINDOW_SIZE, 0), "base")
+    Layout([], base_box)
     g_main_frame = MainFrame(base_box, None, -1, u'controller', pos=(100,100),size=MAIN_WINDOW_SIZE)
 
     main_app.MainLoop()
@@ -137,18 +144,16 @@ def select_list_box(event):
     nth = object.GetSelection()
     selected_box = current_box.inner_layout.agents[nth]
 
-    g_main_frame.set_current_box(current_box.inner_layout.agents[nth])
+    g_main_frame.set_current_box(selected_box)
     g_main_frame.refresh(selected_box)
 
 def click_make_button(event):
     update()
     new_box = BoxAgent(Style([0,0], [0,0], 1), "new box")
+    Layout([], new_box) # create inner layout of new_box
 
-    # in case current box has no inner layout
-    if not g_main_frame.current_box.inner_layout:
-        inner_layout = Layout()
-        inner_layout.set_base_box(g_main_frame.current_box)
-
+    #print g_main_frame.current_box.identifier
+    #print g_main_frame.current_box.inner_layout.agents
     g_main_frame.current_box.inner_layout.add_box(new_box)
 
     g_main_frame.set_current_box(new_box)
@@ -159,7 +164,7 @@ def click_upper_button(event):
     parent_layout = g_main_frame.current_box.parent_layout
     if parent_layout:
         g_main_frame.set_current_box(parent_layout.base_box)
-        g_main_frame.refresh(g_main_frame.current_box)
+        g_main_frame.refresh(parent_layout.base_box)
 
 
 def click_update_button(event):
