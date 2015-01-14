@@ -83,6 +83,17 @@ class Objective():
         # return sum of distances
         return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
 
+    @staticmethod
+    def height_difference(situation):
+
+        boxes = situation.agent_set.agents
+        scale = 10
+
+        distance_list = [[abs(boxes[i].get_height() - boxes[j].get_height()) * scale for j in range(i, len(boxes))] for i in range(len(boxes))]
+
+        # return sum of distances
+        return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
+
 
 
 

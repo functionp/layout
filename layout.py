@@ -157,16 +157,21 @@ class Layout(AgentSet):
         
         header_inner_box.set_x(header_inner_box.get_center_x())
 
-        header_inner_item_style = Style([200,10], [75,50], 1)
+        header_inner_item_style = Style([200,10], [185,55], 1)
         logo_condition = Condition([BoxCondFun.width_constraint(120,150), BoxCondFun.y_constraint(2), BoxCondFun.x_constraint(0, 10) ] , 1)
         phone_condition = Condition([BoxCondFun.width_constraint(120,170), BoxCondFun.y_constraint(2), BoxCondFun.x_end_constraint(MAIN_WIDTH-10, MAIN_WIDTH)] , 1)
+        menu_condition = Condition([BoxCondFun.width_constraint(160,180), BoxCondFun.height_constraint(40, 60, 1), BoxCondFun.y_constraint(2), BoxCondFun.y_end_constraint(0,78, 0)] , 1)
 
         header_inner_item_boxes = []
         #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "logo", logo_condition))
         #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "phone", phone_condition))
 
+        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu1", menu_condition, "menu1"))
+        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu2", menu_condition, "menu2"))
+        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu3", menu_condition, "menu3"))
+
         header_inner_layout = Layout(header_inner_item_boxes, header_inner_box)
-        header_inner_layout.set_optimization_needed(False)
+        header_inner_layout.set_optimization_needed(True)
 
         # image_area_layout
 
@@ -181,16 +186,16 @@ class Layout(AgentSet):
 
         image_area_item_style = Style([200,10], [75,180], 1)
         dl_button_condition = Condition([BoxCondFun.width_constraint(210,230), BoxCondFun.height_constraint(40, 50)] , 1)
-        pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,0), BoxCondFun.height_constraint(190,210,0)] , 1)
-        pr_text_condition = Condition([BoxCondFun.width_constraint(210, 230, 0), BoxCondFun.height_constraint(110,130, 0)] , 1) #height と widthどっちかならできるけどどっちもはむずい
+        pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,1), BoxCondFun.height_constraint(220,240,1)] , 1)
+        pr_text_condition = Condition([BoxCondFun.width_constraint(210, 230, 1), BoxCondFun.height_constraint(110,130, 1)] , 1) #height と widthどっちかならできるけどどっちもはむずい
 
         image_area_item_boxes = []
-        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition, "button"))
+        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition, "button"))
         image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition, "image"))
         image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition, "text"))
 
         image_area_inner_layout = Layout(image_area_item_boxes, image_area_inner_box)
-        image_area_inner_layout.set_optimization_needed(True)
+        image_area_inner_layout.set_optimization_needed(False)
 
         # main_layout
 

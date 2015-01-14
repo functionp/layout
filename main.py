@@ -8,7 +8,7 @@ from optimization import *
 from layout import *
 
 WINDOW_SIZE = [1200,900]
-MAIN_WINDOW_SIZE = (750,420)
+MAIN_WINDOW_SIZE = (750,440)
 MAIN_PADDING = (30,30)
 
 g_main_frame = None
@@ -191,7 +191,10 @@ class MainFrame(wx.Frame):
         update_button = widget_factory(wx.Button, main_panel, 13, "Update", pos=get_right_position(upper_button, 10, -4))
         update_button.Bind(wx.EVT_BUTTON, click_update_button)
 
-        show_button = widget_factory(wx.Button, main_panel, 38, "Show", pos=get_right_position(update_button, 10, -4))
+        reset_button = widget_factory(wx.Button, main_panel, 42, "Reset", pos=get_bottom_position(make_button, 5, -6))
+        reset_button.Bind(wx.EVT_BUTTON, click_reset_button)
+
+        show_button = widget_factory(wx.Button, main_panel, 38, "Show", pos=get_right_position(reset_button, 10, -4))
         show_button.Bind(wx.EVT_BUTTON, click_show_button)
 
         start_button = widget_factory(wx.Button, main_panel, 14, "Start", pos=get_right_position(show_button, 10, -4))
@@ -205,7 +208,7 @@ class MainFrame(wx.Frame):
         for child in g_widgets.values():
             child.Destroy()
 
-        list_box = widget_factory(wx.ListBox, main_panel, 15, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 315))
+        list_box = widget_factory(wx.ListBox, main_panel, 15, choices=get_agent_list(target_box), style=wx.LB_SINGLE, pos=(2,2), size=(150, 368))
         list_box.Bind(wx.EVT_LISTBOX, select_list_box)
 
         self.render_box_options(target_box)
@@ -221,7 +224,7 @@ class MainFrame(wx.Frame):
         self.Show()
         wx.Yield() 
 
-def main():
+def reset():
     global g_main_frame
 
     main_app = wx.App()
@@ -229,9 +232,15 @@ def main():
     base_box =  base_layout.base_box
     #base_box =  BoxAgent(Style([0,0], WINDOW_SIZE, 0), "base")
     #Layout([], base_box)
+
+    if g_main_frame: g_main_frame.Destroy()
     g_main_frame = MainFrame(base_box, None, -1, u'controller', pos=(100,100),size=MAIN_WINDOW_SIZE)
 
     main_app.MainLoop()
+
+def main():
+    reset()
+
 
 def select_list_box(event):
     update()
@@ -243,6 +252,9 @@ def select_list_box(event):
 
     g_main_frame.set_current_box(selected_box)
     g_main_frame.refresh(selected_box)
+
+def click_reset_button(event):
+    reset()
 
 def click_make_button(event):
     update()
@@ -276,6 +288,7 @@ def myint(value):
 def update():
     current_box = g_main_frame.current_box
     current_box.set_identifier(get_widget_by_id(1).GetValue())
+    current_box.set_text(get_widget_by_id(41).GetValue())
     current_box.set_width(int(get_widget_by_id(4).GetValue()))
     current_box.set_height(int(get_widget_by_id(5).GetValue()))
     current_box.set_x(int(get_widget_by_id(2).GetValue()))
@@ -329,6 +342,7 @@ def click_start_button(event):
 
         def optimize_layout_inside(layout):
             constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
+            constraint2 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned(), BoxCondFun.height_unification(1)], 1)
             if layout:
                 if layout.optimization_needed == True:
                     specification = Specification(layout, constraint1)
@@ -344,11 +358,14 @@ def click_start_button(event):
         optimize_layout_inside(base_layout)
         base_layout.render(optimization_frame.base_panel)
 
+    update()
 
     optimization_app = wx.App()
     optimization_frame = OptimizationFrame(None, -1, u'optimization', pos=(400,100))
 
     start_optimization()
+
+    print "finish"
 
     optimization_frame.Show()
 

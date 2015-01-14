@@ -240,6 +240,8 @@ class BoxRule(Rule):
                              BoxAction.change_height(-10),
                              BoxAction.align_to_nearest_box(layout),
                              BoxAction.space_most_aligned_box(20, layout),
+                             BoxAction.space_most_aligned_box(20, layout),
+                             BoxAction.space_most_aligned_box(20, layout),
                              BoxAction.unify_size_to_most_aligned_box(layout)]
 
         action = random.choice(action_candidates)

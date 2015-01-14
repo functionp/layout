@@ -105,6 +105,8 @@ class Agent():
         # make array of agents which has same rule with agent1
         agents_with_same_condition = [agent for agent in agents if agent.condition == agent1.condition and agent != agent1]
 
+        print "koko"
+
         if len(agents_with_same_condition) != 0:
             i2 = random.randint(0,len(agents_with_same_condition)-1)
             agent2 = agents_with_same_condition[i2]
@@ -498,7 +500,7 @@ class BoxAgent(Agent):
         else:
             box_on_top = box2
 
-        return difference_x < box_on_left.get_width() and difference_y < box_on_top.get_height() 
+        return difference_x + 1 < box_on_left.get_width() and difference_y + 1 < box_on_top.get_height() 
 
     @classmethod
     def aligned_or_not(cls, box1, box2):
@@ -515,11 +517,10 @@ class BoxAgent(Agent):
         return length_of_vector(box1.get_gravity_difference(box2))
 
     @classmethod
-    #
     def get_overlaped_area(cls, box1, box2):
         if cls.overlap_or_not(box1, box2):
-            overlaped_width = min(box1.get_x() + box1.get_width(), box2.get_x() + box2.get_width()) - max(box1.get_x(), box2.get_x())
-            overlaped_height = min(box1.get_y() + box1.get_height(), box2.get_y() + box2.get_height()) - max(box1.get_y(), box2.get_y())
+            overlaped_width = min(box1.get_x() + box1.get_width(), box2.get_x() + box2.get_width()) - (max(box1.get_x(), box2.get_x()) + 1)
+            overlaped_height = min(box1.get_y() + box1.get_height(), box2.get_y() + box2.get_height()) - (max(box1.get_y(), box2.get_y()) + 1)
 
             return overlaped_width * overlaped_height
         else:

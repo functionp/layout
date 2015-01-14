@@ -287,7 +287,7 @@ class BoxCondFun(CondFun):
         return CondFun(_y_constraint, Objective(1, _y_constraint_objective), soft_hard)
 
     @classmethod
-    def x_end_constraint(cls, lower_limit, upper_limit=9999):
+    def x_end_constraint(cls, lower_limit, upper_limit=9999, soft_hard=1):
         def _x_end_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_x() + box.get_width() and box.get_x() + box.get_width() <= upper_limit
@@ -301,10 +301,10 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_x_end_constraint, Objective(1, _x_end_constraint_objective))
+        return CondFun(_x_end_constraint, Objective(1, _x_end_constraint_objective), soft_hard)
 
     @classmethod
-    def y_end_constraint(cls, lower_limit, upper_limit=9999):
+    def y_end_constraint(cls, lower_limit, upper_limit=9999, soft_hard=1):
         def _y_end_constraint(situation):
             box = situation.agent
             return lower_limit <= box.get_y() + box.get_height() and box.get_y() + box.get_height() <= upper_limit
@@ -318,7 +318,7 @@ class BoxCondFun(CondFun):
             else:
                 return 0
 
-        return CondFun(_y_end_constraint, Objective(1, _y_end_constraint_objective))
+        return CondFun(_y_end_constraint, Objective(1, _y_end_constraint_objective), soft_hard)
 
     @classmethod
     def in_the_edge(cls):
@@ -380,6 +380,34 @@ class BoxCondFun(CondFun):
                 return True
 
         return CondFun(_all_aligned)
+
+    @classmethod
+    def width_unification(cls, soft_hard=1):
+        def _width_unification(situation):
+            layout = situation.agent_set
+            boxes = layout.agents
+
+            if len(boxes) == 1:
+                return True
+            else:
+                width_equalities = [box.get_width() == boxes[0].get_width() for box in boxes]
+                return reduce((lambda b1,b2: b1 and b2), width_equalities)
+
+        return CondFun(_width_unification, Objective(1, Objective.width_difference), soft_hard)
+
+    @classmethod
+    def height_unification(cls, soft_hard=1):
+        def _height_unification(situation):
+            layout = situation.agent_set
+            boxes = layout.agents
+
+            if len(boxes) == 1:
+                return True
+            else:
+                height_equalities = [box.get_height() == boxes[0].get_height() for box in boxes]
+                return reduce((lambda b1,b2: b1 and b2), height_equalities)
+
+        return CondFun(_height_unification, Objective(1, Objective.height_difference), soft_hard)
 
     @classmethod
     def having_box_in_given_distance(cls, distance):

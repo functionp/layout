@@ -114,14 +114,14 @@ class OCSOptimization(Optimization):
         rule_not_found_or_not = True
         while rule_not_found_or_not == True:
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
-            Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
+            #Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
 
         #self.display_status()
 
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
 
-        self.render()
+        #self.render()
 
         self.agent_set.delete_weak_rules()
 
@@ -169,17 +169,13 @@ class OCSOptimization(Optimization):
 
                 # skip too weak rule (to avoid infinite loop)
                 if selected_rule.strength < 0.001:
-                    print "break"
+                    #print "break"
                     break
 
                 # record objective value, constraint satisfaction before execution
                 previous_situation = situation.get_copy()
                 previous_value = self.get_objective_value()
 
-                print "==Executed Rule"
-                print selected_rule.condition
-                print selected_rule.action
-                print selected_rule.strength
                 agent.execute_action(selected_rule.action)
 
                 current_value = self.get_objective_value()
