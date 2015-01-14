@@ -205,6 +205,9 @@ class MainFrame(wx.Frame):
         self.set_main_panel(wx.Panel(self.base_panel, wx.ID_ANY, pos=MAIN_PADDING, size=(MAIN_WINDOW_SIZE[0], MAIN_WINDOW_SIZE[1])))
         main_panel = self.main_panel
 
+        check_render_value_before = False
+        if get_widget_by_id(43): check_render_value_before = get_widget_by_id(43).GetValue()
+
         for child in g_widgets.values():
             child.Destroy()
 
@@ -220,6 +223,9 @@ class MainFrame(wx.Frame):
         line1 = widget_factory(wx.StaticLine, main_panel, 17, pos=get_bottom_position(get_widget_by_id(7), 205), size=(525,2))
 
         self.render_buttons()
+
+        check_render = widget_factory( wx.CheckBox, main_panel, 43, "Render process of optimization.", pos=get_right_position(get_widget_by_id(14), 15))
+        check_render.SetValue(check_render_value_before)
 
         self.Show()
         wx.Yield() 
@@ -261,8 +267,6 @@ def click_make_button(event):
     new_box = BoxAgent(Style([0,0], [0,0], 1), "new box")
     Layout([], new_box) # create inner layout of new_box
 
-    #print g_main_frame.current_box.identifier
-    #print g_main_frame.current_box.inner_layout.agents
     g_main_frame.current_box.inner_layout.add_box(new_box)
 
     g_main_frame.set_current_box(new_box)
@@ -316,7 +320,7 @@ def update():
 
     if current_box.inner_layout:
         current_box.inner_layout.set_optimization_needed(get_widget_by_id(15).GetValue())
-
+ 
     g_main_frame.refresh(current_box)
 
 def click_show_button(event):
@@ -340,23 +344,32 @@ def click_start_button(event):
                 wx.Yield()
             return _render_closure
 
+        def pass_closure():
+            def _pass_closure():
+                pass
+            return _pass_closure
+
         def optimize_layout_inside(layout):
             constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
             constraint2 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned(), BoxCondFun.height_unification(1)], 1)
             if layout:
                 if layout.optimization_needed == True:
-                    specification = Specification(layout, constraint1)
+                    specification = Specification(layout, constraint2)
                     optimization = OCSOptimization(specification, layout) #あとでoptimizationのinitのlayout外す
 
-                    optimization.set_render_function(render_closure())
+                    if get_widget_by_id(43).GetValue():
+                        optimization.set_render_function(render_closure())
+                    else:
+                        optimization.set_render_function(pass_closure())
+                        
                     optimization.optimize()
 
                 for agent in layout.agents:
                     optimize_layout_inside(agent.inner_layout)
-        
         base_layout = g_main_frame.get_base_box().inner_layout
         optimize_layout_inside(base_layout)
         base_layout.render(optimization_frame.base_panel)
+
 
     update()
 
