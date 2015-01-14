@@ -185,9 +185,9 @@ class Layout(AgentSet):
         pr_text_condition = Condition([BoxCondFun.width_constraint(210, 230, 0), BoxCondFun.height_constraint(110,130, 0)] , 1) #height と widthどっちかならできるけどどっちもはむずい
 
         image_area_item_boxes = []
-        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition))
+        #image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition, "button"))
+        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition, "image"))
+        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition, "text"))
 
         image_area_inner_layout = Layout(image_area_item_boxes, image_area_inner_box)
         image_area_inner_layout.set_optimization_needed(True)

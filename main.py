@@ -8,7 +8,7 @@ from optimization import *
 from layout import *
 
 WINDOW_SIZE = [1200,900]
-MAIN_WINDOW_SIZE = (750,390)
+MAIN_WINDOW_SIZE = (750,420)
 MAIN_PADDING = (30,30)
 
 g_main_frame = None
@@ -101,8 +101,11 @@ class MainFrame(wx.Frame):
         label_name = widget_factory(wx.StaticText, main_panel, 6, "Name", pos=get_bottom_position(label_map, 10))
         text_name = widget_factory(wx.TextCtrl, main_panel, 1, target_box.identifier, pos=get_right_position(label_name, 5, -ADJUST), size=(240, 23))
 
+        label_text = widget_factory(wx.StaticText, main_panel, 40, "Text", pos=get_bottom_position(label_name, 10))
+        text_text = widget_factory(wx.TextCtrl, main_panel, 41, target_box.text, pos=get_right_position(label_text, 16, -ADJUST), size=(240, 23))
+
         STYLE_TEXT_SIZE = (50,23)
-        label_x = widget_factory(wx.StaticText, main_panel, 7, "X", pos=get_bottom_position(label_name, 10))
+        label_x = widget_factory(wx.StaticText, main_panel, 7, "X", pos=get_bottom_position(label_text, 10))
         text_x = widget_factory(wx.TextCtrl, main_panel, 2, str(target_box.get_x()) , pos=get_right_position(label_x, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         text_x.SetMaxLength(4)
 

@@ -136,7 +136,7 @@ class Style():
 
 
 class BoxAgent(Agent):
-    def __init__(self, style, identifier="", condition=None, text=None):
+    def __init__(self, style, identifier="", condition=None, text=""):
 
         # to avoid import error, avoid to use initial value
         if condition == None: condition = Condition()
