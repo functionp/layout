@@ -119,7 +119,7 @@ class MainFrame(wx.Frame):
         text_height.SetMaxLength(4)
 
         if target_box.inner_layout:
-            check_optimization = widget_factory( wx.CheckBox, main_panel, 39, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
+            check_optimization = widget_factory( wx.CheckBox, main_panel, 15, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
             check_optimization.SetValue(target_box.inner_layout.optimization_needed)
 
     def render_conditions(self, target_box):
@@ -235,11 +235,11 @@ def select_list_box(event):
     current_box = g_main_frame.current_box
 
     object = event.GetEventObject()
-    #nth = object.GetSelection()
-    #selected_box = current_box.inner_layout.agents[nth]
+    nth = object.GetSelection()
+    selected_box = current_box.inner_layout.agents[nth]
 
-    #g_main_frame.set_current_box(selected_box)
-    #g_main_frame.refresh(selected_box)
+    g_main_frame.set_current_box(selected_box)
+    g_main_frame.refresh(selected_box)
 
 def click_make_button(event):
     update()
@@ -299,7 +299,7 @@ def update():
         current_box.condition.add_condfun(new_condfun)
 
     if current_box.inner_layout:
-        current_box.inner_layout.set_optimization_needed(get_widget_by_id(39).GetValue())
+        current_box.inner_layout.set_optimization_needed(get_widget_by_id(15).GetValue())
 
     g_main_frame.refresh(current_box)
 
