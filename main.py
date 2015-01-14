@@ -8,7 +8,7 @@ from optimization import *
 from layout import *
 
 WINDOW_SIZE = [1200,900]
-MAIN_WINDOW_SIZE = (710,400)
+MAIN_WINDOW_SIZE = (750,390)
 MAIN_PADDING = (30,30)
 
 g_main_frame = None
@@ -119,7 +119,7 @@ class MainFrame(wx.Frame):
         text_height.SetMaxLength(4)
 
         if target_box.inner_layout:
-            check_optimization = widget_factory( wx.CheckBox, main_panel, 15, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
+            check_optimization = widget_factory( wx.CheckBox, main_panel, 39, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
             check_optimization.SetValue(target_box.inner_layout.optimization_needed)
 
     def render_conditions(self, target_box):
@@ -188,7 +188,10 @@ class MainFrame(wx.Frame):
         update_button = widget_factory(wx.Button, main_panel, 13, "Update", pos=get_right_position(upper_button, 10, -4))
         update_button.Bind(wx.EVT_BUTTON, click_update_button)
 
-        start_button = widget_factory(wx.Button, main_panel, 14, "Start", pos=get_right_position(update_button, 10, -4))
+        show_button = widget_factory(wx.Button, main_panel, 38, "Show", pos=get_right_position(update_button, 10, -4))
+        show_button.Bind(wx.EVT_BUTTON, click_show_button)
+
+        start_button = widget_factory(wx.Button, main_panel, 14, "Start", pos=get_right_position(show_button, 10, -4))
         start_button.Bind(wx.EVT_BUTTON, click_start_button)
 
     def refresh(self, target_box):
@@ -204,11 +207,11 @@ class MainFrame(wx.Frame):
 
         self.render_box_options(target_box)
 
-        line1 = widget_factory(wx.StaticLine, main_panel, 16, pos=get_bottom_position(get_widget_by_id(7), 60), size=(490,2))
+        line1 = widget_factory(wx.StaticLine, main_panel, 16, pos=get_bottom_position(get_widget_by_id(7), 60), size=(525,2))
 
         self.render_conditions(target_box)
 
-        line1 = widget_factory(wx.StaticLine, main_panel, 17, pos=get_bottom_position(get_widget_by_id(7), 205), size=(490,2))
+        line1 = widget_factory(wx.StaticLine, main_panel, 17, pos=get_bottom_position(get_widget_by_id(7), 205), size=(525,2))
 
         self.render_buttons()
 
@@ -232,11 +235,11 @@ def select_list_box(event):
     current_box = g_main_frame.current_box
 
     object = event.GetEventObject()
-    nth = object.GetSelection()
-    selected_box = current_box.inner_layout.agents[nth]
+    #nth = object.GetSelection()
+    #selected_box = current_box.inner_layout.agents[nth]
 
-    g_main_frame.set_current_box(selected_box)
-    g_main_frame.refresh(selected_box)
+    #g_main_frame.set_current_box(selected_box)
+    #g_main_frame.refresh(selected_box)
 
 def click_make_button(event):
     update()
@@ -296,9 +299,20 @@ def update():
         current_box.condition.add_condfun(new_condfun)
 
     if current_box.inner_layout:
-        current_box.inner_layout.set_optimization_needed(get_widget_by_id(15).GetValue())
+        current_box.inner_layout.set_optimization_needed(get_widget_by_id(39).GetValue())
 
     g_main_frame.refresh(current_box)
+
+def click_show_button(event):
+
+    optimization_app = wx.App()
+    optimization_frame = OptimizationFrame(None, -1, u'optimization', pos=(400,100))
+
+    base_layout = g_main_frame.get_base_box().inner_layout
+    base_layout.render(optimization_frame.base_panel)
+
+    optimization_frame.Show()
+    optimization_app.MainLoop()
 
 def click_start_button(event):
 
@@ -326,6 +340,7 @@ def click_start_button(event):
         base_layout = g_main_frame.get_base_box().inner_layout
         optimize_layout_inside(base_layout)
         base_layout.render(optimization_frame.base_panel)
+
 
     optimization_app = wx.App()
     optimization_frame = OptimizationFrame(None, -1, u'optimization', pos=(400,100))
