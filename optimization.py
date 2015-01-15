@@ -31,7 +31,7 @@ class Optimization():
         self.set_worst_value(0)
 
     def get_objective_function(self):
-        return self.agent_set.conditionconstraints.get_sum_of_constraint_objective
+        return self.agent_set.condition.get_sum_of_constraint_objective
 
     def get_objective_value(self):
         objective_funtion = self.get_objective_function()

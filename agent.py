@@ -500,7 +500,7 @@ class BoxAgent(Agent):
         else:
             box_on_top = box2
 
-        return difference_x - 1 < box_on_left.get_width() and difference_y - 1 < box_on_top.get_height() 
+        return difference_x  < box_on_left.get_width() - 1 and difference_y < box_on_top.get_height() - 1 
 
     @classmethod
     def aligned_or_not(cls, box1, box2):
@@ -511,7 +511,7 @@ class BoxAgent(Agent):
         basic_distance_x = (box1.get_width() + box2.get_width()) /2
         basic_distance_y = (box1.get_height() + box2.get_height()) /2
         return [basic_distance_x, basic_distance_y]
-
+        
     @classmethod
     def get_gravity_distance(cls, box1, box2):
         return length_of_vector(box1.get_gravity_difference(box2))
