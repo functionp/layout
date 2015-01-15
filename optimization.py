@@ -31,7 +31,7 @@ class Optimization():
         self.set_worst_value(0)
 
     def get_objective_function(self):
-        return self.agent_set.condition.condfuns[0].objective.function
+        return self.agent_set.conditionconstraints.get_sum_of_constraint_objective
 
     def get_objective_value(self):
         objective_funtion = self.get_objective_function()
@@ -102,7 +102,7 @@ class OCSOptimization(Optimization):
 
             if constraints_satisfied and best_value_now and iteration_finished: break
 
-            #self.display_break_condition()
+            self.display_break_condition()
 
             #constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
             self.one_optimization_cycle()
@@ -211,15 +211,11 @@ class OCSOptimization(Optimization):
         agent_constraints = previous_situation.agent.condition
 
         previous_value = self.get_objective_function()(previous_situation)
-        #previous_whole_constraints_satisfied = whole_constraints.evaluate(previous_situation)
-        #previous_agent_constraints_satisfied = agent_constraints.evaluate(previous_situation)
         previous_whole_constraints_objective = whole_constraints.get_sum_of_constraint_objective(previous_situation)
         previous_agent_constraints_objective = agent_constraints.get_sum_of_constraint_objective(previous_situation)
 
         current_value = self.get_objective_value()
         half_value = self.get_half_value()
-        #whole_constraints_satisfied = previous_whole_constraints_satisfied == False and self.get_whole_constraints_satisfied_or_not() == True
-        #agent_constraints_satisfied = previous_agent_constraints_satisfied == False and self.get_agent_constraints_satisfied_or_not() == True
         whole_constraints_objective = whole_constraints.get_sum_of_constraint_objective(present_situation)
         agent_constraints_objective = agent_constraints.get_sum_of_constraint_objective(present_situation)
 
