@@ -163,14 +163,29 @@ class BoxAction(Action):
         return _approach_to_nearest_box
 
     @classmethod
+    #自分に一番近いボックスとの間隔を指定値にする
+    def space_nearest_box(cls, amount, layout,compare=(lambda x1, x2: x1 < x2)):
+        def _space_nearest_box(box):
+            nearest_box = box.get_nearest_box(layout)
+            x_difference = box.get_position_difference(nearest_box, 0)
+            y_difference = box.get_position_difference(nearest_box, 1)
+ 
+            if compare(x_difference, y_difference):
+                box.make_vertical_space(nearest_box, amount)
+            else:
+                box.make_horizontal_space(nearest_box, amount)
+
+        return _space_nearest_box
+
+    @classmethod
     #自分に一番アラインされているボックスとの間隔を指定値にする
-    def space_most_aligned_box(cls, amount, layout):
+    def space_most_aligned_box(cls, amount, layout, compare=(lambda x1, x2: x1 < x2)):
         def _space_most_aligned_box(box):
             most_aligned_box = box.get_most_aligned_box(layout)
             x_difference = box.get_position_difference(most_aligned_box, 0)
             y_difference = box.get_position_difference(most_aligned_box, 1)
  
-            if x_difference < y_difference:
+            if compare(x_difference,  y_difference):
                 box.make_vertical_space(most_aligned_box, amount)
             else:
                 box.make_horizontal_space(most_aligned_box, amount)
@@ -239,9 +254,12 @@ class BoxRule(Rule):
                              BoxAction.change_height(10),
                              BoxAction.change_height(-10),
                              BoxAction.align_to_nearest_box(layout),
-                             BoxAction.space_most_aligned_box(20, layout),
-                             BoxAction.space_most_aligned_box(20, layout),
-                             BoxAction.space_most_aligned_box(20, layout),
+                             BoxAction.space_nearest_box(20, layout, (lambda x1, x2: x1 < x2)),
+                             BoxAction.space_nearest_box(20, layout, (lambda x1, x2: x1 < x2)),
+                             BoxAction.space_nearest_box(20, layout, (lambda x1, x2: x1 > x2)),
+                             BoxAction.space_most_aligned_box(20, layout, (lambda x1, x2: x1 < x2)),
+                             BoxAction.space_most_aligned_box(20, layout, (lambda x1, x2: x1 < x2)),
+                             BoxAction.space_most_aligned_box(20, layout, (lambda x1, x2: x1 > x2)),
                              BoxAction.unify_size_to_most_aligned_box(layout)]
 
         action = random.choice(action_candidates)

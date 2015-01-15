@@ -13,8 +13,7 @@ def update_something(bool_condition, process):
 
 class Optimization():
 
-    def __init__(self, specification, agent_set):
-        self.specification = specification
+    def __init__(self, agent_set):
         self.agent_set = agent_set#agent_set.get_copy()
         self.reset_record()
 
@@ -32,7 +31,7 @@ class Optimization():
         self.set_worst_value(0)
 
     def get_objective_function(self):
-        return self.specification.objective.function
+        return self.agent_set.condition.condfuns[0].objective.function
 
     def get_objective_value(self):
         objective_funtion = self.get_objective_function()
@@ -63,8 +62,8 @@ class OCSOptimization(Optimization):
     max_cycle_of_learning = 1
     minimum_difference = 20
 
-    def __init__(self, specification, agent_set=AgentSet()):
-        Optimization.__init__(self, specification, agent_set)
+    def __init__(self, agent_set=AgentSet()):
+        Optimization.__init__(self, agent_set)
         self.organizational_rulesets = []
 
     def get_half_value(self):
@@ -74,7 +73,7 @@ class OCSOptimization(Optimization):
         self.organizational_rulesets = rulesets
 
     def get_whole_constraints_satisfied_or_not(self):
-        constraints = self.specification.constraints
+        constraints = self.agent_set.condition
         situation = Situation(agent_set=self.agent_set.get_copy()) 
         return constraints.evaluate(situation)
 
@@ -89,7 +88,7 @@ class OCSOptimization(Optimization):
         # use organizational rulesets for default rulesets
         self.agent_set.set_rulesets(self.organizational_rulesets)
 
-        constraints = self.specification.constraints
+        constraints = self.agent_set.condition
         situation = Situation(agent_set=self.agent_set.get_copy()) 
 
         #for i in range(OCSOptimization.max_iteration):
@@ -103,7 +102,7 @@ class OCSOptimization(Optimization):
 
             if constraints_satisfied and best_value_now and iteration_finished: break
 
-            self.display_break_condition()
+            #self.display_break_condition()
 
             #constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
             self.one_optimization_cycle()
@@ -153,7 +152,7 @@ class OCSOptimization(Optimization):
             current_value = self.get_objective_value()
             previous_value = 10000
 
-            constraints = self.specification.constraints
+            constraints = self.agent_set.condition
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
             #とにかく強度が下がってhogeでbreakするという流れができていて、本来の条件はほぼ無視
@@ -208,7 +207,7 @@ class OCSOptimization(Optimization):
 
     # return True if positive reward is to be given, otherwise return False
     def positive_reward_or_not(self, present_situation, previous_situation):
-        whole_constraints = self.specification.constraints
+        whole_constraints = self.agent_set.condition
         agent_constraints = previous_situation.agent.condition
 
         previous_value = self.get_objective_function()(previous_situation)
@@ -229,7 +228,7 @@ class OCSOptimization(Optimization):
         compare_with_before_whole = (previous_whole_constraints_objective > whole_constraints_objective)
         compare_with_before_agent = (previous_agent_constraints_objective > agent_constraints_objective)
 
-        return compare_with_before or compare_with_before_whole or compare_with_before_agent
+        return compare_with_before_whole or compare_with_before_agent
 
     # give rewards to serial rules at one time
     def give_rewards(self, pairs, reward_function):
@@ -240,7 +239,7 @@ class OCSOptimization(Optimization):
 
     def display_break_condition(self):
 
-        constraints = self.specification.constraints
+        constraints = self.agent_set.condition
         situation = Situation(agent_set=self.agent_set.get_copy()) 
 
         print "---------------------------------------------"
@@ -277,10 +276,6 @@ class OCSOptimization(Optimization):
                 print rule.action
 
             print ""
-
-class SampleOptimization(Optimization):
-    def __init__(self, specification):
-        Optimization.__init__(self, specification)
 
 
 # imports - - - - - - -

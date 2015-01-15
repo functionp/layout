@@ -511,7 +511,7 @@ class BoxAgent(Agent):
         basic_distance_x = (box1.get_width() + box2.get_width()) /2
         basic_distance_y = (box1.get_height() + box2.get_height()) /2
         return [basic_distance_x, basic_distance_y]
-
+        
     @classmethod
     def get_gravity_distance(cls, box1, box2):
         return length_of_vector(box1.get_gravity_difference(box2))

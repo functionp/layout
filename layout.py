@@ -2,8 +2,9 @@
 
 
 class AgentSet():
-    def __init__(self, agents=[]):
+    def __init__(self, agents=[], condition=None):
         self.agents = agents
+        self.set_condition(condition)
 
     def get_copy(self):
         return AgentSet(self.agents[:])
@@ -19,6 +20,9 @@ class AgentSet():
 
     def get_number_of_agents(self):
         return len(self.agents)
+
+    def set_condition(self, condition):
+        self.condition = condition
 
     def set_rulesets(self, rulesets):
         if rulesets != []:
@@ -57,12 +61,14 @@ class AgentSet():
 
 
 class Layout(AgentSet):
-    def __init__(self, agents=[], base_box=None):
+    def __init__(self, agents=[], base_box=None, condition=None):
 
         # to avoid import error, avoid to use initial value
         if base_box == None: base_box = BoxAgent(Style([0,0], main.WINDOW_SIZE, 0))
+        if condition == None: condition = Condition()
 
-        self.agents = agents
+        AgentSet.__init__(self, agents, condition)
+
         self.set_base_box(base_box)
         self.optimization_needed = False
 
@@ -166,12 +172,13 @@ class Layout(AgentSet):
         #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "logo", logo_condition))
         #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "phone", phone_condition))
 
-        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu1", menu_condition, "menu1"))
-        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu2", menu_condition, "menu2"))
-        header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu3", menu_condition, "menu3"))
+        #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu1", menu_condition, "menu1"))
+        #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu2", menu_condition, "menu2"))
+        #header_inner_item_boxes.append(BoxAgent(header_inner_item_style.get_copy(), "menu3", menu_condition, "menu3"))
 
-        header_inner_layout = Layout(header_inner_item_boxes, header_inner_box)
-        header_inner_layout.set_optimization_needed(True)
+        header_layout_constraint = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned(), BoxCondFun.height_unification(1)], 1)
+        header_inner_layout = Layout(header_inner_item_boxes, header_inner_box, header_layout_constraint)
+        header_inner_layout.set_optimization_needed(False)
 
         # image_area_layout
 
@@ -184,18 +191,21 @@ class Layout(AgentSet):
 
         image_area_inner_box.set_x(image_area_inner_box.get_center_x())
 
-        image_area_item_style = Style([200,10], [75,180], 1)
+        image_area_item_style1 = Style([200,10], [75,180], 1)
+        image_area_item_style2 = Style([220,30], [75,180], 1)
+        image_area_item_style3 = Style([240,50], [75,180], 1)
         dl_button_condition = Condition([BoxCondFun.width_constraint(210,230), BoxCondFun.height_constraint(40, 50)] , 1)
-        pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,1), BoxCondFun.height_constraint(220,240,1)] , 1)
-        pr_text_condition = Condition([BoxCondFun.width_constraint(210, 230, 1), BoxCondFun.height_constraint(110,130, 1)] , 1) #height と widthどっちかならできるけどどっちもはむずい
+        pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,1), BoxCondFun.height_constraint(230,265,1)] , 1)
+        pr_text_condition = Condition([BoxCondFun.width_constraint(210, 230, 1), BoxCondFun.height_constraint(110,130, 0)] , 1) #height と widthどっちかならできるけどどっちもはむずい
 
         image_area_item_boxes = []
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "dl_button", dl_button_condition, "button"))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pc_image", pc_image_condition, "image"))
-        image_area_item_boxes.append(BoxAgent(image_area_item_style.get_copy(), "pr_text", pr_text_condition, "text"))
+        #image_area_item_boxes.append(BoxAgent(image_area_item_style1.get_copy(), "dl_button", dl_button_condition, "button"))
+        image_area_item_boxes.append(BoxAgent(image_area_item_style2.get_copy(), "pc_image", pc_image_condition, "image"))
+        image_area_item_boxes.append(BoxAgent(image_area_item_style3.get_copy(), "pr_text", pr_text_condition, "text"))
 
-        image_area_inner_layout = Layout(image_area_item_boxes, image_area_inner_box)
-        image_area_inner_layout.set_optimization_needed(False)
+        image_area_constraint = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
+        image_area_inner_layout = Layout(image_area_item_boxes, image_area_inner_box, image_area_constraint)
+        image_area_inner_layout.set_optimization_needed(True)
 
         # main_layout
 

@@ -350,12 +350,9 @@ def click_start_button(event):
             return _pass_closure
 
         def optimize_layout_inside(layout):
-            constraint1 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
-            constraint2 = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned(), BoxCondFun.height_unification(1)], 1)
             if layout:
                 if layout.optimization_needed == True:
-                    specification = Specification(layout, constraint2)
-                    optimization = OCSOptimization(specification, layout) #あとでoptimizationのinitのlayout外す
+                    optimization = OCSOptimization(layout) #あとでoptimizationのinitのlayout外す
 
                     if get_widget_by_id(43).GetValue():
                         optimization.set_render_function(render_closure())
