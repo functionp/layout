@@ -1,37 +1,5 @@
 #-*- coding: utf-8 -*-
 
-
-#制約条件も目的関数に取り込む方針で　カプセル化の意味でSpecificationは消さない
-#目的関数ありの最適化にも対応できるように残しておく
-class Specification():
-    def __init__(self, default_layout, constraints=None, objective=None):
-
-        # to avoid import error, avoid to use initial value
-        if constraints == None: constraints = Condition()
-        if objective == None: objective = Objective()
-
-        self.set_default_layout(default_layout)
-        self.constraints = constraints
-        self.objective = objective
-
-    def set_default_layout(self, layout):
-        self.default_layout = layout
-
-    @staticmethod
-    def load_specification(file_path):
-        pass
-        #something = ''
-        #return Specification(constraint, objective)
-        #return SoftplannerSpecification()
-
-class SoftplannerSpecification(Specification):
-    def __init__(self):
-        default_layout = SoftplannerLayout()
-        objective = Objective()
-        constraint = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
-
-        Specification.__init__(self, default_layout, constraint, objective)
-        
 class Objective():
     def __init__(self, max_min=1, function=(lambda x: 0)):
         self.max_min = max_min

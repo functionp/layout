@@ -61,7 +61,9 @@ class Condition():
         objective_value_list = [condfun.get_objective_value(situation) for condfun in self.condfuns]
         #print objective_value_list
 
-        if len(objective_value_list) == 1:
+        if len(objective_value_list) == 0:
+            return 0
+        elif len(objective_value_list) == 1:
             return objective_value_list[0]
         else:
             return reduce((lambda x, y: x+y), objective_value_list)

@@ -58,7 +58,7 @@ class Optimization():
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
 class OCSOptimization(Optimization):
-    minimum_iteration = 30
+    minimum_iteration = 1
     max_cycle_of_learning = 1
     minimum_difference = 20
 
@@ -87,28 +87,29 @@ class OCSOptimization(Optimization):
     def optimize(self):
         # use organizational rulesets for default rulesets
         self.agent_set.set_rulesets(self.organizational_rulesets)
+        print self.organizational_rulesets
 
         constraints = self.agent_set.condition
         situation = Situation(agent_set=self.agent_set.get_copy()) 
 
         #for i in range(OCSOptimization.max_iteration):
 
-        #最適化全体の終了条件：所定の回数繰り返す　かつ　全体制約充足　かつ　全エージェントの個別制約充足
+        # Termination condition for whole optimization: satisfaction of all hard constraints, best_value
         i = 0
         while True:
             constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
-            best_value_now = self.get_best_value_now_or_not()
+            best_value_now = True #self.get_best_value_now_or_not()
             iteration_finished = i > OCSOptimization.minimum_iteration
 
             if constraints_satisfied and best_value_now and iteration_finished: break
 
-            self.display_break_condition()
+            #self.display_break_condition()
 
-            #constraints_not_satisfied = constraints.evaluate(situation) == False or situation.agent_set.evaluate_agent_constraint() == False
             self.one_optimization_cycle()
             i += 1
 
     def one_optimization_cycle(self):
+
         # repeat while ruleset is not converged(while new rule is generated)
         rule_not_found_or_not = True
         while rule_not_found_or_not == True:
@@ -134,6 +135,56 @@ class OCSOptimization(Optimization):
     def update_organizational_rulesets(self, new_value):
         new_rulesets = self.agent_set.get_rulesets()
         update_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_rulesets)))
+        print self.organizational_rulesets
+
+        constraints = self.agent_set.condition
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
+
+        #for i in range(OCSOptimization.max_iteration):
+
+        # Termination condition for whole optimization: satisfaction of all hard constraints, best_value
+        i = 0
+        while True:
+            constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
+            best_value_now = True #self.get_best_value_now_or_not()
+            iteration_finished = i > OCSOptimization.minimum_iteration
+
+            if constraints_satisfied and best_value_now and iteration_finished: break
+
+            #self.display_break_condition()
+
+            self.one_optimization_cycle()
+            i += 1
+
+    def one_optimization_cycle(self):
+
+        # repeat while ruleset is not converged(while new rule is generated)
+        rule_not_found_or_not = True
+        while rule_not_found_or_not == True:
+            rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
+            #Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
+
+        #self.display_status()
+
+        # learn and adjust a strength of each rule
+        self.reinforcement_learning()
+
+        self.render()
+
+        current_objective_value = self.get_objective_value()
+        self.update_worst_value(current_objective_value)
+        self.update_organizational_rulesets(current_objective_value)
+
+        self.agent_set.delete_weak_rules()
+
+        #self.display_status()
+
+    #update objective value if it is the best, and record the rulesets
+    def update_organizational_rulesets(self, new_value):
+        new_rulesets = self.agent_set.get_rulesets()
+        #update_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_rulesets)))
+        #print new_rulesets
+        self.set_organizational_rulesets(new_rulesets)
 
     def reinforcement_learning(self):
         for agent in self.agent_set.agents:
@@ -184,11 +235,7 @@ class OCSOptimization(Optimization):
                 pair_of_episode_and_rule = {'episode':episode, 'rule':selected_rule}
                 applied_pairs.append(pair_of_episode_and_rule)
 
-                #print "episode" + str(episode)
                 episode += 1
-
-                #self.display_status()
-                #raw_input()
 
                 self.reward_process(situation, previous_situation, applied_pairs)
 
