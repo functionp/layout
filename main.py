@@ -240,7 +240,7 @@ def reset():
     #Layout([], base_box)
 
     if g_main_frame: g_main_frame.Destroy()
-    g_main_frame = MainFrame(base_box, None, -1, u'controller', pos=(100,100),size=MAIN_WINDOW_SIZE)
+    g_main_frame = MainFrame(base_box, None, -1, u'Layout Designator', pos=(100,100),size=MAIN_WINDOW_SIZE)
 
     main_app.MainLoop()
 

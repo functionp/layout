@@ -196,7 +196,7 @@ class Layout(AgentSet):
         image_area_item_style3 = Style([240,50], [75,180], 1)
         dl_button_condition = Condition([BoxCondFun.width_constraint(210,230), BoxCondFun.height_constraint(40, 50)] , 1)
         pc_image_condition = Condition([BoxCondFun.width_constraint(340,360,1), BoxCondFun.height_constraint(230,265,1)] , 1)
-        pr_text_condition = Condition([BoxCondFun.width_constraint(210, 230, 1), BoxCondFun.height_constraint(110,130, 0)] , 1) #height と widthどっちかならできるけどどっちもはむずい
+        pr_text_condition = Condition([BoxCondFun.width_constraint(210, 230, 1), BoxCondFun.height_constraint(110,130, 1)] , 1) #height と widthどっちかならできるけどどっちもはむずい
 
         image_area_item_boxes = []
         #image_area_item_boxes.append(BoxAgent(image_area_item_style1.get_copy(), "dl_button", dl_button_condition, "button"))

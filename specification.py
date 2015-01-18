@@ -1,5 +1,7 @@
 #-*- coding: utf-8 -*-
 
+import math
+
 class Objective():
     def __init__(self, max_min=1, function=(lambda x: 0)):
         self.max_min = max_min
@@ -11,7 +13,7 @@ class Objective():
         boxes = situation.agent_set.agents
 
         if len(boxes) > 1:
-            overlapped_area_list = [[BoxAgent.get_overlaped_area(boxes[i], boxes[j]) for j in range(i, len(boxes)) if i != j] for i in range(len(boxes))]
+            overlapped_area_list = [[int(math.sqrt(BoxAgent.get_overlaped_area(boxes[i], boxes[j]))) for j in range(i, len(boxes)) if i != j] for i in range(len(boxes))]
         else:
             overlapped_area_list = [[0]]
 
