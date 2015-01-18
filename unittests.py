@@ -67,8 +67,7 @@ class TestAgent(unittest.TestCase):
         layout = Layout([box1], base_box)
         box1.set_width(400)
 
-        # size should be 250 because box1's x is relative(400 - 150 = 250)
-        self.assertEqual(box1.get_width(), 250)
+        self.assertEqual(box1.get_width(), 400)
 
 
 class TestLayout(unittest.TestCase):
@@ -107,29 +106,23 @@ class TestLayout(unittest.TestCase):
         self.assertNotEqual(matching_rule, None)
 
 
+    def test_generating_rule(self):
+        box1 = BoxAgent(Style([50, 100], [30, 30]))
+        box2 = BoxAgent(Style([50, 200], [30, 30]))
+        box3 = BoxAgent(Style([150, 100], [30, 30]))
+        box3 = BoxAgent(Style([320, 200], [30, 30]))
+
+        layout = Layout([box1, box2, box3])
+        situation = Situation(agent_set=layout)
+
+        alignment_distance = Objective.sum_of_alignment_distance(situation)
+        self.assertEqual(alignment_distance, 0)
+
+
 class TestOptimization(unittest.TestCase):
 
     def setUp(self):
         pass
-
-    def test_recorded_objective(self):
-
-        box1 = BoxAgent(Style([100, 100], [30, 30]))
-        box2 = BoxAgent(Style([100, 200], [30, 30]))
-        box3 = BoxAgent(Style([150, 180], [30, 30]))
-
-        layout = Layout([box1, box2, box3])
-
-        objective = DistanceObjective()
-        specification = Specification(layout, objective)
-
-        optimization = OCSOptimization(specification, specification.default_layout)
-
-        objective_value = optimization.get_objective_value()
-        best_value = optimization.update_best_value(objective_value)
-        worst_value = optimization.update_worst_value(objective_value)
-
-        self.assertTrue(optimization.best_value == optimization.worst_value)
 
 class TestRule(unittest.TestCase):
 
@@ -234,18 +227,6 @@ class TestAction(unittest.TestCase):
 
         self.assertEqual(box2.get_width(), box1.get_width())
 
-
-    def test_split_vertically(self):
-        box1 = BoxAgent(Style([100, 100], [200, 200]))
-
-        layout = Layout([box1])
-
-        action1 = BoxAction.split_oneself_vertically(layout)
-        action1(layout.agents[0])
-        action1(layout.agents[0])
-        action1(layout.agents[0])
-
-        self.assertEqual(layout.get_number_of_agents(), 4)
 
 
 class TestCondition(unittest.TestCase):

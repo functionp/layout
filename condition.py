@@ -381,7 +381,7 @@ class BoxCondFun(CondFun):
             else:
                 return True
 
-        return CondFun(_all_aligned)
+        return CondFun(_all_aligned, Objective(1, Objective.sum_of_alignment_distance))
 
     @classmethod
     def width_unification(cls, soft_hard=1):

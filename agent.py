@@ -390,11 +390,11 @@ class BoxAgent(Agent):
 
         pairs = []
         for box in layout.agents:
-            smaller_difference = min(self.get_position_difference(box,0), self.get_position_difference(box,1))
+            alignemnt_distance = self.get_alignment_distance(self, box)
 
             # in case smaller_difference is same, add gravity distance to make difference
             scaled_gravity_distance = BoxAgent.get_gravity_distance(self, box) / 200
-            pairs.append((smaller_difference + scaled_gravity_distance, box))
+            pairs.append((alignemnt_distance + scaled_gravity_distance, box))
 
         pairs.sort()
 
@@ -509,6 +509,10 @@ class BoxAgent(Agent):
         basic_distance_x = (box1.get_width() + box2.get_width()) /2
         basic_distance_y = (box1.get_height() + box2.get_height()) /2
         return [basic_distance_x, basic_distance_y]
+        
+    @classmethod
+    def get_alignment_distance(cls, box1, box2):
+        return min(box1.get_position_difference(box2,0), box1.get_position_difference(box2,1))
         
     @classmethod
     def get_gravity_distance(cls, box1, box2):

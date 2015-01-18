@@ -21,6 +21,19 @@ class Objective():
         return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), overlapped_area_list))
 
     @staticmethod
+    def sum_of_alignment_distance(situation):
+
+        boxes = situation.agent_set.agents
+
+        if len(boxes) > 1:
+            alignment_distance_list = [BoxAgent.get_alignment_distance(box, box.get_most_aligned_box(situation.agent_set)) for box in boxes]
+        else:
+            alignment_distance_list = [0]
+
+        # return sum of distances
+        return reduce(lambda x,y: x+y, alignment_distance_list)
+
+    @staticmethod
     def sum_of_distance_between_gravities(situation):
 
         boxes = situation.agent_set.agents
