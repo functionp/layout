@@ -352,7 +352,8 @@ def click_start_button(event):
         def optimize_layout_inside(layout):
             if layout:
                 if layout.optimization_needed == True:
-                    optimization = OCSOptimization(layout) #あとでoptimizationのinitのlayout外す
+                    #optimization = OCSOptimization(layout) 
+                    optimization = RandomOptimization(layout) 
 
                     if get_widget_by_id(43).GetValue():
                         optimization.set_render_function(render_closure())

@@ -31,6 +31,18 @@ class Optimization():
         self.set_best_value(100000)
         self.set_worst_value(0)
 
+    def get_whole_constraints_satisfied_or_not(self):
+        constraints = self.agent_set.condition
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
+        return constraints.evaluate(situation)
+
+    def get_agent_constraints_satisfied_or_not(self):
+        situation = Situation(agent_set=self.agent_set.get_copy()) 
+        return situation.agent_set.evaluate_agent_constraint()
+
+    def get_best_value_now_or_not(self):
+        return abs(self.best_value - self.get_objective_value()) < OCSOptimization.minimum_difference
+
     def get_objective_function(self):
         return self.agent_set.condition.get_sum_of_constraint_objective
 
@@ -92,7 +104,7 @@ class RandomOptimization(Optimization):
 
     def optimize(self):
         
-        base_box = agent_set.base_box
+        base_box = self.agent_set.base_box
         grid_size = 10
         max_x_grid =  base_box.get_width() / grid_size
         max_y_grid =  base_box.get_height() / grid_size
@@ -102,10 +114,12 @@ class RandomOptimization(Optimization):
         number_of_trial = 0
         while True:
             constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
-            reach_max_trial = max_trial < number_of_trial
+            reach_max_trial = self.max_trial < number_of_trial
             if constraints_satisfied or reach_max_trial: break
 
-            for agent in self.agent_set:
+            self.render()
+
+            for agent in self.agent_set.agents:
                 agent.set_x(random.randint(0, max_x_grid) * grid_size)
                 agent.set_y(random.randint(0, max_y_grid) * grid_size)
 
@@ -132,18 +146,6 @@ class OCSOptimization(Optimization):
 
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets
-
-    def get_whole_constraints_satisfied_or_not(self):
-        constraints = self.agent_set.condition
-        situation = Situation(agent_set=self.agent_set.get_copy()) 
-        return constraints.evaluate(situation)
-
-    def get_agent_constraints_satisfied_or_not(self):
-        situation = Situation(agent_set=self.agent_set.get_copy()) 
-        return situation.agent_set.evaluate_agent_constraint()
-
-    def get_best_value_now_or_not(self):
-        return abs(self.best_value - self.get_objective_value()) < OCSOptimization.minimum_difference
 
     def optimize(self):
         # use organizational rulesets for default rulesets
