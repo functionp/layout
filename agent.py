@@ -4,7 +4,7 @@ import math
 
 class Agent():
 
-    max_rules = 5
+    max_rules = 20
 
     def __init__(self, condition, identifier=""):
         self.set_ruleset([])
@@ -498,7 +498,7 @@ class BoxAgent(Agent):
         else:
             box_on_top = box2
 
-        return difference_x  < box_on_left.get_width() - 2 and difference_y < box_on_top.get_height() - 2
+        return difference_x < box_on_left.get_width() + 2 and difference_y < box_on_top.get_height() + 2
 
     @classmethod
     def aligned_or_not(cls, box1, box2):
@@ -521,8 +521,8 @@ class BoxAgent(Agent):
     @classmethod
     def get_overlaped_area(cls, box1, box2):
         if cls.overlap_or_not(box1, box2):
-            overlaped_width = min(box1.get_x() + box1.get_width(), box2.get_x() + box2.get_width()) - (max(box1.get_x(), box2.get_x()) + 2)
-            overlaped_height = min(box1.get_y() + box1.get_height(), box2.get_y() + box2.get_height()) - (max(box1.get_y(), box2.get_y()) + 2)
+            overlaped_width = min(box1.get_x() + box1.get_width(), box2.get_x() + box2.get_width()) + 2 - (max(box1.get_x(), box2.get_x()))
+            overlaped_height = min(box1.get_y() + box1.get_height(), box2.get_y() + box2.get_height()) + 2 - (max(box1.get_y(), box2.get_y()))
 
             return overlaped_width * overlaped_height
         else:

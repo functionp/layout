@@ -2,6 +2,7 @@
 
 # imports - - - - - - -
 from layout import *
+import random
 
 # a high order function which updates given value and return True if updated.
 def update_something(bool_condition, process):
@@ -57,6 +58,66 @@ class Optimization():
     def update_worst_value(self, new_value):
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
+    def clear_output_file(self, filename):
+        file = open(filename, 'w')
+        file.write("")
+        file.close
+
+    def output_obvective_values(self, filename):
+
+        constraints = self.agent_set.condition
+        situation = Situation(agent_set=self.agent_set.get_copy())
+
+        output_line = ""
+        output_line += str(constraints.get_sum_of_constraint_objective(situation)) + ","
+
+        agents = self.agent_set.agents
+        for i,agent in enumerate(agents):
+            situation_with_agent = Situation(agent_set=self.agent_set.get_copy(), agent=agent.get_copy())
+            output_line += str(agent.condition.get_sum_of_constraint_objective(situation_with_agent)) + ","
+
+        output_line += "\n"
+        
+        file = open(filename, 'a')
+        file.write(output_line)
+        file.close()
+
+
+class RandomOptimization(Optimization):
+
+    max_trial = 1000
+
+    def __init__(self, agent_set=AgentSet()):
+        Optimization.__init__(self, agent_set)
+
+    def optimize(self):
+        
+        base_box = agent_set.base_box
+        grid_size = 10
+        max_x_grid =  base_box.get_width() / grid_size
+        max_y_grid =  base_box.get_height() / grid_size
+
+        self.clear_output_file("output_data.csv")
+
+        number_of_trial = 0
+        while True:
+            constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
+            reach_max_trial = max_trial < number_of_trial
+            if constraints_satisfied or reach_max_trial: break
+
+            for agent in self.agent_set:
+                agent.set_x(random.randint(0, max_x_grid) * grid_size)
+                agent.set_y(random.randint(0, max_y_grid) * grid_size)
+
+                max_width_grid =  (base_box.get_width() - agent.get_x()) / grid_size
+                max_height_grid =  (base_box.get_height() - agent.get_y()) / grid_size
+                agent.set_width(random.randint(0, max_width_grid) * grid_size)
+                agent.set_height(random.randint(0, max_height_grid) * grid_size)
+
+            self.output_obvective_values("output_data.csv")
+
+            number_of_trial += 1
+
 class OCSOptimization(Optimization):
     minimum_iteration = 1
     max_cycle_of_learning = 1
@@ -94,6 +155,8 @@ class OCSOptimization(Optimization):
 
         #for i in range(OCSOptimization.max_iteration):
 
+        self.clear_output_file("output_data.csv")
+
         # Termination condition for whole optimization: satisfaction of all hard constraints, best_value
         i = 0
         while True:
@@ -108,6 +171,8 @@ class OCSOptimization(Optimization):
             self.one_optimization_cycle()
             i += 1
 
+        self.output_obvective_values("output_data.csv")
+
     def one_optimization_cycle(self):
 
         # repeat while ruleset is not converged(while new rule is generated)
@@ -116,7 +181,7 @@ class OCSOptimization(Optimization):
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
             #Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
 
-        #self.display_status()
+        self.display_status()
 
         self.output_obvective_values("output_data.csv")
 
@@ -189,6 +254,7 @@ class OCSOptimization(Optimization):
                 applied_pairs.append(pair_of_episode_and_rule)
 
                 episode += 1
+                #self.display_status()
 
                 self.reward_process(situation, previous_situation, applied_pairs)
 
@@ -197,7 +263,6 @@ class OCSOptimization(Optimization):
         fixed_value = (lambda x: 0.5)
         decreasing_function = (lambda x: (0.1)**x)
 
-        #報酬関数を減少関数にするとあっという間に強度が収束してデッドロックに陥る
         if self.positive_reward_or_not(present_situation, previous_situation):
             reward_function = (lambda x: fixed_value(x))
         else:
@@ -221,10 +286,12 @@ class OCSOptimization(Optimization):
 
         compare_with_half = (half_value > current_value)
         compare_with_before = (previous_value > current_value)
-        compare_with_before_whole = (previous_whole_constraints_objective > whole_constraints_objective)
-        compare_with_before_agent = (previous_agent_constraints_objective > agent_constraints_objective)
+        compare_with_before_whole = (previous_whole_constraints_objective > whole_constraints_objective) 
+        compare_with_before_agent = (previous_agent_constraints_objective > agent_constraints_objective) 
 
-        return compare_with_before_whole or compare_with_before_agent
+        #best_now =  whole_constraints_objective == 0 and agent_constraints_objective == 0 #もう満たしている状態になってるのにあえて変えちゃうってことあるのでは？
+
+        return compare_with_before_whole or compare_with_before_agent 
 
     # give rewards to serial rules at one time
     def give_rewards(self, pairs, reward_function):
@@ -272,25 +339,5 @@ class OCSOptimization(Optimization):
                 print rule.action
 
             print ""
-
-    def output_obvective_values(self, filename):
-
-        constraints = self.agent_set.condition
-        situation = Situation(agent_set=self.agent_set.get_copy())
-
-        output_line = ""
-        output_line += str(constraints.get_sum_of_constraint_objective(situation)) + ","
-
-        agents = self.agent_set.agents
-        for i,agent in enumerate(agents):
-            situation_with_agent = Situation(agent_set=self.agent_set.get_copy(), agent=agent.get_copy())
-            output_line += str(agent.condition.get_sum_of_constraint_objective(situation_with_agent)) + ","
-
-        output_line += "\n"
-        
-        file = open(filename, 'a')
-        file.write(output_line)
-        file.close()
-
 # imports - - - - - - -
 from condition import *

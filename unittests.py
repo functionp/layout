@@ -228,7 +228,6 @@ class TestAction(unittest.TestCase):
         self.assertEqual(box2.get_width(), box1.get_width())
 
 
-
 class TestCondition(unittest.TestCase):
 
     def setUp(self):
