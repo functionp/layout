@@ -9,9 +9,8 @@ class Situation():
     def get_copy(self):
         return Situation(agent_set=self.agent_set.get_copy(), agent=self.agent.get_copy())
 
-
-# return True if relation between given box and any box in given layout satisfies the given bool function
 def bool_for_layout_and_box(agent_set, agent, bool_function):
+    """Return True if relation between given box and any box in given layout satisfies the given bool function"""
 
     agents = agent_set.agents[:]
 
@@ -30,13 +29,13 @@ def bool_for_layout_and_box(agent_set, agent, bool_function):
     return result
 
 class Condition():
-    # we call function which reperesents one condition  as "condfun"
+    # we call function which reperesents one condition as "condfun"
     def __init__(self, condfuns=[], and_or=1):
         self.condfuns = condfuns
         self.and_or = and_or
 
-    # evaluate the condition with given situation and return True or False
     def evaluate(self, situation, latitude=0):
+        """Evaluate the condition with given situation and return True or False."""
 
         if self.condfuns != []:
             results = [condfun.evaluate_function(situation) for condfun in self.condfuns]
@@ -85,9 +84,9 @@ class Condition():
         del(self.condfuns[index])
 
     @classmethod
-    # make Condition instance which represents given situation(layout and box)
     def make_condition(cls, situation):
-        #in_the_edgeだけってケースが多いのでコンディション増やしたら変わってくるかも
+        """Make Condition instance which represents given situation(layout and box)"""
+
         condfun_candidates = [BoxCondFun.in_the_edge(), 
                               BoxCondFun.width_constraint(0,25),
                               BoxCondFun.width_constraint(26,50),
@@ -134,22 +133,6 @@ class Condition():
             condition.remove_random_condfun()
 
         return condition
-
-        # # # CONDFUNS # # #
-
-    @classmethod
-    def minimum_member(cls, number):
-        def _minimum_member(situation):
-            agent_set = situation.agent_set
-
-            if agent_set.get_number_of_boxes() >= number:
-                return True
-            else:
-                return False
-
-        return _minimum_member
-
-
 
 class BoxCondition(Condition):
     pass
@@ -439,6 +422,18 @@ class BoxCondFun(CondFun):
             return bool_for_layout_and_box(layout, box, bool_function)
 
         return CondFun(_having_overlapped_box)
+
+    @classmethod
+    def minimum_member(cls, number):
+        def _minimum_member(situation):
+            agent_set = situation.agent_set
+
+            if agent_set.get_number_of_boxes() >= number:
+                return True
+            else:
+                return False
+
+        return CondFun(_minimum_member)
 
 # imports - - - - - - -
 from layout import *

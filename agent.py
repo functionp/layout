@@ -25,8 +25,9 @@ class Agent():
     def get_copy_of_ruleset(self):
         return self.ruleset[:]
 
-    # return sorted ruleset according to its strength
     def get_sorted_ruleset(self):
+        """ Return sorted ruleset according to its strength."""
+
         pairs = [(rule.strength, rule) for rule in self.ruleset]
         pairs.sort()
         pairs.reverse()
@@ -74,8 +75,9 @@ class Agent():
 
         return index_weakest
 
-    # change weakest rule of agent into given rule (DESTRUCTIVE)
     def replace_weakest_rule(self, rule):
+        """Change weakest rule of agent into given rule. (DESTRUCTIVE)"""
+
         i = self.get_index_of_weakest_rule()
         new_rule = rule.get_copy()
         #new_rule.set_strength(Rule.initial_strength)
@@ -95,8 +97,9 @@ class Agent():
         return _greedy(self)
 
     @classmethod
-    # exchange two rules between agents having same condition (DESTRUCTIVE)
     def exchange_rule_randomly(cls, agents):
+        """Exchange two rules between agents having same condition. (DESTRUCTIVE)"""
+
         BORDER = 3
 
         i1 = random.randint(0,len(agents)-1)
@@ -281,8 +284,9 @@ class BoxAgent(Agent):
         if self.inner_layout:
             self.inner_layout.render(panel)
 
-    #add rule which has present condition and random action
     def add_rule_with_random_action(self, layout):
+        """Add rule which has present condition and random action."""
+
         situation = Situation(agent_set=layout, agent=self)
         condition = Condition.make_condition(situation)
 
@@ -295,8 +299,8 @@ class BoxAgent(Agent):
         else:
             return False
 
-    # find (the strongest) rule which matches current condition(layout and box) and return it. return None if no rule is found.
     def get_matching_rule(self, layout):
+        """Find (the strongest) rule which matches current condition(layout and box) and return it. return None if no rule is found."""
         self.ruleset = self.get_sorted_ruleset()
         matching_rule = None
         current_situation = Situation(agent_set=layout, agent=self)
@@ -356,15 +360,17 @@ class BoxAgent(Agent):
         self.align_top(target_box)
         self.set_height(target_box.get_height())
 
-    # place itself next to given box making given amount of vertical space
     def make_vertical_space(self, box, amount):
+        """Place itself next to given box making given amount of vertical space."""
+
         if box.get_y() < self.get_y():
             self.set_y(box.get_y() + box.get_height() + amount)
         else:
             self.set_y(box.get_y() - self.get_height() - amount)
 
-    # place itself next to given box making given amount of horizontal space
     def make_horizontal_space(self, box, amount):
+        """Place itself next to given box making given amount of horizontal space."""
+
         if box.get_x() < self.get_x():
             self.set_x(box.get_x() + box.get_width() + amount)
         else:
@@ -406,8 +412,9 @@ class BoxAgent(Agent):
 
         return most_aligned_box
 
-    # get difference(signed distance) of gravity
     def get_gravity_difference(self, target_box):
+        """Get difference(signed distance) of gravity."""
+
         self_gravity = self.get_gravity_position()
         target_gravity = target_box.get_gravity_position()
 
@@ -416,8 +423,9 @@ class BoxAgent(Agent):
 
         return [gravity_difference_x, gravity_difference_y]
 
-    # stay away from target, or approach to target
     def change_distance(self, target_box, amount):
+        """Stay away from target, or approach to target."""
+
         gravity_difference = self.get_gravity_difference(target_box)
         gravity_distance = length_of_vector(gravity_difference)
 
@@ -455,8 +463,8 @@ class BoxAgent(Agent):
         if gravity_distance > amount:
             self.change_distance(target_box, -amount)
 
-    # get the position of center of gravity
     def get_gravity_position(self):
+        """Get the position of center of gravity."""
         gravity_x = self.get_x() + self.get_width() / 2
         gravity_y = self.get_y() + self.get_height() / 2
 

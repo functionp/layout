@@ -4,8 +4,9 @@
 from layout import *
 import random
 
-# a high order function which updates given value and return True if updated.
 def update_something(bool_condition, process):
+    """A high order function which updates given value and return True if updated."""
+
     if bool_condition:
         process()
         return True
@@ -60,14 +61,12 @@ class Optimization():
     def set_worst_value(self, value):
         self.worst_value = value
 
-    # update best objective value if gained new value is better(smaller) than the best value
-    # if updated, return True
     def update_best_value(self, new_value):
+        """Update best objective value if gained new value is better(smaller) than the best value. If updated, return True. """
         update_something((new_value < self.best_value), (lambda : self.set_best_value(new_value)))
 
-    # update worst objective value if gained new value is worse(bigger) than the worst value
-    # if updated, return True
     def update_worst_value(self, new_value):
+        """Update worst objective value if gained new value is worse(bigger) than the worst value. If updated, return True."""
         update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
     def clear_output_file(self, filename):
@@ -174,7 +173,7 @@ class OCSOptimization(Optimization):
             i += 1
 
         self.output_obvective_values("output_data.csv")
-
+        
     def one_optimization_cycle(self):
 
         # repeat while ruleset is not converged(while new rule is generated)
@@ -200,8 +199,9 @@ class OCSOptimization(Optimization):
 
         #self.display_status()
 
-    #update objective value if it is the best, and record the rulesets
     def update_organizational_rulesets(self, new_value):
+        """update objective value if it is the best, and record the rulesets"""
+
         new_rulesets = self.agent_set.get_rulesets()
         #Eupdate_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_rulesets))) #とにかく毎週記録してれば終了時のルールはゲットできる
         self.set_organizational_rulesets(new_rulesets)
@@ -214,7 +214,6 @@ class OCSOptimization(Optimization):
 
         agent_set = self.agent_set
 
-        #てか収束してんだから繰り返しても意味ないのでは？
         for i in range(OCSOptimization.max_cycle_of_learning):
 
             episode = 1
@@ -226,7 +225,6 @@ class OCSOptimization(Optimization):
             constraints = self.agent_set.condition
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
-            #とにかく強度が下がってhogeでbreakするという流れができていて、本来の条件はほぼ無視
             while True:
                 converged = abs(previous_value - current_value) < OCSOptimization.minimum_difference
                 whole_constraints_satisfied = self.get_whole_constraints_satisfied_or_not() 
@@ -238,9 +236,7 @@ class OCSOptimization(Optimization):
                 selected_rule = agent.rule_select()
 
                 # skip too weak rule (to avoid infinite loop)
-                if selected_rule.strength < 0.001:
-                    #print "break"
-                    break
+                if selected_rule.strength < 0.001: break
 
                 # record objective value, constraint satisfaction before execution
                 previous_situation = situation.get_copy()
@@ -272,8 +268,9 @@ class OCSOptimization(Optimization):
 
         self.give_rewards(applied_pairs, reward_function)
 
-    # return True if positive reward is to be given, otherwise return False
     def positive_reward_or_not(self, present_situation, previous_situation):
+        """return True if positive reward is to be given, otherwise return False"""
+
         whole_constraints = self.agent_set.condition
         agent_constraints = previous_situation.agent.condition
 
@@ -288,15 +285,20 @@ class OCSOptimization(Optimization):
 
         compare_with_half = (half_value > current_value)
         compare_with_before = (previous_value > current_value)
-        compare_with_before_whole = (previous_whole_constraints_objective > whole_constraints_objective) 
-        compare_with_before_agent = (previous_agent_constraints_objective > agent_constraints_objective) 
+
+        difference_whole = previous_whole_constraints_objective - whole_constraints_objective 
+        difference_agent = previous_agent_constraints_objective - agent_constraints_objective
 
         #best_now =  whole_constraints_objective == 0 and agent_constraints_objective == 0 #もう満たしている状態になってるのにあえて変えちゃうってことあるのでは？
 
-        return compare_with_before_whole or compare_with_before_agent 
+        improve_total_objective = difference_whole + difference_agent > 0
+        improve_either_one = difference_whole > 0 or difference_agent > 0 
 
-    # give rewards to serial rules at one time
+        return improve_either_one
+
     def give_rewards(self, pairs, reward_function):
+        """give rewards to serial rules at one time"""
+
         for pair in pairs:
             rule = pair['rule']
             episode = pair['episode']

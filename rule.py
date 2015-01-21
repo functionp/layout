@@ -4,7 +4,6 @@
 from condition import *
 import random
 
-#アクションはagentをとる関数 Actionクラスはインスタンスを持たない：持ったほうがいいか？
 class Action():
     pass
 
@@ -163,8 +162,9 @@ class BoxAction(Action):
         return _approach_to_nearest_box
 
     @classmethod
-    #自分に一番近いボックスとの間隔を指定値にする
     def space_nearest_box(cls, amount, layout,compare=(lambda x1, x2: x1 < x2)):
+        """Set space with the nearest box designated value"""
+
         def _space_nearest_box(box):
             nearest_box = box.get_nearest_box(layout)
             x_difference = box.get_position_difference(nearest_box, 0)
@@ -178,8 +178,9 @@ class BoxAction(Action):
         return _space_nearest_box
 
     @classmethod
-    #自分に一番アラインされているボックスとの間隔を指定値にする
     def space_most_aligned_box(cls, amount, layout, compare=(lambda x1, x2: x1 < x2)):
+        """Set space with the most aligned box designated value"""
+
         def _space_most_aligned_box(box):
             most_aligned_box = box.get_most_aligned_box(layout)
             x_difference = box.get_position_difference(most_aligned_box, 0)
@@ -191,21 +192,6 @@ class BoxAction(Action):
                 box.make_horizontal_space(most_aligned_box, amount)
 
         return _space_most_aligned_box
-
-    @classmethod
-    #途中でエージェントの数を変えるアクションは強化学習構造を変更する必要あり
-    def split_oneself_vertically(cls, layout):
-
-        def _split_oneself_vertically(box):
-            splited_box1, splited_box2 = box.get_vertically_splited_boxes(20)
-            layout.add_agent(splited_box1)
-            layout.add_agent(splited_box2)
-
-            print layout.agents
-            print box
-            layout.remove_agent(box)
-
-        return _split_oneself_vertically
 
 class Rule():
     initial_strength = 0.5
@@ -230,20 +216,20 @@ class Rule():
     def get_copy(self):
         return Rule(self.condition.get_copy(), self.action, self.strength)
 
-    # increase(decrease) strength
     def reinforce(self, episode, reward_function):
+        """Increase(decrease) strength."""
+
         self.set_strength(self.strength + reward_function(episode))
 
     @classmethod
-    # take layout as argument because some actions need layout for argument
+    #take layout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, agent_set):
         pass
 
 class BoxRule(Rule):
     @classmethod
-    # take layout as argument because some actions need layout for argument
+    # take elayout as argument because some actions need layout for argument
     def generate_rule_with_random_action(cls, condition, layout):
-#        action_candidates = [BoxAction.split_oneself_vertically(layout)]
         action_candidates = [BoxAction.stay(),
                              BoxAction.move_horizontally(10),
                              BoxAction.move_vertically(10),
