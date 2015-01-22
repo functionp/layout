@@ -221,7 +221,7 @@ class BoxAgent(Agent):
         # in case of overflow
         if self.get_x() + value > right_limit:
 
-            if right_limit - value > 0:
+            if value < right_limit:
                 self.set_x(right_limit - value)
             else:
                 self.set_x(0)
@@ -238,7 +238,7 @@ class BoxAgent(Agent):
         # in case of overflow
         if self.get_y() + value > bottom_limit:
 
-            if bottom_limit - value > 0:
+            if value < bottom_limit:
                 self.set_y(bottom_limit - value)
             else:
                 self.set_y(0)
@@ -277,7 +277,6 @@ class BoxAgent(Agent):
 
         if self.text:
             text = wx.StaticText(panel, wx.ID_ANY, self.text, (0,0), size=self.get_size())
-            #text.Wrap(100)
             text.SetBackgroundColour('#ffffff')
 
         # if this box has boxes(layout) in itself, render them
@@ -301,6 +300,7 @@ class BoxAgent(Agent):
 
     def get_matching_rule(self, layout):
         """Find (the strongest) rule which matches current condition(layout and box) and return it. return None if no rule is found."""
+
         self.ruleset = self.get_sorted_ruleset()
         matching_rule = None
         current_situation = Situation(agent_set=layout, agent=self)
@@ -376,21 +376,23 @@ class BoxAgent(Agent):
         else:
             self.set_x(box.get_x() - self.get_width()- amount)
 
-    def get_nearest_box(self, layout):
+    def get_the_best_box_from_pairs(self, pairs):
+        """Return the box which has the highest pair value in the list of pairs."""
 
-        pairs = [(BoxAgent.get_gravity_distance(self, box), box)  for box in layout.agents]
         pairs.sort()
 
         if len(pairs) == 1 :
-            nearest_box = pairs[0][1]
+            best_box = pairs[0][1]
         else: 
             # take 1st box as nearest box because 0th box is box itself
-            nearest_box = pairs[1][1]
+            best_box = pairs[1][1]
 
-        return nearest_box
+        return best_box
 
-    def get_position_difference(self,box,i):
-        return abs(self.get_position()[i] - box.get_position()[i])
+    def get_nearest_box(self, layout):
+        pairs = [(BoxAgent.get_gravity_distance(self, box), box)  for box in layout.agents]
+
+        return self.get_the_best_box_from_pairs(pairs)
 
     def get_most_aligned_box(self, layout):
 
@@ -402,15 +404,10 @@ class BoxAgent(Agent):
             scaled_gravity_distance = BoxAgent.get_gravity_distance(self, box) / 200
             pairs.append((alignemnt_distance + scaled_gravity_distance, box))
 
-        pairs.sort()
+        return self.get_the_best_box_from_pairs(pairs)
 
-        if len(pairs) == 1 :
-            most_aligned_box = pairs[0][1]
-        else: 
-            # take 1st box as nearest box because 0th box is box itself
-            most_aligned_box = pairs[1][1]
-
-        return most_aligned_box
+    def get_position_difference(self,box,i):
+        return abs(self.get_position()[i] - box.get_position()[i])
 
     def get_gravity_difference(self, target_box):
         """Get difference(signed distance) of gravity."""
@@ -475,21 +472,6 @@ class BoxAgent(Agent):
         off_left_or_top = self.get_x() < 0 or self.get_y() < 0
 
         return off_right_or_bottom or off_left_or_top
-
-
-    def get_vertically_splited_boxes(self, margin):
-        original_rule = self.get_copy_of_ruleset()
-
-        splited_width = (self.get_width() - margin) / 2
-        splited_size = [splited_width , self.get_height()]
-        box1 = BoxAgent(Style(self.get_position(), splited_size))
-        box1.set_ruleset(original_rule)
-
-        box2_position = [self.get_x() + (self.get_width() + margin) / 2, self.get_y()]
-        box2 = BoxAgent(Style(box2_position, splited_size))
-        box2.set_ruleset(original_rule)
-
-        return box1, box2
 
     @classmethod
     def overlap_or_not(cls, box1, box2):
