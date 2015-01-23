@@ -78,8 +78,6 @@ class Objective():
         return reduce((lambda x,y: x+y), reduce((lambda x,y: x+y), distance_list))
 
 
-
-
 class OverlappedAreaObjective(Objective):
     def __init__(self):
 

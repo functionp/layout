@@ -208,6 +208,7 @@ class MainFrame(wx.Frame):
         check_render_value_before = False
         if get_widget_by_id(43): check_render_value_before = get_widget_by_id(43).GetValue()
 
+        # reset all widgets on panel
         for child in g_widgets.values():
             child.Destroy()
 

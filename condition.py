@@ -58,14 +58,8 @@ class Condition():
 
     def get_sum_of_constraint_objective(self, situation):
         objective_value_list = [condfun.get_objective_value(situation) for condfun in self.condfuns]
-        #print objective_value_list
 
-        if len(objective_value_list) == 0:
-            return 0
-        elif len(objective_value_list) == 1:
-            return objective_value_list[0]
-        else:
-            return reduce((lambda x, y: x+y), objective_value_list)
+        return sum(objective_value_list)
 
     def add_condfun(self, condfun):
         self.condfuns.append(condfun)
@@ -87,36 +81,18 @@ class Condition():
     def make_condition(cls, situation):
         """Make Condition instance which represents given situation(layout and box)"""
 
-        condfun_candidates = [BoxCondFun.in_the_edge(), 
-                              BoxCondFun.width_constraint(0,25),
-                              BoxCondFun.width_constraint(26,50),
-                              BoxCondFun.width_constraint(51,75),
-                              BoxCondFun.width_constraint(76,100),
-                              BoxCondFun.width_constraint(101,125),
-                              BoxCondFun.width_constraint(126,150),
-                              BoxCondFun.width_constraint(151,175),
-                              BoxCondFun.width_constraint(176,200),
-                              BoxCondFun.width_constraint(201,225),
-                              BoxCondFun.width_constraint(226,250),
-                              BoxCondFun.width_constraint(251,275),
-                              BoxCondFun.width_constraint(276,300),
-                              BoxCondFun.height_constraint(0,25),
-                              BoxCondFun.height_constraint(26,50),
-                              BoxCondFun.height_constraint(51,75),
-                              BoxCondFun.height_constraint(76,100),
-                              BoxCondFun.height_constraint(101,125),
-                              BoxCondFun.height_constraint(126,150),
-                              BoxCondFun.height_constraint(151,175),
-                              BoxCondFun.height_constraint(176,200),
-                              BoxCondFun.height_constraint(201,225),
-                              BoxCondFun.height_constraint(226,250),
-                              BoxCondFun.height_constraint(251,275),
-                              BoxCondFun.height_constraint(276,300),
-                              BoxCondFun.having_box_in_given_distance(100), 
-                              BoxCondFun.having_box_in_given_distance(200), 
-                              BoxCondFun.having_box_in_given_distance(400), 
-                              BoxCondFun.keeping_given_distance_from_box(300), 
+        condfun_candidates = [BoxCondFun.in_the_edge(),
                               BoxCondFun.having_overlapped_box()]
+
+        partition_unit_size　= 25
+        for i in range(15):
+            condfun_candidates.append(BoxCondFun.width_constraint(i * partition_unit_size, (i+1) * partition_unit_size - 1))
+            condfun_candidates.append(BoxCondFun.height_constraint(i * partition_unit_size, (i+1) * partition_unit_size - 1))
+
+        distance_unit_size = 100
+        for i in range(1,5):
+            condfun_candidates.append(BoxCondFun.having_box_in_given_distance(i * distance_unit_size))
+            condfun_candidates.append(BoxCondFun.keeping_given_distance_from_box(i * distance_unit_size))
 
         # add agent condition to candidate
         if situation.agent:
@@ -129,7 +105,8 @@ class Condition():
         condition = Condition(matched_condfuns, and_or)
 
         # remove if condition has a lot of condfuns (loosening condition)
-        if 3 < condition.get_size():
+        condufns_max = 3
+        if condufns_max < condition.get_size():
             condition.remove_random_condfun()
 
         return condition

@@ -3,6 +3,7 @@
 # imports - - - - - - -
 from layout import *
 import random
+import time
 
 def update_something(bool_condition, process):
     """A high order function which updates given value and return True if updated."""
@@ -111,7 +112,9 @@ class RandomOptimization(Optimization):
         self.clear_output_file("output_data.csv")
 
         number_of_trial = 0
+        total_cycle_duration = 0
         while True:
+            start = time.time()
             constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
             reach_max_trial = self.max_trial < number_of_trial
             if constraints_satisfied or reach_max_trial: break
@@ -130,6 +133,10 @@ class RandomOptimization(Optimization):
             self.output_obvective_values("output_data.csv")
 
             number_of_trial += 1
+            total_cycle_duration += time.time() - start
+
+        average_cycle_duration = total_cycle_duration / number_of_trial
+        print average_cycle_duration
 
 class OCSOptimization(Optimization):
     minimum_iteration = 1
@@ -154,23 +161,27 @@ class OCSOptimization(Optimization):
         constraints = self.agent_set.condition
         situation = Situation(agent_set=self.agent_set.get_copy()) 
 
-        #for i in range(OCSOptimization.max_iteration):
-
         self.clear_output_file("output_data.csv")
 
         # Termination condition for whole optimization: satisfaction of all hard constraints, best_value
-        i = 0
+        number_of_trial = 0
+        total_cycle_duration = 0
         while True:
+            start = time.time()
             constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
             best_value_now = True #self.get_best_value_now_or_not()
-            iteration_finished = i > OCSOptimization.minimum_iteration
+            iteration_finished = inumber_of_trial > OCSOptimization.minimum_iteration
 
             if constraints_satisfied and best_value_now and iteration_finished: break
 
             #self.display_break_condition()
 
             self.one_optimization_cycle()
-            i += 1
+            number_of_trial += 1
+            total_cycle_duration += time.time() - start
+
+        average_cycle_duration = total_cycle_duration / number_of_trial
+        print average_cycle_duration
 
         self.output_obvective_values("output_data.csv")
         
@@ -180,7 +191,7 @@ class OCSOptimization(Optimization):
         rule_not_found_or_not = True
         while rule_not_found_or_not == True:
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
-            #Agent.exchange_rule_randomly(self.agent_set.agents) #条件が非対称だと余計交換いらない
+            #Agent.exchange_rule_randomly(self.agent_set.agents) 
 
         #self.display_status()
 
@@ -203,7 +214,7 @@ class OCSOptimization(Optimization):
         """update objective value if it is the best, and record the rulesets"""
 
         new_rulesets = self.agent_set.get_rulesets()
-        #Eupdate_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_rulesets))) #とにかく毎週記録してれば終了時のルールはゲットできる
+        #update_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_rulesets))) #とにかく毎週記録してれば終了時のルールはゲットできる
         self.set_organizational_rulesets(new_rulesets)
 
     def reinforcement_learning(self):
@@ -343,5 +354,6 @@ class OCSOptimization(Optimization):
                 print rule.action
 
             print ""
+
 # imports - - - - - - -
 from condition import *
