@@ -84,7 +84,7 @@ class Condition():
         condfun_candidates = [BoxCondFun.in_the_edge(),
                               BoxCondFun.having_overlapped_box()]
 
-        partition_unit_size　= 25
+        partition_unit_size = 25
         for i in range(15):
             condfun_candidates.append(BoxCondFun.width_constraint(i * partition_unit_size, (i+1) * partition_unit_size - 1))
             condfun_candidates.append(BoxCondFun.height_constraint(i * partition_unit_size, (i+1) * partition_unit_size - 1))

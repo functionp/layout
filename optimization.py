@@ -97,7 +97,7 @@ class Optimization():
 
 class RandomOptimization(Optimization):
 
-    max_trial = 1000
+    max_trial = 10000
 
     def __init__(self, agent_set=AgentSet()):
         Optimization.__init__(self, agent_set)
@@ -170,7 +170,7 @@ class OCSOptimization(Optimization):
             start = time.time()
             constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
             best_value_now = True #self.get_best_value_now_or_not()
-            iteration_finished = inumber_of_trial > OCSOptimization.minimum_iteration
+            iteration_finished = number_of_trial > OCSOptimization.minimum_iteration
 
             if constraints_satisfied and best_value_now and iteration_finished: break
 
@@ -184,7 +184,7 @@ class OCSOptimization(Optimization):
         print average_cycle_duration
 
         self.output_obvective_values("output_data.csv")
-        
+
     def one_optimization_cycle(self):
 
         # repeat while ruleset is not converged(while new rule is generated)
@@ -219,6 +219,9 @@ class OCSOptimization(Optimization):
 
     def reinforcement_learning(self):
         for agent in self.agent_set.agents:
+            # do not move fixed box
+            if agent.fixedness == True: continue 
+
             self.learn_strength_with_profit_sharing(agent)
 
     def learn_strength_with_profit_sharing(self, agent):
@@ -235,6 +238,7 @@ class OCSOptimization(Optimization):
 
             constraints = self.agent_set.condition
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
+
 
             while True:
                 converged = abs(previous_value - current_value) < OCSOptimization.minimum_difference

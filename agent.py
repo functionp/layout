@@ -149,6 +149,7 @@ class BoxAgent(Agent):
         self.set_parent_layout(None)
         self.set_text(text)
         self.set_inner_layout(None)
+        self.set_fixedness(False)
 
     def get_copy(self):
         box = BoxAgent(self.style.get_copy(), self.identifier, self.condition.get_copy(), self.text)
@@ -258,6 +259,9 @@ class BoxAgent(Agent):
 
     def set_text(self, text):
         self.text = text
+
+    def set_fixedness(self, fixedness):
+        self.fixedness = fixedness
 
     def make_visible(self):
         self.style.set_visibility(1)

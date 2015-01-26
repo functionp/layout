@@ -121,8 +121,11 @@ class MainFrame(wx.Frame):
         text_height = widget_factory(wx.TextCtrl, main_panel, 5, str(target_box.get_height()), pos=get_right_position(label_height, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         text_height.SetMaxLength(4)
 
+        check_fixedness = widget_factory( wx.CheckBox, main_panel, 44, "Fix this box.", pos=get_bottom_position(label_x, 15))
+        check_fixedness.SetValue(target_box.fixedness)
+
         if target_box.inner_layout:
-            check_optimization = widget_factory( wx.CheckBox, main_panel, 15, "Optimize layout in this box.", pos=get_bottom_position(label_x, 15))
+            check_optimization = widget_factory( wx.CheckBox, main_panel, 15, "Optimize layout in this box.", pos=get_bottom_position(check_fixedness, 5))
             check_optimization.SetValue(target_box.inner_layout.optimization_needed)
 
     def render_conditions(self, target_box):
@@ -142,7 +145,7 @@ class MainFrame(wx.Frame):
                 return ""
 
         STYLE_TEXT_SIZE = (50,23)
-        label_x_from = widget_factory(wx.StaticText, main_panel, 18, "X Constraint", pos=get_bottom_position(get_widget_by_id(16), 20))
+        label_x_from = widget_factory(wx.StaticText, main_panel, 18, "X Constraint", pos=get_bottom_position(get_widget_by_id(16), 17))
         text_x_from = widget_factory(wx.TextCtrl, main_panel, 19, str(get_func_dict_value(target_box, '_x_constraint', 'lower')) , pos=get_right_position(label_x_from, 5, -ADJUST), size=STYLE_TEXT_SIZE)
         label_x_to = widget_factory(wx.StaticText, main_panel, 20, " - ", pos=get_right_position(text_x_from, 5, ADJUST))
         text_x_to = widget_factory(wx.TextCtrl, main_panel, 21, str(get_func_dict_value(target_box, '_x_constraint', 'upper')) , pos=get_right_position(label_x_to, 5, -ADJUST), size=STYLE_TEXT_SIZE)
@@ -217,7 +220,7 @@ class MainFrame(wx.Frame):
 
         self.render_box_options(target_box)
 
-        line1 = widget_factory(wx.StaticLine, main_panel, 16, pos=get_bottom_position(get_widget_by_id(7), 60), size=(525,2))
+        line1 = widget_factory(wx.StaticLine, main_panel, 16, pos=get_bottom_position(get_widget_by_id(7), 70), size=(525,2))
 
         self.render_conditions(target_box)
 
@@ -298,6 +301,7 @@ def update():
     current_box.set_height(int(get_widget_by_id(5).GetValue()))
     current_box.set_x(int(get_widget_by_id(2).GetValue()))
     current_box.set_y(int(get_widget_by_id(3).GetValue()))
+    current_box.set_fixedness(get_widget_by_id(44).GetValue())
 
     current_box.condition.remove_condfun_by_name("_x_constraint")
     if get_widget_by_id(19).GetValue() or get_widget_by_id(21).GetValue():
@@ -353,8 +357,8 @@ def click_start_button(event):
         def optimize_layout_inside(layout):
             if layout:
                 if layout.optimization_needed == True:
-                    optimization = OCSOptimization(layout) 
-                    #optimization = RandomOptimization(layout) 
+                    #optimization = OCSOptimization(layout) 
+                    optimization = RandomOptimization(layout) 
 
                     if get_widget_by_id(43).GetValue():
                         optimization.set_render_function(render_closure())
