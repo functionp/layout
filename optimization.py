@@ -122,6 +122,8 @@ class RandomOptimization(Optimization):
             self.render()
 
             for agent in self.agent_set.agents:
+                if agent.fixedness == True: continue
+
                 agent.set_x(random.randint(0, max_x_grid) * grid_size)
                 agent.set_y(random.randint(0, max_y_grid) * grid_size)
 
