@@ -171,10 +171,9 @@ class OCSOptimization(Optimization):
         while True:
             start = time.time()
             constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
-            best_value_now = True #self.get_best_value_now_or_not()
             iteration_finished = number_of_trial > OCSOptimization.minimum_iteration
 
-            if constraints_satisfied and best_value_now and iteration_finished: break
+            if constraints_satisfied and iteration_finished: break
 
             #self.display_break_condition()
 
@@ -183,7 +182,8 @@ class OCSOptimization(Optimization):
             total_cycle_duration += time.time() - start
 
         average_cycle_duration = total_cycle_duration / number_of_trial
-        print average_cycle_duration
+        print "Average Cycle Duration: " + str(average_cycle_duration)
+        print "Number of Trials: " + str(number_of_trial)
 
         self.output_obvective_values("output_data.csv")
 
@@ -222,7 +222,7 @@ class OCSOptimization(Optimization):
     def reinforcement_learning(self):
         for agent in self.agent_set.agents:
             # do not move fixed box
-            if agent.fixedness == True: continue 
+            if agent.fixedness == True: continue
 
             self.learn_strength_with_profit_sharing(agent)
 
@@ -242,9 +242,9 @@ class OCSOptimization(Optimization):
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
             while True:
-                selected_rule = agent.rule_select()
                 agent_condition_satisfied = agent.condition.get_sum_of_constraint_objective(situation) <= border_enough
                 whole_condition_satisfied = constraints.get_sum_of_constraint_objective(situation) <= border_enough
+                selected_rule = agent.rule_select()
 
                 if agent_condition_satisfied and whole_condition_satisfied: break
                 if selected_rule.strength < 0.001: break # to avoid infinite loop, skip too weak rule
@@ -296,12 +296,13 @@ class OCSOptimization(Optimization):
         difference_whole = previous_whole_constraints_objective - whole_constraints_objective 
         difference_agent = previous_agent_constraints_objective - agent_constraints_objective
 
-        #best_now =  whole_constraints_objective == 0 and agent_constraints_objective == 0 #もう満たしている状態になってるのにあえて変えちゃうってことあるのでは？
+        # if objective is already the best, give positive reward
+        best_now =  whole_constraints_objective == 0 and agent_constraints_objective == 0 
 
-        improve_total_objective = difference_whole + difference_agent > 0
-        improve_either_one = difference_whole > 0 or difference_agent > 0 
+        improve_both_objective = difference_whole + difference_agent > 0
+        improve_either_objective = difference_whole > 0 or difference_agent > 0 
 
-        return improve_either_one
+        return improve_either_objective or best_now
 
     def give_rewards(self, pairs, reward_function):
         """give rewards to serial rules at one time"""
