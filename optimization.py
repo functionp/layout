@@ -193,7 +193,7 @@ class OCSOptimization(Optimization):
         rule_not_found_or_not = True
         while rule_not_found_or_not == True:
             rule_not_found_or_not, rule_generated_or_not = self.agent_set.generate_rules() 
-            #Agent.exchange_rule_randomly(self.agent_set.agents) 
+            Agent.exchange_rule_randomly(self.agent_set.agents) 
 
         #self.display_status()
 
@@ -228,6 +228,7 @@ class OCSOptimization(Optimization):
 
     def learn_strength_with_profit_sharing(self, agent):
 
+        border_enough = 0 # condition evaluation gets loose when border gets higher
         agent_set = self.agent_set
 
         for i in range(OCSOptimization.max_cycle_of_learning):
@@ -236,32 +237,21 @@ class OCSOptimization(Optimization):
             applied_pairs = []
 
             current_value = self.get_objective_value()
-            previous_value = 10000
 
             constraints = self.agent_set.condition
             situation = Situation(agent_set=agent_set.get_copy(), agent=agent) 
 
-
             while True:
-                converged = abs(previous_value - current_value) < OCSOptimization.minimum_difference
-                whole_constraints_satisfied = self.get_whole_constraints_satisfied_or_not() 
-                best_value_now = self.get_best_value_now_or_not()
-
-                if converged and whole_constraints_satisfied and best_value_now : break
-                #if converged: break #ここの条件ゆるめただけで強度がガン上がり
-
                 selected_rule = agent.rule_select()
+                agent_condition_satisfied = agent.condition.get_sum_of_constraint_objective(situation) <= border_enough
+                whole_condition_satisfied = constraints.get_sum_of_constraint_objective(situation) <= border_enough
 
-                # skip too weak rule (to avoid infinite loop)
-                if selected_rule.strength < 0.001: break
+                if agent_condition_satisfied and whole_condition_satisfied: break
+                if selected_rule.strength < 0.001: break # to avoid infinite loop, skip too weak rule
 
                 # record objective value, constraint satisfaction before execution
                 previous_situation = situation.get_copy()
-                previous_value = self.get_objective_value()
-
                 agent.execute_action(selected_rule.action)
-
-                current_value = self.get_objective_value()
                 situation = Situation(agent_set=agent_set.get_copy(), agent=agent.get_copy())
 
                 # rememebr applied rule with episode(time)

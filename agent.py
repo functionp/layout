@@ -25,15 +25,15 @@ class Agent():
     def get_copy_of_ruleset(self):
         return self.ruleset[:]
 
-    def get_sorted_ruleset(self):
-        """ Return sorted ruleset according to its strength."""
+    def get_sorted_ruleset(self, border=-1):
+        """ Return sorted ruleset according to its strength, and filter the rule whose strength is more than border."""
 
         pairs = [(rule.strength, rule) for rule in self.ruleset]
         pairs.sort()
         pairs.reverse()
         sorted_ruleset = [pair[1] for pair in pairs]
 
-        return sorted_ruleset
+        return [rule for rule in sorted_ruleset if rule.strength > border]
 
     def get_number_of_rules(self):
         return len(self.ruleset)
@@ -100,7 +100,7 @@ class Agent():
     def exchange_rule_randomly(cls, agents):
         """Exchange two rules between agents having same condition. (DESTRUCTIVE)"""
 
-        BORDER = 3
+        strength_border = 0.9 # do not exchange rule whose strength is less than this value
 
         i1 = random.randint(0,len(agents)-1)
         agent1 = agents[i1]
@@ -109,15 +109,20 @@ class Agent():
         agents_with_same_condition = [agent for agent in agents if agent.condition == agent1.condition and agent != agent1]
 
         if len(agents_with_same_condition) != 0:
+
             i2 = random.randint(0,len(agents_with_same_condition)-1)
             agent2 = agents_with_same_condition[i2]
-            if agent1.get_number_of_rules() != 0:
-                sending_rule1 = agent1.get_sorted_ruleset()[0].get_copy()
+
+            filtered_ruleset1 = agent1.get_sorted_ruleset(strength_border)
+            filtered_ruleset2 = agent2.get_sorted_ruleset(strength_border)
+
+            if len(filtered_ruleset1) != 0:
+                sending_rule1 = filtered_ruleset1[0].get_copy()
                 #sending_rule1.set_strength(Rule.initial_strength)
                 agent2.add_rule(sending_rule1)
 
-            if agent2.get_number_of_rules() != 0:
-                sending_rule2 = agent2.get_sorted_ruleset()[0].get_copy()
+            if len(filtered_ruleset2) != 0:
+                sending_rule2 = filtered_ruleset2[0].get_copy()
                 #sending_rule2.set_strength(Rule.initial_strength)
                 agent1.add_rule(sending_rule2)
 
