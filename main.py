@@ -238,7 +238,8 @@ def reset():
     global g_main_frame
 
     main_app = wx.App()
-    base_layout = Layout.get_softplanner_layout()
+    #base_layout = Layout.get_softplanner_layout()
+    base_layout = Layout.get_sample_layout()
     base_box =  base_layout.base_box
     #base_box =  BoxAgent(Style([0,0], WINDOW_SIZE, 0), "base")
     #Layout([], base_box)

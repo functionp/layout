@@ -208,7 +208,7 @@ class OCSOptimization(Optimization):
         self.render()
 
         self.update_organizational_knowledge()
-            
+
         self.agent_set.delete_weak_rules()
 
         #self.display_status()
@@ -224,12 +224,12 @@ class OCSOptimization(Optimization):
 
         update_something(record_best_value, (lambda : self.set_organizational_layout(new_layout)))
         update_something(record_best_value, (lambda : self.set_organizational_rulesets(new_rulesets)))
-        
+
         #print self.best_value
 
     def lord_organizational_layout(self):
         #ある程度繰り返したら始まる
-        if random.randint(0,10) == 1 and self.number_of_trial > 100:
+        if random.randint(0,200) == 1 and self.number_of_trial > 100:
             self.agent_set = self.organizational_layout.get_copy()
             self.agent_set.set_rulesets(self.organizational_rulesets)
 

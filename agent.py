@@ -331,11 +331,20 @@ class BoxAgent(Agent):
         return [present_x, present_y + self.get_height() + margin]
 
     def get_center_x(self):
-        parent_box = self.parent_layout.base_box
+        
+        if self.parent_layout:
+            parent_box = self.parent_layout.base_box
+        else:
+            parent_box = BoxAgent(Style([0, 0], WINDOW_SIZE))
+
         return (parent_box.get_width() - self.get_width()) / 2
 
     def get_center_y(self):
-        parent_box = self.parent_layout.base_box
+        if self.parent_layout:
+            parent_box = self.parent_layout.base_box
+        else:
+            parent_box = BoxAgent(Style([0, 0], WINDOW_SIZE))
+
         return (parent_box.get_width() - self.get_height()) / 2
 
     def add_x(self, amount):

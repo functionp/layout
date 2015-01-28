@@ -137,34 +137,82 @@ class Layout(AgentSet):
 
         MAIN_WIDTH = 750
         margin = 20
+        MAX_WIDTH = main.WINDOW_SIZE[0]
+        MAX_HEIGHT = main.WINDOW_SIZE[1]
 
         # base_layout
 
         base_box = BoxAgent(Style([0,0], main.WINDOW_SIZE, 0), "base")
-        max_width = main.WINDOW_SIZE[0]
+        base_inner_box = BoxAgent(Style([0,0], [MAIN_WIDTH, MAX_HEIGHT], 1), "base_inner")
+        base_inner_box.set_x(base_inner_box.get_center_x())
 
-        header_style = Style([0,0], [max_width, 80], 1)
-        header_condition = Condition([BoxCondFun.width_constraint(max_width, max_width)], 1)
-        header_box = BoxAgent(header_style, "header", header_condition)
+        base_layout = Layout([base_inner_box], base_box)
 
-        image_area_style = Style(header_box.get_bottom_position(3), [header_box.get_width(), 270], 1)
-        image_area_condition = Condition()
-        image_area_box = BoxAgent(image_area_style, "image_area", image_area_condition)
+        # base_inner_layout
 
-        main_style = Style(image_area_box.get_bottom_position(margin), [MAIN_WIDTH, 600], 1)
-        main_condition = Condition([BoxCondFun.width_constraint(0, 800)] , 1)
-        main_box = BoxAgent(main_style, "main", main_condition)
+        header_style = Style([0,0], [MAIN_WIDTH, 80], 1)
+        header_box = BoxAgent(header_style, "header")
 
-        footer_style = Style(main_box.get_bottom_position(margin), [max_width,100], 1)
-        footer_condition = Condition([BoxCondFun.width_constraint(0, 800)] , 1)
-        footer_box = BoxAgent(footer_style, "footer")
+        main_style = Style(header_box.get_bottom_position(margin), [MAIN_WIDTH, 600], 0)
+        main_box = BoxAgent(main_style, "main")
 
-        base_layout = Layout([header_box, image_area_box, main_box], base_box)
-        base_layout.set_optimization_needed(False)
+        base_inner_layout_condition = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned(), BoxCondFun.width_unification(1)], 1)
+        base_inner_layout = Layout([header_box, main_box], base_inner_box, base_inner_layout_condition)
+        base_inner_layout.set_optimization_needed(False)
 
-        main_box.set_x(main_box.get_center_x())
+        # main_layout
 
-        #content_box.set_x(content_box.get_center_x())
+        content_style = Style([400,0], [280, 280], 1)
+        content_condition = Condition([BoxCondFun.width_constraint(550,590), BoxCondFun.height_constraint(500)] , 1)
+        content_box = BoxAgent(content_style, "content", content_condition)
+
+        side_style = Style([400,0], [280, 280], 1)
+        side_condition = Condition([BoxCondFun.width_constraint(140,160), BoxCondFun.height_constraint(500)] , 1)
+        side_box = BoxAgent(side_style, "side", side_condition)
+
+        main_layout_condition = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
+        main_layout = Layout([content_box, side_box], main_box, main_layout_condition)
+        main_layout.set_optimization_needed(True)
+
+        # side_layout
+
+        side_item_style = Style([0,0], [30, 30], 1)
+        side_item_condition = Condition([BoxCondFun.width_constraint(120,140), BoxCondFun.height_constraint(80, None, 0)] , 1)
+        side_item_boxes = []
+        side_item_boxes.append(BoxAgent(side_item_style.get_copy(), "side_item1", side_item_condition))
+        side_item_boxes.append(BoxAgent(side_item_style.get_copy(), "side_item2", side_item_condition))
+
+        side_layout_condition = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned(), BoxCondFun.width_unification(1)], 1)
+        side_layout = Layout(side_item_boxes, side_box, side_layout_condition)
+        side_layout.set_optimization_needed(True)
+
+        # content_layout
+
+        content_item_style = Style([0,0], [240, 240], 1)
+        content_item_condition = Condition([BoxCondFun.height_constraint(80, 110), BoxCondFun.width_constraint(210), ] , 1)
+        content_item_box1 = BoxAgent(content_item_style.get_copy(), "content_item1", content_item_condition)
+        content_item_box2 = BoxAgent(content_item_style.get_copy(), "content_item2", content_item_condition)
+
+        content_layout_condition = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned(), BoxCondFun.width_unification(1)], 1)
+        content_layout = Layout([content_item_box1, content_item_box2], content_box, content_layout_condition)
+        content_layout.set_optimization_needed(True)
+
+        # content_item_layout
+
+        content_image_style = Style([0,0], [30, 30], 1)
+        content_image_condition = Condition([BoxCondFun.width_constraint(60,80,1), BoxCondFun.height_constraint(60,90,1)] , 1)
+        content_image_box = BoxAgent(content_image_style, "content_image", content_image_condition, "image")
+
+        content_text_style = Style([0, 120],[30, 30], 1)
+        content_text_condition = Condition([BoxCondFun.width_constraint(100, 130, 1), BoxCondFun.height_constraint(50, 80, 1)] , 1)
+        content_text_box = BoxAgent(content_text_style, "side", content_text_condition, "text")
+
+        content_item_layout_condition = Condition([BoxCondFun.no_overlap(), BoxCondFun.all_aligned()], 1)
+        content_item_layout1 = Layout([content_image_box.get_copy(), content_text_box.get_copy()], content_item_box1, content_item_layout_condition)
+        content_item_layout2 = Layout([content_image_box.get_copy(), content_text_box.get_copy()], content_item_box2, content_item_layout_condition)
+        content_item_layout1.set_optimization_needed(True)
+        content_item_layout2.set_optimization_needed(True)
+
 
         return base_layout
 
