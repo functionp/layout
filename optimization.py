@@ -229,7 +229,7 @@ class OCSOptimization(Optimization):
 
     def lord_organizational_layout(self):
         #ある程度繰り返したら始まる
-        if random.randint(0,200) == 1 and self.number_of_trial > 100:
+        if random.randint(0,30) == 1 and self.number_of_trial > 200:
             self.agent_set = self.organizational_layout.get_copy()
             self.agent_set.set_rulesets(self.organizational_rulesets)
 

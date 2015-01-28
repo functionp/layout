@@ -110,7 +110,7 @@ class BoxAction(Action):
         return _unify_size_to_most_aligned_box
 
     @classmethod
-    def align_to_nearest_box(cls, layout):
+    def align_to_nearest_box(cls, layout, compare=(lambda x1, x2: x1 < x2)):
 
         def _align_to_nearest_box(box):
             nearest_box = box.get_nearest_box(layout)
@@ -118,7 +118,7 @@ class BoxAction(Action):
             difference_x = abs(box.get_x() - nearest_box.get_x())
             difference_y = abs(box.get_y() - nearest_box.get_y())
 
-            if difference_x < difference_y:
+            if compare(difference_x , difference_y):
                 box.align_left(nearest_box)
             else:
                 box.align_top(nearest_box)
@@ -239,7 +239,8 @@ class BoxRule(Rule):
                              BoxAction.change_width(-10),
                              BoxAction.change_height(10),
                              BoxAction.change_height(-10),
-                             BoxAction.align_to_nearest_box(layout),
+                             BoxAction.align_to_nearest_box(layout, (lambda x1, x2: x1 < x2)),
+                             BoxAction.align_to_nearest_box(layout, (lambda x1, x2: x1 > x2)),
                              BoxAction.space_nearest_box(20, layout, (lambda x1, x2: x1 < x2)),
                              BoxAction.space_nearest_box(20, layout, (lambda x1, x2: x1 < x2)),
                              BoxAction.space_nearest_box(20, layout, (lambda x1, x2: x1 > x2)),
