@@ -46,7 +46,7 @@ class Optimization():
         return abs(self.best_value - self.get_objective_value()) < OCSOptimization.minimum_difference
 
     def get_objective_function(self):
-        return self.agent_set.condition.get_sum_of_constraint_objective
+        return (lambda situation: situation.agent_set.get_sum_of_all_constraint_objective())
 
     def get_objective_value(self):
         objective_funtion = self.get_objective_function()
@@ -64,11 +64,11 @@ class Optimization():
 
     def update_best_value(self, new_value):
         """Update best objective value if gained new value is better(smaller) than the best value. If updated, return True. """
-        update_something((new_value < self.best_value), (lambda : self.set_best_value(new_value)))
+        return update_something((new_value < self.best_value), (lambda : self.set_best_value(new_value)))
 
     def update_worst_value(self, new_value):
         """Update worst objective value if gained new value is worse(bigger) than the worst value. If updated, return True."""
-        update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
+        return update_something((self.worst_value < new_value), (lambda : self.set_worst_value(new_value)))
 
     def clear_output_file(self, filename):
         file = open(filename, 'w')
@@ -148,6 +148,7 @@ class OCSOptimization(Optimization):
     def __init__(self, agent_set=AgentSet()):
         Optimization.__init__(self, agent_set)
         self.organizational_rulesets = []
+        self.organizational_layout = agent_set.get_copy()
 
     def get_half_value(self):
         return (self.worst_value + self.best_value) / 2
@@ -155,10 +156,12 @@ class OCSOptimization(Optimization):
     def set_organizational_rulesets(self, rulesets):
         self.organizational_rulesets = rulesets
 
+    def set_organizational_layout(self, layout):
+        self.organizational_layout = layout
+
     def optimize(self):
         # use organizational rulesets for default rulesets
         self.agent_set.set_rulesets(self.organizational_rulesets)
-        print self.organizational_rulesets
 
         constraints = self.agent_set.condition
         situation = Situation(agent_set=self.agent_set.get_copy()) 
@@ -166,29 +169,30 @@ class OCSOptimization(Optimization):
         self.clear_output_file("output_data.csv")
 
         # Termination condition for whole optimization: satisfaction of all hard constraints, best_value
-        number_of_trial = 0
+        self.number_of_trial = 0
         total_cycle_duration = 0
         while True:
             start = time.time()
             constraints_satisfied = self.get_whole_constraints_satisfied_or_not() and self.get_agent_constraints_satisfied_or_not()
-            iteration_finished = number_of_trial > OCSOptimization.minimum_iteration
+            iteration_finished = self.number_of_trial > OCSOptimization.minimum_iteration
 
             if constraints_satisfied and iteration_finished: break
 
             #self.display_break_condition()
 
             self.one_optimization_cycle()
-            number_of_trial += 1
+            self.number_of_trial += 1
             total_cycle_duration += time.time() - start
 
-        average_cycle_duration = total_cycle_duration / number_of_trial
+        average_cycle_duration = total_cycle_duration / self.number_of_trial
         print "Average Cycle Duration: " + str(average_cycle_duration)
-        print "Number of Trials: " + str(number_of_trial)
+        print "Number of Trials: " + str(self.number_of_trial)
 
         self.output_obvective_values("output_data.csv")
 
     def one_optimization_cycle(self):
 
+        self.lord_organizational_layout() 
         # repeat while ruleset is not converged(while new rule is generated)
         rule_not_found_or_not = True
         while rule_not_found_or_not == True:
@@ -201,23 +205,33 @@ class OCSOptimization(Optimization):
 
         # learn and adjust a strength of each rule
         self.reinforcement_learning()
-
         self.render()
 
-        current_objective_value = self.get_objective_value()
-        self.update_worst_value(current_objective_value)
-        self.update_organizational_rulesets(current_objective_value)
-
+        self.update_organizational_knowledge()
+            
         self.agent_set.delete_weak_rules()
 
         #self.display_status()
 
-    def update_organizational_rulesets(self, new_value):
-        """update objective value if it is the best, and record the rulesets"""
+    def update_organizational_knowledge(self):
+        """update objective value if it is the best, and record the rulesets and layout"""
 
+        new_value = self.agent_set.get_sum_of_all_constraint_objective()
         new_rulesets = self.agent_set.get_rulesets()
-        #update_something(self.update_best_value(new_value), (lambda : self.set_organizational_rulesets(new_rulesets))) #とにかく毎週記録してれば終了時のルールはゲットできる
-        self.set_organizational_rulesets(new_rulesets)
+        new_layout = self.agent_set.get_copy()
+
+        record_best_value = self.update_best_value(new_value)
+
+        update_something(record_best_value, (lambda : self.set_organizational_layout(new_layout)))
+        update_something(record_best_value, (lambda : self.set_organizational_rulesets(new_rulesets)))
+        
+        #print self.best_value
+
+    def lord_organizational_layout(self):
+        #ある程度繰り返したら始まる
+        if random.randint(0,10) == 1 and self.number_of_trial > 100:
+            self.agent_set = self.organizational_layout.get_copy()
+            self.agent_set.set_rulesets(self.organizational_rulesets)
 
     def reinforcement_learning(self):
         for agent in self.agent_set.agents:
@@ -229,6 +243,7 @@ class OCSOptimization(Optimization):
     def learn_strength_with_profit_sharing(self, agent):
 
         border_enough = 0 # condition evaluation gets loose when border gets higher
+        max_episode = 100
         agent_set = self.agent_set
 
         for i in range(OCSOptimization.max_cycle_of_learning):
@@ -248,6 +263,7 @@ class OCSOptimization(Optimization):
 
                 if agent_condition_satisfied and whole_condition_satisfied: break
                 if selected_rule.strength < 0.001: break # to avoid infinite loop, skip too weak rule
+                if episode > max_episode: break # to avoid infinite loop, skip too weak rule
 
                 # record objective value, constraint satisfaction before execution
                 previous_situation = situation.get_copy()
