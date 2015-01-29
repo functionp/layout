@@ -283,6 +283,29 @@ class BoxCondFun(CondFun):
         return CondFun(_y_end_constraint, Objective(1, _y_end_constraint_objective), soft_hard)
 
     @classmethod
+    def centering_constraint(cls, soft_hard=1):
+        latitude = 11
+        def _centering_constraint(situation):
+            box = situation.agent
+            base_width = situation.agent.parent_layout.base_box.get_width()
+            right_margin = base_width - (box.get_x() + box.get_width())
+            left_margin = box.get_x()
+            return abs(right_margin - left_margin) <= latitude
+
+        def _centering_constraint_objective(situation):
+            box = situation.agent
+            base_width = situation.agent.parent_layout.base_box.get_width()
+            right_margin = base_width - (box.get_x() + box.get_width())
+            left_margin = box.get_x()
+
+            if abs(right_margin - left_margin) > latitude:
+                return abs(right_margin - left_margin) - latitude
+            else:
+                return 0
+
+        return CondFun(_centering_constraint, Objective(1, _centering_constraint_objective), soft_hard)
+
+    @classmethod
     def horizontal_margin_constraint(cls, max_margin, soft_hard=1):
         def _horizontal_margin_constraint(situation):
             box_width = situation.agent.get_width()
@@ -320,14 +343,16 @@ class BoxCondFun(CondFun):
     def horizontal_layout_margin(cls, max_margin, soft_hard=1):
         def _horizontal_layout_margin(situation):
             inclusion_width = situation.agent_set.get_minimum_inclusion_size()[0]
+            sum_of_width = sum([box.get_width() for box in situation.agent_set.agents])
             base_width = situation.agent_set.base_box.get_width()
-            return base_width - inclusion_width <= max_margin
+            return base_width - sum_of_width <= max_margin
 
         def _horizontal_layout_margin_objective(situation):
             inclusion_width = situation.agent_set.get_minimum_inclusion_size()[0]
+            sum_of_width = sum([box.get_width() for box in situation.agent_set.agents])
             base_width = situation.agent_set.base_box.get_width()
-            if base_width - inclusion_width > max_margin:
-                return (base_width - inclusion_width) - max_margin
+            if base_width - sum_of_width > max_margin:
+                return (base_width - sum_of_width) - max_margin
             else:
                 return 0
 
@@ -337,14 +362,16 @@ class BoxCondFun(CondFun):
     def vertical_layout_margin(cls, max_margin, soft_hard=1):
         def _vertical_layout_margin(situation):
             inclusion_height = situation.agent_set.get_minimum_inclusion_size()[1]
+            sum_of_height = sum([box.get_height() for box in situation.agent_set.agents])
             base_height = situation.agent_set.base_box.get_height()
-            return base_height - inclusion_height <= max_margin
+            return base_height - sum_of_height <= max_margin
 
         def _vertical_layout_margin_objective(situation):
             inclusion_height = situation.agent_set.get_minimum_inclusion_size()[1]
+            sum_of_height = sum([box.get_height() for box in situation.agent_set.agents])
             base_height = situation.agent_set.base_box.get_height()
-            if base_height - inclusion_height > max_margin:
-                return (base_height - inclusion_height) - max_margin
+            if base_height - sum_of_height > max_margin:
+                return (base_height - sum_of_height) - max_margin
             else:
                 return 0
 
